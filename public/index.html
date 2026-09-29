@@ -6,112 +6,136 @@
     <title>Double Check - AI Legal Contract Summariser</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
 
     <!-- HEADER -->
-    <header class="w-full bg-slate-900 text-white px-6 py-4 flex items-center justify-between border-b border-slate-800 sticky top-0 z-50">
+    <header class="w-full bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-lg shadow-md">
+            <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md">
                 DC
             </div>
-            <span class="text-xl font-bold tracking-wide">Double Check</span>
+            <span class="text-xl font-bold tracking-wide text-slate-800">Double Check</span>
         </div>
-
-        <button onclick="toggleMenu()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition flex items-center space-x-2 text-sm font-medium">
-            <span>Menu</span>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        <button onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-slate-100 transition text-slate-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
     </header>
 
-    <!-- SLIDE-OUT MENU DRAWER -->
-    <div id="menuDrawer" class="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm hidden">
-        <div class="w-80 h-full bg-slate-900 border-l border-slate-800 p-6 flex flex-col justify-between shadow-2xl">
-            <div>
-                <div class="flex items-center justify-between mb-8">
-                    <h2 class="text-lg font-bold">Account Menu</h2>
-                    <button onclick="toggleMenu()" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white">✕</button>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50">
-                        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Subscription Status</p>
-                        <p class="text-base font-bold text-indigo-400 mt-1">Free Tier</p>
-                        
-                        <div class="mt-4 pt-4 border-t border-slate-700/50">
-                            <div class="flex justify-between text-xs text-slate-300 mb-1">
-                                <span>Contracts Left This Month</span>
-                                <span class="font-bold text-white">3 / 5</span>
-                            </div>
-                            <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
-                                <div class="bg-indigo-500 h-full w-3/5"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <nav class="space-y-2">
-                        <a href="#" class="block px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">About Double Check</a>
-                        <a href="#" class="block px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">Account Settings</a>
-                    </nav>
-                </div>
+    <!-- SLIDE-OUT DRAWER -->
+    <div id="menuDrawer" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex justify-end">
+        <div class="w-80 bg-white h-full shadow-2xl p-6 flex flex-col border-l border-slate-200">
+            <div class="flex justify-between items-center mb-8">
+                <span class="text-lg font-bold text-slate-800">Menu</span>
+                <button onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500">✕</button>
             </div>
-
-            <button class="w-full py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold border border-red-500/20 transition">
-                Sign Out
-            </button>
+            <nav class="space-y-4">
+                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 font-semibold text-slate-700 transition">Home</a>
+                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 font-semibold text-slate-700 transition">My Account</a>
+                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 font-semibold text-slate-700 transition">Past Financials</a>
+            </nav>
         </div>
     </div>
 
-    <!-- MAIN HOMEPAGE DASHBOARD -->
-    <main class="flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center space-y-6">
-        <div class="text-center space-y-2 mb-4">
-            <h1 class="text-3xl font-extrabold tracking-tight">Simplify Any Legal Contract</h1>
-            <p class="text-slate-400 text-sm">Upload a photo, a PDF, or paste text below to get your instant 8-box AI breakdown.</p>
-        </div>
+    <!-- MAIN HOMEPAGE VIEW -->
+    <main id="homeView" class="flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center items-center text-center">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Simplify Any Legal Contract</h1>
+        <p class="text-slate-500 mb-8 max-w-lg">Upload a photo, a PDF, or paste text below to get your instant 8-box AI breakdown.</p>
 
         <!-- TOP UPLOAD ROW -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label class="border-2 border-dashed border-slate-700 hover:border-indigo-500 bg-slate-900/50 hover:bg-slate-900 transition rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer text-center group">
-                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                    📷
-                </div>
-                <span class="font-semibold text-slate-200">Upload Photo</span>
-                <span class="text-xs text-slate-400 mt-1">Snap or select an image (JPG, PNG)</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-6">
+            <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:border-indigo-500 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
+                <span class="text-indigo-600 font-bold mb-2">Upload Photo</span>
+                <span class="text-xs text-slate-400">Snap or select an image (JPG, PNG)</span>
                 <input type="file" accept="image/*" class="hidden">
             </label>
-
-            <label class="border-2 border-dashed border-slate-700 hover:border-indigo-500 bg-slate-900/50 hover:bg-slate-900 transition rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer text-center group">
-                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                    📄
-                </div>
-                <span class="font-semibold text-slate-200">Upload PDF File</span>
-                <span class="text-xs text-slate-400 mt-1">Select document from your files</span>
+            <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:border-indigo-500 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
+                <span class="text-indigo-600 font-bold mb-2">Upload PDF File</span>
+                <span class="text-xs text-slate-400">Select document from your files</span>
                 <input type="file" accept=".pdf" class="hidden">
             </label>
         </div>
 
         <!-- BIG PASTE BOX -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Or Paste Contract Text</label>
-            <textarea 
-                rows="6" 
-                class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition text-sm"
-                placeholder="Paste the full terms, agreement, or legal text here..."
-            ></textarea>
+        <div class="w-full bg-white border border-slate-200 rounded-3xl p-4 shadow-sm mb-6">
+            <textarea id="contractInput" placeholder="Paste the full terms, agreement, or legal text here..." class="w-full h-36 bg-transparent text-slate-800 placeholder-slate-400 resize-none focus:outline-none p-2 text-sm"></textarea>
         </div>
 
-        <!-- SUMMARISE BUTTON -->
-        <button class="w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-base shadow-lg shadow-indigo-600/20 transition transform active:scale-[0.99]">
-            Summarise Contract ⚡
+        <button onclick="summarise()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg transition transform active:scale-95">
+            Summarise Contract
         </button>
     </main>
 
-    <!-- SIMPLE MENU SCRIPT -->
+    <!-- RESULTS VIEW (8-BOX LAYOUT) -->
+    <div id="resultsView" class="hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-slate-800">Contract Analysis Breakdown</h2>
+            <button onclick="clearText()" class="text-sm px-4 py-2 bg-slate-200 hover:bg-slate-300 font-semibold rounded-xl text-slate-700 transition">Back to Home</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Subscription Status</p>
+                <p class="text-sm font-bold text-slate-800">1. Complete Contract Scope: Detailed overview of what's covered under this monthly plan.</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Purpose & Scope</p>
+                <p class="text-sm font-bold text-slate-800">2. Establishes formal project parameters and milestone delivery schedules.</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Financial Terms</p>
+                <p class="text-sm font-bold text-slate-800">3. Financial consideration including deposit rules, payment methods, and schedules.</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Timeframes & Deadlines</p>
+                <p class="text-sm font-bold text-slate-800">4. Commencing around Referral 1 with strict milestone completion windows.</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Contracts Left This Month</p>
+                <p class="text-sm font-bold text-slate-800">5. 300 left - Comprehensive document review quota status.</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Account Settings</p>
+                <p class="text-sm font-bold text-slate-800">6. Manages notification preferences and primary dashboard links.</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Legal Protections</p>
+                <p class="text-sm font-bold text-slate-800">7. Outlines liability limits, indemnification, and dispute resolution rules.</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Termination Terms</p>
+                <p class="text-sm font-bold text-slate-800">8. Specifies notice periods, cancellation penalties, and asset handover steps.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIMPLE SCRIPT -->
     <script>
         function toggleMenu() {
             const drawer = document.getElementById('menuDrawer');
             drawer.classList.toggle('hidden');
+        }
+
+        function summarise() {
+            const btn = document.querySelector('button[onclick="summarise()"]');
+            btn.textContent = "Analyzing Contract...";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.textContent = "Summarise Contract";
+                btn.disabled = false;
+                document.getElementById('homeView').classList.add('hidden');
+                document.getElementById('resultsView').classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }, 800);
+        }
+
+        function clearText() {
+            document.getElementById('contractInput').value = '';
+            document.getElementById('resultsView').classList.add('hidden');
+            document.getElementById('homeView').classList.remove('hidden');
+            window.scrollTo(0, 0);
         }
     </script>
 </body>
