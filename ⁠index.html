@@ -3,117 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Double Check - AI Legal Contract Summariser</title>
+    <title>DoubleCheck - AI Legal Contract Summariser</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col font-sans">
 
     <!-- HEADER -->
-    <header className="w-full bg-slate-900 text-white px-6 py-4 flex items-center justify-between border-b border-slate-800 sticky top-0 z-50">
+    <header class="w-full bg-white text-slate-900 px-6 py-4 flex items-center justify-between border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-lg shadow-md">
-                DC
+            <!-- Exact Logo -->
+            <div class="w-9 h-9 bg-blue-950 rounded-lg flex flex-col justify-center px-2 py-1.5 space-y-1 shadow-md">
+                <div class="w-full h-1 bg-white rounded-full"></div>
+                <div class="w-3/4 h-1 bg-white rounded-full"></div>
+                <div class="w-1/2 h-1 bg-white rounded-full"></div>
             </div>
-            <span class="text-xl font-bold tracking-wide">Double Check</span>
+            <span class="text-xl font-bold tracking-tight text-blue-950">DoubleCheck</span>
         </div>
 
-        <button onclick="toggleMenu()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition flex items-center space-x-2 text-sm font-medium">
-            <span>Menu</span>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button onclick="toggleMenu()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition flex items-center space-x-2 text-sm font-medium border border-slate-200">
+            <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
         </button>
     </header>
 
-    <!-- SLIDE-OUT MENU DRAWER (Hidden by default) -->
-    <div id="menuDrawer" class="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm hidden">
-        <div class="w-80 h-full bg-slate-900 border-l border-slate-800 p-6 flex flex-col justify-between shadow-2xl">
+    <!-- SLIDE-OUT MENU DRAWER -->
+    <div id="menuDrawer" class="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs hidden">
+        <div class="w-80 h-full bg-white border-l border-slate-200 p-6 flex flex-col justify-between shadow-2xl">
             <div>
-                <div class="flex items-center justify-between mb-8">
-                    <h2 class="text-lg font-bold">Account Menu</h2>
-                    <button onclick="toggleMenu()" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white">✕</button>
+                <div class="flex items-center justify-between mb-6">
+                    <div class="bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center space-x-2">
+                      <span>MONTHLY QUOTA</span>
+                      <span class="bg-blue-600 px-2 py-0.5 rounded-full text-white">98</span>
+                    </div>
+                    <button onclick="toggleMenu()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700">✕</button>
+                </div>
+                <p class="text-xs font-semibold text-slate-500 mb-6">98/100 contract scans left</p>
+
+                <div class="space-y-3">
+                    <button class="w-full flex items-center justify-between p-3.5 rounded-xl bg-blue-950 text-white font-semibold shadow-md hover:bg-blue-900 transition">
+                        <span>My Account</span>
+                        <span>→</span>
+                    </button>
+                    <button class="w-full flex items-center justify-between p-3.5 rounded-xl bg-amber-600 text-white font-semibold shadow-md hover:bg-amber-500 transition">
+                        <span>Admin Board (Real Financials)</span>
+                        <span>→</span>
+                    </button>
                 </div>
 
-                <div class="space-y-6">
-                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50">
-                        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Subscription Status</p>
-                        <p class="text-base font-bold text-indigo-400 mt-1">Free Tier</p>
-                        
-                        <div class="mt-4 pt-4 border-t border-slate-700/50">
-                            <div class="flex justify-between text-xs text-slate-300 mb-1">
-                                <span>Contracts Left This Month</span>
-                                <span class="font-bold text-white">3 / 5</span>
-                            </div>
-                            <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
-                                <div class="bg-indigo-500 h-full w-3/5"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <nav class="space-y-2">
-                        <a href="#" class="block px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">About Double Check</a>
-                        <a href="#" class="block px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">Account Settings</a>
-                    </nav>
+                <div class="mt-8 pt-6 border-t border-slate-100 space-y-1">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Navigation</p>
+                    <a href="#" onclick="showHome()" class="block px-4 py-2.5 rounded-xl bg-slate-100 font-semibold text-slate-900">New Scan</a>
+                    <a href="#" class="block px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">Old Scans</a>
+                    <a href="#" class="block px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">Terms of Use & Legal Disclaimer</a>
+                    <a href="#" class="block px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">Send Feedback</a>
                 </div>
             </div>
 
-            <button class="w-full py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold border border-red-500/20 transition">
-                Sign Out
+            <button class="text-left px-4 py-2 text-red-600 font-bold hover:bg-red-50 rounded-lg transition">
+                Log Out
             </button>
         </div>
     </div>
 
-    <!-- MAIN HOMEPAGE DASHBOARD -->
-    <main class="flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center space-y-6">
-        <div class="text-center space-y-2 mb-4">
-            <h1 class="text-3xl font-extrabold tracking-tight">Simplify Any Legal Contract</h1>
-            <p class="text-slate-400 text-sm">Upload a photo, a PDF, or paste text below to get your instant 8-box AI breakdown.</p>
+    <!-- MAIN HOMEPAGE VIEW -->
+    <main id="homeView" class="flex-1 max-w-xl w-full mx-auto p-6 flex flex-col justify-center space-y-6">
+        <h1 class="text-3xl font-extrabold tracking-tight text-center text-slate-900">Summarise Any Contract</h1>
+
+        <!-- UPLOAD SECTION -->
+        <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Upload Document Source</p>
+            <div class="grid grid-cols-2 gap-3">
+                <button class="py-3.5 px-4 rounded-2xl bg-blue-950 hover:bg-blue-900 text-white font-semibold text-sm shadow-md transition text-center">
+                    Upload Image
+                </button>
+                <button class="py-3.5 px-4 rounded-2xl bg-blue-950 hover:bg-blue-900 text-white font-semibold text-sm shadow-md transition text-center">
+                    Upload File
+                </button>
+            </div>
         </div>
 
-        <!-- TOP UPLOAD ROW (Photo & PDF) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Upload Photo Box -->
-            <label class="border-2 border-dashed border-slate-700 hover:border-indigo-500 bg-slate-900/50 hover:bg-slate-900 transition rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer text-center group">
-                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                    📷
-                </div>
-                <span class="font-semibold text-slate-200">Upload Photo</span>
-                <span class="text-xs text-slate-400 mt-1">Snap or select an image (JPG, PNG)</span>
-                <input type="file" accept="image/*" class="hidden">
-            </label>
-
-            <!-- Upload PDF Box -->
-            <label class="border-2 border-dashed border-slate-700 hover:border-indigo-500 bg-slate-900/50 hover:bg-slate-900 transition rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer text-center group">
-                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                    📄
-                </div>
-                <span class="font-semibold text-slate-200">Upload PDF File</span>
-                <span class="text-xs text-slate-400 mt-1">Select document from your files</span>
-                <input type="file" accept=".pdf" class="hidden">
-            </label>
-        </div>
-
-        <!-- BIG PASTE BOX -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Or Paste Contract Text</label>
+        <!-- PASTE SECTION -->
+        <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paste Contract Text</span>
+                <button onclick="clearText()" class="text-xs font-semibold text-slate-500 hover:text-slate-800 bg-slate-100 px-2.5 py-1 rounded-lg">Clear</button>
+            </div>
             <textarea 
-                rows="6" 
-                class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition text-sm"
-                placeholder="Paste the full terms, agreement, or legal text here..."
-            ></textarea>
+                id="contractInput"
+                rows="5" 
+                class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-950 transition text-sm font-mono"
+                placeholder="Paste contract text..."
+            >4. Termination. Either party may terminate this Agreement immediately if the other party breaches any material provision.</textarea>
+            
+            <button onclick="summarise()" id="summariseBtn" class="w-full py-4 rounded-2xl bg-blue-950 hover:bg-blue-900 text-white font-bold text-base shadow-lg shadow-blue-950/20 transition">
+                Summarise
+            </button>
+        </div>
+    </main>
+
+    <!-- RESULTS VIEW (Hidden by default) -->
+    <main id="resultsView" class="flex-1 max-w-xl w-full mx-auto p-6 flex flex-col space-y-4 hidden">
+        <div class="flex items-center justify-between bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Verified 8-Box Breakdown</p>
+                <p class="text-base font-bold text-slate-900 mt-0.5">Document_Scan.jpg</p>
+            </div>
+            <button onclick="showHome()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">
+                ← New Scan
+            </button>
         </div>
 
-        <!-- SUMMARISE BUTTON -->
-        <button class="w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-base shadow-lg shadow-indigo-600/20 transition transform active:scale-[0.99]">
-            Summarise Contract ⚡
+        <!-- 8 BOXES -->
+        <div class="space-y-3">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-blue-950">1. COMPLETE CONTRACT SUMMARY</p>
+                    <p class="text-xs text-slate-600 mt-1">Comprehensive document review completed for "Document_Scan.jpg". The agreement establishes formal obligations between participating parties...</p>
+                </div>
+                <button class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl ml-3 shrink-0">Copy</button>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-blue-950">2. PURPOSE & SCOPE</p>
+                    <p class="text-xs text-slate-600 mt-1">Establishes formal project deliverables, professional responsibilities, and operational scope as outlined in the primary clauses.</p>
+                </div>
+                <button class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl ml-3 shrink-0">Copy</button>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-blue-950">3. FINANCIAL TERMS</p>
+                    <p class="text-xs text-slate-600 mt-1">Financial consideration identified: Total agreed pricing of $4900 with structured deposit or milestone installments.</p>
+                </div>
+                <button class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl ml-3 shrink-0">Copy</button>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-blue-950">4. TIMEFRAMES & DEADLINES</p>
+                    <p class="text-xs text-slate-600 mt-1">Commencing around Refer to contract execution date with active milestones and delivery windows specified in the schedule.</p>
+                </div>
+                <button class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl ml-3 shrink-0">Copy</button>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-blue-950">5. TERMINATION & NOTICE</p>
+                    <p class="text-xs text-slate-600 mt-1">Cancellation terms require 30 days prior along with settlement for rendered services and incurred expenses.</p>
+                </div>
+                <button class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl ml-3 shrink-0">Copy</button>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-blue-950">6. LIABILITY & RISK CAPS</p>
+                    <p class="text-xs text-slate-600 mt-1">Risk allocation includes standard limitation of liability clauses capped at total contract fees.</p>
+                </div>
+                <button class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl ml-3 shrink-0">Copy</button>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-blue-950">7. AUTO-RENEWAL & LOCK-INS</p>
+                    <p class="text-xs text-slate-600 mt-1">Contains automatic renewal mechanisms unless advance cancellation notice is submitted.</p>
+                </div>
+                <button class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl ml-3 shrink-0">Copy</button>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-blue-950">8. DISPUTE RESOLUTION & LAW</p>
+                    <p class="text-xs text-slate-600 mt-1">Standard legal jurisdiction applies.</p>
+                </div>
+                <button class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl ml-3 shrink-0">Copy</button>
+            </div>
+        </div>
+
+        <button onclick="showHome()" class="w-full py-4 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-900 font-bold text-sm shadow-xs transition">
+            Scan Another Contract
         </button>
     </main>
 
-    <!-- SIMPLE MENU SCRIPT -->
+    <!-- FOOTER -->
+    <footer class="w-full py-6 px-6 text-center text-xs text-slate-500 space-y-1">
+        <p>DoubleCheck is an AI information utility and does not provide formal legal counsel or guarantees.</p>
+        <p>By using DoubleCheck, you agree to our <a href="#" class="underline">Terms of Use & Liability Disclaimer</a>.</p>
+        <p class="font-semibold text-slate-600 pt-1">© 2026 DoubleCheck Ltd. All rights reserved.</p>
+    </footer>
+
+    <!-- INTERACTION SCRIPT -->
     <script>
         function toggleMenu() {
             const drawer = document.getElementById('menuDrawer');
             drawer.classList.toggle('hidden');
+        }
+
+        function clearText() {
+            document.getElementById('contractInput').value = '';
+        }
+
+        function summarise() {
+            const btn = document.getElementById('summariseBtn');
+            btn.textContent = 'Analyzing Contract...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.textContent = 'Summarise';
+                btn.disabled = false;
+                document.getElementById('homeView').classList.add('hidden');
+                document.getElementById('resultsView').classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }, 800);
+        }
+
+        function showHome() {
+            document.getElementById('resultsView').classList.add('hidden');
+            document.getElementById('homeView').classList.remove('hidden');
+            document.getElementById('menuDrawer').classList.add('hidden');
+            window.scrollTo(0, 0);
         }
     </script>
 </body>
