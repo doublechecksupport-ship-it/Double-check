@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Double Check - AI Legal Contract Summariser</title>
+    <title>DoubleCheck - AI Legal Contract Summariser</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
@@ -11,12 +11,19 @@
     <!-- HEADER -->
     <header class="w-full bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md">
-                DC
-            </div>
-            <span class="text-xl font-bold tracking-wide text-slate-800">Double Check</span>
+            <!-- Exact Document Logo Icon -->
+            <svg class="w-8 h-8" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M64 416V96C64 78.3269 78.3269 64 96 64H320L416 160V416C416 433.673 401.673 448 384 448H96C78.3269 448 64 433.673 64 416Z" fill="#1e3a8a"/>
+                <path d="M320 64V160H416" fill="#1e3a8a"/>
+                <path d="M320 64L416 160H336C327.163 160 320 152.837 320 144V64Z" fill="white" fill-opacity="0.9"/>
+                <rect x="120" y="220" width="180" height="24" rx="12" fill="white"/>
+                <rect x="120" y="272" width="220" height="24" rx="12" fill="white"/>
+                <rect x="120" y="324" width="220" height="24" rx="12" fill="white"/>
+                <rect x="120" y="376" width="140" height="24" rx="12" fill="white"/>
+            </svg>
+            <span class="text-xl font-bold tracking-tight text-slate-900">DoubleCheck</span>
         </div>
-        <button onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-slate-100 transition text-slate-600">
+        <button onclick="toggleMenu()" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
@@ -26,91 +33,157 @@
     <!-- SLIDE-OUT DRAWER -->
     <div id="menuDrawer" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex justify-end">
         <div class="w-80 bg-white h-full shadow-2xl p-6 flex flex-col border-l border-slate-200">
-            <div class="flex justify-between items-center mb-8">
-                <span class="text-lg font-bold text-slate-800">Menu</span>
-                <button onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500">✕</button>
+            <div class="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
+                <span class="text-lg font-bold text-slate-900">Navigation Menu</span>
+                <button onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
             </div>
-            <nav class="space-y-4">
-                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 font-semibold text-slate-700 transition">Home</a>
-                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 font-semibold text-slate-700 transition">My Account</a>
-                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 font-semibold text-slate-700 transition">Past Financials</a>
+            <nav class="space-y-2">
+                <a href="#" onclick="toggleMenu(); clearText();" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Home Dashboard</a>
+                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">My Account Settings</a>
+                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Past Financials & Scans</a>
+                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Terms & Legal Disclaimer</a>
             </nav>
         </div>
     </div>
 
     <!-- MAIN HOMEPAGE VIEW -->
     <main id="homeView" class="flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center items-center text-center">
-        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Simplify Any Legal Contract</h1>
-        <p class="text-slate-500 mb-8 max-w-lg">Upload a photo, a PDF, or paste text below to get your instant 8-box AI breakdown.</p>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Summarise Any Contract</h1>
+        <p class="text-slate-500 mb-8 max-w-lg">Upload a document or paste your agreement text below for an instant structured breakdown.</p>
 
         <!-- TOP UPLOAD ROW -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-6">
-            <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:border-indigo-500 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
-                <span class="text-indigo-600 font-bold mb-2">Upload Photo</span>
-                <span class="text-xs text-slate-400">Snap or select an image (JPG, PNG)</span>
+            <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:border-blue-900 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
+                <span class="text-blue-900 font-bold mb-1">Upload Image</span>
+                <span class="text-xs text-slate-400">Select photo (JPG, PNG)</span>
                 <input type="file" accept="image/*" class="hidden">
             </label>
-            <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:border-indigo-500 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
-                <span class="text-indigo-600 font-bold mb-2">Upload PDF File</span>
-                <span class="text-xs text-slate-400">Select document from your files</span>
+            <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:border-blue-900 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
+                <span class="text-blue-900 font-bold mb-1">Upload File</span>
+                <span class="text-xs text-slate-400">Select PDF document</span>
                 <input type="file" accept=".pdf" class="hidden">
             </label>
         </div>
 
         <!-- BIG PASTE BOX -->
-        <div class="w-full bg-white border border-slate-200 rounded-3xl p-4 shadow-sm mb-6">
-            <textarea id="contractInput" placeholder="Paste the full terms, agreement, or legal text here..." class="w-full h-36 bg-transparent text-slate-800 placeholder-slate-400 resize-none focus:outline-none p-2 text-sm"></textarea>
+        <div class="w-full bg-white border border-slate-200 rounded-3xl p-4 shadow-sm mb-6 text-left">
+            <div class="flex justify-between items-center px-2 mb-2">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paste Contract Text</span>
+                <button onclick="document.getElementById('contractInput').value=''" class="text-xs font-semibold text-slate-500 hover:text-slate-800">Clear</button>
+            </div>
+            <textarea id="contractInput" placeholder="Paste full contract terms here..." class="w-full h-36 bg-transparent text-slate-800 placeholder-slate-400 resize-none focus:outline-none p-2 text-sm"></textarea>
         </div>
 
-        <button onclick="summarise()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg transition transform active:scale-95">
-            Summarise Contract
+        <button onclick="summarise()" class="w-full py-4 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl shadow-lg transition transform active:scale-95">
+            Summarise
         </button>
     </main>
 
     <!-- RESULTS VIEW (8-BOX LAYOUT) -->
     <div id="resultsView" class="hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold text-slate-800">Contract Analysis Breakdown</h2>
-            <button onclick="clearText()" class="text-sm px-4 py-2 bg-slate-200 hover:bg-slate-300 font-semibold rounded-xl text-slate-700 transition">Back to Home</button>
+        <div class="flex justify-between items-center mb-6 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-sm">
+            <div>
+                <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">Verified 8-Box Breakdown</p>
+                <h2 id="scannedFileName" class="text-lg font-extrabold text-slate-900">Document_Scan.jpg</h2>
+            </div>
+            <button onclick="clearText()" class="text-sm px-4 py-2 bg-slate-100 hover:bg-slate-200 font-semibold rounded-xl text-slate-700 transition">New Scan</button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Subscription Status</p>
-                <p class="text-sm font-bold text-slate-800">1. Complete Contract Scope: Detailed overview of what's covered under this monthly plan.</p>
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">1. Complete Contract Summary</span>
+                        <button onclick="copyBox(1)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
+                    </div>
+                    <p id="box1Text" class="text-sm text-slate-700 mt-2">Comprehensive document review completed. The agreement establishes formal obligations between participating parties, detailing explicit financial considerations, operational schedules, and legal governance.</p>
+                </div>
             </div>
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Purpose & Scope</p>
-                <p class="text-sm font-bold text-slate-800">2. Establishes formal project parameters and milestone delivery schedules.</p>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">2. Purpose & Scope</span>
+                        <button onclick="copyBox(2)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
+                    </div>
+                    <p id="box2Text" class="text-sm text-slate-700 mt-2">Establishes formal project deliverables, professional responsibilities, and operational scope as outlined in the primary clauses.</p>
+                </div>
             </div>
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Financial Terms</p>
-                <p class="text-sm font-bold text-slate-800">3. Financial consideration including deposit rules, payment methods, and schedules.</p>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">3. Financial Terms</span>
+                        <button onclick="copyBox(3)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
+                    </div>
+                    <p id="box3Text" class="text-sm text-slate-700 mt-2">Financial consideration identified: Total agreed pricing of $4,900 with structured deposit or milestone installments.</p>
+                </div>
             </div>
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Timeframes & Deadlines</p>
-                <p class="text-sm font-bold text-slate-800">4. Commencing around Referral 1 with strict milestone completion windows.</p>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">4. Timeframes & Deadlines</span>
+                        <button onclick="copyBox(4)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
+                    </div>
+                    <p id="box4Text" class="text-sm text-slate-700 mt-2">Commencing around reference date to contract execution date with active milestones and delivery windows specified in the schedule.</p>
+                </div>
             </div>
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Contracts Left This Month</p>
-                <p class="text-sm font-bold text-slate-800">5. 300 left - Comprehensive document review quota status.</p>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">5. Termination & Notice</span>
+                        <button onclick="copyBox(5)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
+                    </div>
+                    <p id="box5Text" class="text-sm text-slate-700 mt-2">Cancellation terms require 30 days prior along with settlement for rendered services and incurred expenses.</p>
+                </div>
             </div>
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Account Settings</p>
-                <p class="text-sm font-bold text-slate-800">6. Manages notification preferences and primary dashboard links.</p>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">6. Liability & Risk Caps</span>
+                        <button onclick="copyBox(6)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
+                    </div>
+                    <p id="box6Text" class="text-sm text-slate-700 mt-2">Risk allocation includes standard limitation of liability clauses capped at total contract fees.</p>
+                </div>
             </div>
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Legal Protections</p>
-                <p class="text-sm font-bold text-slate-800">7. Outlines liability limits, indemnification, and dispute resolution rules.</p>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">7. Auto-Renewal & Lock-Ins</span>
+                        <button onclick="copyBox(7)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
+                    </div>
+                    <p id="box7Text" class="text-sm text-slate-700 mt-2">Contains automatic renewal mechanisms unless advance cancellation notice is submitted.</p>
+                </div>
             </div>
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Termination Terms</p>
-                <p class="text-sm font-bold text-slate-800">8. Specifies notice periods, cancellation penalties, and asset handover steps.</p>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">8. Dispute Resolution & Law</span>
+                        <button onclick="copyBox(8)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
+                    </div>
+                    <p id="box8Text" class="text-sm text-slate-700 mt-2">Standard legal jurisdiction applies to all governance and contractual disagreements.</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- SIMPLE SCRIPT -->
+        <button onclick="clearText()" class="w-full mt-6 py-4 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl shadow-lg transition">
+            Scan Another Contract
+        </button>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500 mt-auto">
+        DoubleCheck is an AI information utility and does not provide formal legal counsel or guarantees. <br>
+        By using DoubleCheck, you agree to our Terms of Use & Liability Disclaimer. <br>
+        © 2026 DoubleCheck Ltd. All rights reserved.
+    </footer>
+
+    <!-- SCRIPT -->
     <script>
         function toggleMenu() {
             const drawer = document.getElementById('menuDrawer');
@@ -119,12 +192,21 @@
 
         function summarise() {
             const btn = document.querySelector('button[onclick="summarise()"]');
+            const inputVal = document.getElementById('contractInput').value.trim();
+            
             btn.textContent = "Analyzing Contract...";
             btn.disabled = true;
 
             setTimeout(() => {
-                btn.textContent = "Summarise Contract";
+                btn.textContent = "Summarise";
                 btn.disabled = false;
+                
+                if(inputVal) {
+                    document.getElementById('scannedFileName').textContent = "Pasted_Contract_Text.txt";
+                } else {
+                    document.getElementById('scannedFileName').textContent = "Document_Scan.jpg";
+                }
+
                 document.getElementById('homeView').classList.add('hidden');
                 document.getElementById('resultsView').classList.remove('hidden');
                 window.scrollTo(0, 0);
@@ -136,6 +218,11 @@
             document.getElementById('resultsView').classList.add('hidden');
             document.getElementById('homeView').classList.remove('hidden');
             window.scrollTo(0, 0);
+        }
+
+        function copyBox(boxNum) {
+            const text = document.getElementById('box' + boxNum + 'Text').innerText;
+            navigator.clipboard.writeText(text);
         }
     </script>
 </body>
