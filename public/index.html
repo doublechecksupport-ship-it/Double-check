@@ -8,7 +8,8 @@
     <style>
         .logo-icon {
             height: 36px;
-            width: auto;
+            width: 36px;
+            min-width: 36px;
             display: inline-block;
         }
     </style>
@@ -44,10 +45,7 @@
             <div>
                 <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
                     <span class="text-lg font-bold text-slate-900">Menu</span>
-                    <div class="flex items-center space-x-2">
-                        <span id="menuScanCounter" class="text-xs font-bold bg-blue-50 text-blue-900 border border-blue-200 px-2.5 py-1 rounded-lg">0/20</span>
-                        <button onclick="toggleMenu()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
-                    </div>
+                    <button onclick="toggleMenu()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
                 </div>
                 <nav id="drawerNavLinks" class="space-y-2">
                     <!-- Dynamically populated based on auth status -->
@@ -155,7 +153,7 @@
     <div id="authView" class="view-section hidden flex-1 max-w-md w-full mx-auto p-6 flex flex-col justify-center">
         <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col items-center">
             <div class="mb-4">
-                <svg class="logo-icon h-12 w-auto" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <svg class="logo-icon h-12 w-12" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
                     <path d="M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z" fill="#1e3a8a"/>
                     <path d="M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z" fill="white" fill-opacity="0.85"/>
                     <rect x="120" y="220" width="180" height="24" rx="12" fill="white"/>
@@ -269,12 +267,18 @@
 
     <!-- PAST DOCUMENTS VIEW -->
     <div id="pastDocumentsView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col">
-        <div class="flex justify-between items-center mb-6 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-sm">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-sm gap-4">
             <div>
                 <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">Archive</p>
                 <h2 class="text-lg font-extrabold text-slate-900">Past Documents & Scans</h2>
             </div>
-            <button onclick="switchView('homeView')" class="text-sm px-4 py-2 bg-blue-900 hover:bg-blue-950 font-semibold rounded-xl text-white transition">New Scan</button>
+            <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+                <div class="text-right">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase block">Scans Remaining</span>
+                    <span id="pageScanCounter" class="text-sm font-extrabold text-blue-900 bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl">0/20</span>
+                </div>
+                <button onclick="switchView('homeView')" class="text-sm px-4 py-2 bg-blue-900 hover:bg-blue-950 font-semibold rounded-xl text-white transition">New Scan</button>
+            </div>
         </div>
 
         <div class="space-y-3">
@@ -340,7 +344,7 @@
             const accUserEmail = document.getElementById('accUserEmail');
             const currentPlanName = document.getElementById('currentPlanName');
             const trialRenewalText = document.getElementById('trialRenewalText');
-            const menuScanCounter = document.getElementById('menuScanCounter');
+            const pageScanCounter = document.getElementById('pageScanCounter');
             const basePlanBtn = document.getElementById('basePlanBtn');
             const proPlanBtn = document.getElementById('proPlanBtn');
 
@@ -380,7 +384,9 @@
                     proPlanBtn.textContent = "Active Plan";
                 }
 
-                menuScanCounter.textContent = currentUser.scansRemaining + "/" + currentUser.maxScans;
+                if(pageScanCounter) {
+                    pageScanCounter.textContent = currentUser.scansRemaining + "/" + currentUser.maxScans;
+                }
 
                 if(currentUser.email.toLowerCase() === "theo_kay@icloud.com" || currentUser.email.toLowerCase() === "theoamani99@gmail.com") {
                     adminPanel.classList.remove('hidden');
@@ -403,7 +409,7 @@
 
                 authSection.innerHTML = '<button onclick="toggleMenu(); switchView(\'authView\');" class="w-full py-3 bg-blue-900 text-white font-bold rounded-xl transition text-center">Login / Register</button>';
                 if(adminPanel) adminPanel.classList.add('hidden');
-                menuScanCounter.textContent = "0/20";
+                if(pageScanCounter) pageScanCounter.textContent = "0/20";
             }
         }
 
