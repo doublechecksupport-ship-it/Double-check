@@ -11,15 +11,8 @@
     <!-- HEADER -->
     <header class="w-full bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('homeView')">
-            <!-- Document Logo Icon -->
-            <svg class="w-9 h-9" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z" fill="#1e3a8a"/>
-                <path d="M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z" fill="white" fill-opacity="0.85"/>
-                <rect x="120" y="220" width="180" height="24" rx="12" fill="white"/>
-                <rect x="120" y="272" width="220" height="24" rx="12" fill="white"/>
-                <rect x="120" y="324" width="220" height="24" rx="12" fill="white"/>
-                <rect x="120" y="376" width="140" height="24" rx="12" fill="white"/>
-            </svg>
+            <!-- Larger Document Logo -->
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-eS1X1p7rJ0C6hE4m6P2v9Q8z4X3W2y.png" alt="DoubleCheck Logo" class="w-11 h-11 object-contain" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path d=%22M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z%22 fill=%22%231e3a8a%22/><path d=%22M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z%22 fill=%22white%22 fill-opacity=%220.85%22/><rect x=%22120%22 y=%22220%22 width=%22180%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22272%22 width=%22220%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22324%22 width=%22220%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22376%22 width=%22140%22 height=%2224%22 rx=%2212%22 fill=%22white%22/></svg>'">
             <span class="text-2xl font-extrabold tracking-tight text-slate-900">DoubleCheck</span>
         </div>
         <div class="flex items-center space-x-3">
@@ -154,11 +147,13 @@
 
     <!-- AUTHENTICATION VIEW -->
     <div id="authView" class="view-section hidden flex-1 max-w-md w-full mx-auto p-6 flex flex-col justify-center">
-        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-            <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900 mb-2">Login to DoubleCheck</h2>
-            <p id="authSubtitle" class="text-xs text-slate-500 mb-6">Enter your credentials to access your account.</p>
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col items-center">
+            <!-- Logo added to login page -->
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-eS1X1p7rJ0C6hE4m6P2v9Q8z4X3W2y.png" alt="DoubleCheck Logo" class="w-14 h-14 object-contain mb-4">
+            <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900 mb-1 text-center">Login to DoubleCheck</h2>
+            <p id="authSubtitle" class="text-xs text-slate-500 mb-6 text-center">Enter your credentials to access your account.</p>
 
-            <div id="authFormFields" class="space-y-4">
+            <div id="authFormFields" class="space-y-4 w-full">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email Address</label>
                     <input type="email" id="authEmail" placeholder="name@example.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
@@ -176,7 +171,7 @@
                 <div id="verificationContainer" class="hidden">
                     <label class="block text-xs font-bold text-blue-900 uppercase mb-1">Email Verification Code</label>
                     <input type="text" id="authCode" placeholder="Enter 4-digit code" class="w-full p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm focus:outline-none focus:border-blue-900 font-mono tracking-widest text-center">
-                    <p class="text-[10px] text-slate-400 mt-1">Simulation Note: Enter code 9999.</p>
+                    <p class="text-[10px] text-slate-400 mt-1 text-center">Simulation Note: Enter code 9999.</p>
                 </div>
                 <button onclick="handleAuthAction()" id="authActionBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition shadow-md">Login</button>
             </div>
@@ -187,53 +182,55 @@
         </div>
     </div>
 
-    <!-- MY ACCOUNT VIEW -->
+    <!-- MY ACCOUNT VIEW (Spread out layout) -->
     <div id="accountView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center">
-        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-sm space-y-8">
+            <!-- Header section -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-6 gap-4">
                 <div>
-                    <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">Account Dashboard</p>
-                    <h2 id="accUserEmail" class="text-xl font-extrabold text-slate-900">theo_kay@icloud.com</h2>
+                    <p class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-1">Account Dashboard</p>
+                    <h2 id="accUserEmail" class="text-xl sm:text-2xl font-extrabold text-slate-900">theo_kay@icloud.com</h2>
                 </div>
-                <span id="accRoleBadge" class="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-bold rounded-full">Subscriber</span>
+                <span id="accRoleBadge" class="px-3.5 py-1.5 bg-blue-100 text-blue-900 text-xs font-bold rounded-full">Subscriber</span>
             </div>
 
             <!-- SUBSCRIPTION MANAGEMENT SECTION -->
-            <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
-                <div class="flex justify-between items-center">
+            <div class="p-6 sm:p-8 bg-slate-50 border border-slate-200 rounded-3xl space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Current Plan Status</span>
-                        <h3 id="currentPlanName" class="text-lg font-extrabold text-slate-900">DoubleCheck Base (3-Month Free Trial Active)</h3>
+                        <h3 id="currentPlanName" class="text-lg font-extrabold text-slate-900 mt-1">DoubleCheck Base (3-Month Free Trial Active)</h3>
                     </div>
-                    <button onclick="switchView('pricingView')" class="px-4 py-2 bg-blue-900 hover:bg-blue-950 text-white text-xs font-bold rounded-xl transition">Change Plan</button>
+                    <button onclick="switchView('pricingView')" class="px-5 py-2.5 bg-blue-900 hover:bg-blue-950 text-white text-xs font-bold rounded-xl transition">Change Plan</button>
                 </div>
-                <div class="flex justify-between items-center pt-3 border-t border-slate-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-5 border-t border-slate-200 gap-4">
                     <p id="trialRenewalText" class="text-xs text-slate-500">Billing renews automatically after trial completion.</p>
                     <button onclick="cancelSubscription()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition">Cancel Subscription</button>
                 </div>
             </div>
 
             <!-- SIMPLER MASTER ADMIN PANEL -->
-            <div id="adminPanel" class="hidden p-6 bg-slate-900 text-white rounded-2xl shadow-md space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div id="adminPanel" class="hidden p-6 sm:p-8 bg-slate-900 text-white rounded-3xl shadow-md space-y-5">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                     <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Admin Overview</span>
-                    <span class="text-[10px] bg-blue-900 px-2 py-0.5 rounded text-white font-mono">THEO KAY</span>
+                    <span class="text-[10px] bg-blue-900 px-2.5 py-1 rounded text-white font-mono">THEO KAY</span>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
                         <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Monthly Revenue</span>
                         <p id="adminRevenueDisplay" class="text-2xl font-extrabold text-white mt-1">£0.00</p>
                     </div>
-                    <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
+                    <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
                         <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Plan</span>
                         <p id="adminPlanDisplay" class="text-lg font-extrabold text-blue-400 mt-1">Free Trial</p>
                     </div>
                 </div>
             </div>
 
-            <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
-                <button onclick="handleLogout()" class="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition">Logout</button>
-                <button onclick="switchView('homeView')" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">Back to Scanner</button>
+            <!-- Bottom Action Row -->
+            <div class="pt-6 border-t border-slate-100 flex justify-between items-center">
+                <button onclick="handleLogout()" class="px-5 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition">Logout</button>
+                <button onclick="switchView('homeView')" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">Back to Scanner</button>
             </div>
         </div>
     </div>
@@ -340,13 +337,13 @@
                 if(currentUser.email.toLowerCase() === "theo_kay@icloud.com") {
                     adminPanel.classList.remove('hidden');
                     accRoleBadge.textContent = "Master Admin";
-                    accRoleBadge.className = "px-3 py-1 bg-blue-900 text-white text-xs font-bold rounded-full";
+                    accRoleBadge.className = "px-3.5 py-1.5 bg-blue-900 text-white text-xs font-bold rounded-full";
                     document.getElementById('adminRevenueDisplay').textContent = (currentUser.plan === 'Pro' ? "£19.99" : currentUser.plan === 'Base' ? "£9.99" : "£0.00");
                     document.getElementById('adminPlanDisplay').textContent = currentUser.plan === 'Pro' ? "Pro (£19.99/mo)" : currentUser.plan === 'Base' ? "Base (£9.99/mo)" : "Free Trial";
                 } else {
                     adminPanel.classList.add('hidden');
                     accRoleBadge.textContent = "Subscriber";
-                    accRoleBadge.className = "px-3 py-1 bg-blue-100 text-blue-900 text-xs font-bold rounded-full";
+                    accRoleBadge.className = "px-3.5 py-1.5 bg-blue-100 text-blue-900 text-xs font-bold rounded-full";
                 }
             } else {
                 statusDisplay.textContent = "Not logged in";
@@ -465,18 +462,18 @@
                     currentUser.plan = 'Trial';
                     currentUser.trialUsed = true;
                     currentUser.maxScans = 20;
-                    currentUser.scansRemaining = 20; // Resets back to 20/20 on renewal/start
+                    currentUser.scansRemaining = 20;
                     alert("Successfully started your 3-month free trial for DoubleCheck Base!");
                 } else {
                     currentUser.plan = 'Base';
                     currentUser.maxScans = 20;
-                    currentUser.scansRemaining = 20; // Resets back to 20/20 on monthly payment
+                    currentUser.scansRemaining = 20;
                     alert("Switched to DoubleCheck Base (£9.99/mo). Scans reset to 20/20.");
                 }
             } else if(planType === 'Pro') {
                 currentUser.plan = 'Pro';
                 currentUser.maxScans = 50;
-                currentUser.scansRemaining = 50; // Resets back to 50/50 on upgrade/payment
+                currentUser.scansRemaining = 50;
                 alert("Upgraded to DoubleCheck Pro (£19.99/mo). Scans reset to 50/50.");
             }
 
@@ -570,7 +567,7 @@
 
             updateAuthStateUI();
             alert("Welcome back!");
-            switchView('accountView');
+            switchView('homeView'); // Lands directly on home dashboard after login
         }
 
         function handleLogout() {
