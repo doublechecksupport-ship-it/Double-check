@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoubleCheck - AI Legal Contract Summariser</title>
+    <title>DoubleCheck - AI Legal Document Summariser</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
 
     <!-- HEADER -->
     <header class="w-full bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-        <div class="flex items-center space-x-3">
-            <!-- Exact Document Logo Icon -->
-            <svg class="w-8 h-8" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('homeView')">
+            <!-- Enlarged Professional Document Logo -->
+            <svg class="w-10 h-10" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M64 416V96C64 78.3269 78.3269 64 96 64H320L416 160V416C416 433.673 401.673 448 384 448H96C78.3269 448 64 433.673 64 416Z" fill="#1e3a8a"/>
                 <path d="M320 64V160H416" fill="#1e3a8a"/>
                 <path d="M320 64L416 160H336C327.163 160 320 152.837 320 144V64Z" fill="white" fill-opacity="0.9"/>
@@ -21,82 +21,91 @@
                 <rect x="120" y="324" width="220" height="24" rx="12" fill="white"/>
                 <rect x="120" y="376" width="140" height="24" rx="12" fill="white"/>
             </svg>
-            <span class="text-xl font-bold tracking-tight text-slate-900">DoubleCheck</span>
+            <span class="text-2xl font-extrabold tracking-tight text-slate-900">DoubleCheck</span>
         </div>
-        <button onclick="toggleMenu()" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
+        <div class="flex items-center space-x-3">
+            <span id="userStatusDisplay" class="text-xs font-semibold text-slate-500 hidden sm:inline"></span>
+            <button onclick="toggleMenu()" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
     </header>
 
     <!-- SLIDE-OUT DRAWER -->
     <div id="menuDrawer" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex justify-end">
-        <div class="w-80 bg-white h-full shadow-2xl p-6 flex flex-col border-l border-slate-200">
-            <div class="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
-                <span class="text-lg font-bold text-slate-900">Navigation Menu</span>
-                <button onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
+        <div class="w-80 bg-white h-full shadow-2xl p-6 flex flex-col border-l border-slate-200 justify-between">
+            <div>
+                <div class="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
+                    <span class="text-lg font-bold text-slate-900">Menu</span>
+                    <button onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
+                </div>
+                <nav class="space-y-2">
+                    <a href="#" onclick="toggleMenu(); switchView('homeView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Home Dashboard</a>
+                    <a href="#" onclick="toggleMenu(); switchView('accountView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">My Account</a>
+                    <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-3 rounded-xl hover:bg-blue-900 hover:text-white font-semibold text-blue-900 transition">Past Documents & Scans</a>
+                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">About DoubleCheck</a>
+                    <a href="#" onclick="toggleMenu(); switchView('authView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Login / Create Account</a>
+                </nav>
             </div>
-            <nav class="space-y-2">
-                <a href="#" onclick="toggleMenu(); clearText();" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Home Dashboard</a>
-                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">My Account Settings</a>
-                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Past Financials & Scans</a>
-                <a href="#" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Terms & Legal Disclaimer</a>
-            </nav>
+            <div id="drawerAuthSection" class="pt-4 border-t border-slate-100">
+                <button onclick="toggleMenu(); handleLogout();" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-center">Logout</button>
+            </div>
         </div>
     </div>
 
     <!-- MAIN HOMEPAGE VIEW -->
-    <main id="homeView" class="flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center items-center text-center">
-        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Summarise Any Contract</h1>
-        <p class="text-slate-500 mb-8 max-w-lg">Upload a document or paste your agreement text below for an instant structured breakdown.</p>
+    <main id="homeView" class="view-section flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center items-center text-center">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Summarise Any Legal Document</h1>
+        <p class="text-slate-500 mb-8 max-w-lg">Upload a document or paste your legal text below for an instant structured AI breakdown.</p>
 
         <!-- TOP UPLOAD ROW -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-6">
             <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:border-blue-900 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
                 <span class="text-blue-900 font-bold mb-1">Upload Image</span>
                 <span class="text-xs text-slate-400">Select photo (JPG, PNG)</span>
-                <input type="file" accept="image/*" class="hidden">
+                <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload('Image')">
             </label>
             <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:border-blue-900 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
                 <span class="text-blue-900 font-bold mb-1">Upload File</span>
                 <span class="text-xs text-slate-400">Select PDF document</span>
-                <input type="file" accept=".pdf" class="hidden">
+                <input type="file" accept=".pdf" class="hidden" onchange="handleFileUpload('PDF')">
             </label>
         </div>
 
         <!-- BIG PASTE BOX -->
         <div class="w-full bg-white border border-slate-200 rounded-3xl p-4 shadow-sm mb-6 text-left">
             <div class="flex justify-between items-center px-2 mb-2">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paste Contract Text</span>
-                <button onclick="document.getElementById('contractInput').value=''" class="text-xs font-semibold text-slate-500 hover:text-slate-800">Clear</button>
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paste Legal Document Text</span>
+                <button onclick="document.getElementById('documentInput').value=''" class="text-xs font-semibold text-slate-500 hover:text-slate-800">Clear</button>
             </div>
-            <textarea id="contractInput" placeholder="Paste full contract terms here..." class="w-full h-36 bg-transparent text-slate-800 placeholder-slate-400 resize-none focus:outline-none p-2 text-sm"></textarea>
+            <textarea id="documentInput" placeholder="Paste full legal document terms here..." class="w-full h-36 bg-transparent text-slate-800 placeholder-slate-400 resize-none focus:outline-none p-2 text-sm"></textarea>
         </div>
 
         <button onclick="summarise()" class="w-full py-4 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl shadow-lg transition transform active:scale-95">
-            Summarise
+            Summarise Document
         </button>
     </main>
 
     <!-- RESULTS VIEW (8-BOX LAYOUT) -->
-    <div id="resultsView" class="hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col">
+    <div id="resultsView" class="view-section hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col">
         <div class="flex justify-between items-center mb-6 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-sm">
             <div>
                 <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">Verified 8-Box Breakdown</p>
                 <h2 id="scannedFileName" class="text-lg font-extrabold text-slate-900">Document_Scan.jpg</h2>
             </div>
-            <button onclick="clearText()" class="text-sm px-4 py-2 bg-slate-100 hover:bg-slate-200 font-semibold rounded-xl text-slate-700 transition">New Scan</button>
+            <button onclick="switchView('homeView')" class="text-sm px-4 py-2 bg-slate-100 hover:bg-slate-200 font-semibold rounded-xl text-slate-700 transition">New Scan</button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">1. Complete Contract Summary</span>
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">1. Complete Document Summary</span>
                         <button onclick="copyBox(1)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
                     </div>
-                    <p id="box1Text" class="text-sm text-slate-700 mt-2">Comprehensive document review completed. The agreement establishes formal obligations between participating parties, detailing explicit financial considerations, operational schedules, and legal governance.</p>
+                    <p id="box1Text" class="text-sm text-slate-700 mt-2">Comprehensive document review completed. Establishes formal obligations between participating parties, detailing explicit financial considerations, operational schedules, and legal governance.</p>
                 </div>
             </div>
 
@@ -126,7 +135,7 @@
                         <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">4. Timeframes & Deadlines</span>
                         <button onclick="copyBox(4)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
                     </div>
-                    <p id="box4Text" class="text-sm text-slate-700 mt-2">Commencing around reference date to contract execution date with active milestones and delivery windows specified in the schedule.</p>
+                    <p id="box4Text" class="text-sm text-slate-700 mt-2">Commencing around reference date to execution date with active milestones and delivery windows specified in the schedule.</p>
                 </div>
             </div>
 
@@ -136,7 +145,7 @@
                         <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">5. Termination & Notice</span>
                         <button onclick="copyBox(5)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
                     </div>
-                    <p id="box5Text" class="text-sm text-slate-700 mt-2">Cancellation terms require 30 days prior along with settlement for rendered services and incurred expenses.</p>
+                    <p id="box5Text" class="text-sm text-slate-700 mt-2">Cancellation terms require 30 days prior notice along with settlement for rendered services and incurred expenses.</p>
                 </div>
             </div>
 
@@ -146,7 +155,7 @@
                         <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">6. Liability & Risk Caps</span>
                         <button onclick="copyBox(6)" class="text-xs text-slate-500 hover:text-blue-900 font-semibold px-2 py-1 rounded bg-slate-50 border border-slate-200">Copy</button>
                     </div>
-                    <p id="box6Text" class="text-sm text-slate-700 mt-2">Risk allocation includes standard limitation of liability clauses capped at total contract fees.</p>
+                    <p id="box6Text" class="text-sm text-slate-700 mt-2">Risk allocation includes standard limitation of liability clauses capped at total agreement fees.</p>
                 </div>
             </div>
 
@@ -171,10 +180,123 @@
             </div>
         </div>
 
-        <button onclick="clearText()" class="w-full mt-6 py-4 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl shadow-lg transition">
-            Scan Another Contract
+        <button onclick="switchView('homeView')" class="w-full mt-6 py-4 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl shadow-lg transition">
+            Scan Another Document
         </button>
-    </main>
+    </div>
+
+    <!-- AUTHENTICATION VIEW (LOGIN / CREATE ACCOUNT WITH CYBERSECURITY EMAIL VERIFICATION) -->
+    <div id="authView" class="view-section hidden flex-1 max-w-md w-full mx-auto p-6 flex flex-col justify-center">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900 mb-2">Login to DoubleCheck</h2>
+            <p id="authSubtitle" class="text-xs text-slate-500 mb-6">Enter your credentials to access your secure account.</p>
+
+            <div id="authFormFields" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email Address</label>
+                    <input type="email" id="authEmail" placeholder="name@example.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Password</label>
+                    <input type="password" id="authPassword" placeholder="********" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
+                </div>
+                <div id="verificationContainer" class="hidden">
+                    <label class="block text-xs font-bold text-blue-900 uppercase mb-1">Cybersecurity Verification Code (Sent to Email)</label>
+                    <input type="text" id="authCode" placeholder="Enter 6-digit code" class="w-full p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm focus:outline-none focus:border-blue-900 font-mono tracking-widest text-center">
+                    <p class="text-[10px] text-slate-400 mt-1">Simulation Note: Use code 9999 for verification.</p>
+                </div>
+                <button onclick="handleAuthAction()" id="authActionBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition shadow-md">Login Securely</button>
+            </div>
+
+            <div class="mt-6 text-center">
+                <button onclick="toggleAuthMode()" id="authToggleLink" class="text-xs font-semibold text-blue-900 hover:underline">Need an account? Create one</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MY ACCOUNT VIEW (WITH SPECIAL ADMIN OPTIONS FOR THEO) -->
+    <div id="accountView" class="view-section hidden flex-1 max-w-3xl w-full mx-auto p-6 flex flex-col justify-center">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                <div>
+                    <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">Account Profile</p>
+                    <h2 id="accUserEmail" class="text-xl font-extrabold text-slate-900">Theo_kay@icloud.com</h2>
+                </div>
+                <span id="accRoleBadge" class="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-bold rounded-full">Standard User</span>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-800 mb-2">Subscription & Quota Status</h3>
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex justify-between items-center">
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold">Active Plan: Professional Tier</p>
+                            <p class="text-sm font-bold text-slate-900">300 Document Scans Remaining This Month</p>
+                        </div>
+                        <button onclick="alert('Subscription active.')" class="px-4 py-2 bg-blue-900 text-white text-xs font-bold rounded-xl">Manage</p>
+                    </div>
+                </div>
+
+                <!-- SPECIAL ADMIN PANEL (ONLY VISIBLE FOR THEO) -->
+                <div id="adminPanel" class="hidden p-6 bg-slate-900 text-white rounded-2xl shadow-md space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Administrator Panel</span>
+                        <span class="text-[10px] bg-blue-900 px-2 py-0.5 rounded text-white font-mono">AUTHORIZED: THEO KAY</span>
+                    </div>
+                    <p class="text-xs text-slate-300">System controls unlocked. You have full oversight of user database security logs, server response health, and global document processing queues.</p>
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button onclick="alert('All system security logs cleared and encrypted.')" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold rounded-xl transition">Purge Security Logs</button>
+                        <button onclick="alert('Global API quota reset successfully.')" class="py-2.5 bg-blue-600 hover:bg-blue-500 text-xs font-bold rounded-xl transition">Reset API Quotas</button>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
+                    <button onclick="handleLogout()" class="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition">Log Out</button>
+                    <button onclick="switchView('homeView')" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">Back to Scanner</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAST DOCUMENTS & FINANCIALS VIEW -->
+    <div id="pastDocumentsView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col">
+        <div class="flex justify-between items-center mb-6 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-sm">
+            <div>
+                <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">Archive</p>
+                <h2 class="text-lg font-extrabold text-slate-900">Past Documents & Financial Summaries</h2>
+            </div>
+            <button onclick="switchView('homeView')" class="text-sm px-4 py-2 bg-blue-900 hover:bg-blue-950 font-semibold rounded-xl text-white transition">New Scan</button>
+        </div>
+
+        <div class="space-y-3">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex justify-between items-center hover:border-blue-900 transition cursor-pointer" onclick="switchView('resultsView')">
+                <div>
+                    <span class="text-xs font-bold text-blue-900 uppercase">Document_Scan.jpg</span>
+                    <h3 class="text-sm font-bold text-slate-800">Commercial Lease Agreement - Unit 4B</h3>
+                    <p class="text-xs text-slate-400">Scanned on September 29, 2026 | 8-Box Breakdown Generated</p>
+                </div>
+                <span class="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-700 rounded-lg">View</span>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex justify-between items-center hover:border-blue-900 transition cursor-pointer" onclick="switchView('resultsView')">
+                <div>
+                    <span class="text-xs font-bold text-blue-900 uppercase">Pasted_Text_Contract.txt</span>
+                    <h3 class="text-sm font-bold text-slate-800">Freelance Services Master Contract</h3>
+                    <p class="text-xs text-slate-400">Scanned on September 28, 2026 | 8-Box Breakdown Generated</p>
+                </div>
+                <span class="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-700 rounded-lg">View</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT VIEW -->
+    <div id="aboutView" class="view-section hidden flex-1 max-w-3xl w-full mx-auto p-6 flex flex-col justify-center">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-4">
+            <h2 class="text-2xl font-extrabold text-slate-900">About DoubleCheck</h2>
+            <p class="text-sm text-slate-600">DoubleCheck is a premier AI-powered document intelligence platform designed to extract, synthesize, and structure complex legal agreements, financial disclosures, and contracts into clear 8-box actionable breakdowns.</p>
+            <p class="text-sm text-slate-600">Engineered with enterprise-grade cybersecurity standards, multi-factor email verification, and instant document parsing utilities for professionals worldwide.</p>
+            <button onclick="switchView('homeView')" class="mt-4 px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Return to Home</button>
+        </div>
+    </div>
 
     <!-- FOOTER -->
     <footer class="w-full bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500 mt-auto">
@@ -185,45 +307,154 @@
 
     <!-- SCRIPT -->
     <script>
+        let currentUser = { email: "Theo_kay@icloud.com", loggedIn: true };
+        let isSignupMode = false;
+        let verificationStep = false;
+
+        function updateAuthStateUI() {
+            const statusDisplay = document.getElementById('userStatusDisplay');
+            const authSection = document.getElementById('drawerAuthSection');
+            const adminPanel = document.getElementById('adminPanel');
+            const accRoleBadge = document.getElementById('accRoleBadge');
+            const accUserEmail = document.getElementById('accUserEmail');
+
+            if(currentUser && currentUser.loggedIn) {
+                statusDisplay.textContent = "Logged in: " + currentUser.email;
+                authSection.innerHTML = '<button onclick="toggleMenu(); handleLogout();" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-center">Logout (' + currentUser.email + ')</button>';
+                accUserEmail.textContent = currentUser.email;
+
+                if(currentUser.email.toLowerCase() === "theo_kay@icloud.com") {
+                    adminPanel.classList.remove('hidden');
+                    accRoleBadge.textContent = "Master Administrator";
+                    accRoleBadge.className = "px-3 py-1 bg-blue-900 text-white text-xs font-bold rounded-full";
+                } else {
+                    adminPanel.classList.add('hidden');
+                    accRoleBadge.textContent = "Standard User";
+                    accRoleBadge.className = "px-3 py-1 bg-blue-100 text-blue-900 text-xs font-bold rounded-full";
+                }
+            } else {
+                statusDisplay.textContent = "Not logged in";
+                authSection.innerHTML = '<button onclick="toggleMenu(); switchView(\'authView\');" class="w-full py-3 bg-blue-900 hover:bg-white text-white hover:text-blue-900 border border-blue-900 font-bold rounded-xl transition text-center">Login / Register</button>';
+                adminPanel.classList.add('hidden');
+            }
+        }
+
         function toggleMenu() {
             const drawer = document.getElementById('menuDrawer');
             drawer.classList.toggle('hidden');
         }
 
+        function switchView(viewId) {
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(v => v.classList.add('hidden'));
+            document.getElementById(viewId).classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function handleFileUpload(type) {
+            document.getElementById('scannedFileName').textContent = type === 'PDF' ? "Uploaded_Document.pdf" : "Uploaded_Document_Scan.jpg";
+            summariseAction();
+        }
+
         function summarise() {
+            const inputVal = document.getElementById('documentInput').value.trim();
+            if(inputVal) {
+                document.getElementById('scannedFileName').textContent = "Pasted_Document_Text.txt";
+            } else {
+                document.getElementById('scannedFileName').textContent = "Document_Scan.jpg";
+            }
+            summariseAction();
+        }
+
+        function summariseAction() {
             const btn = document.querySelector('button[onclick="summarise()"]');
-            const inputVal = document.getElementById('contractInput').value.trim();
-            
-            btn.textContent = "Analyzing Contract...";
-            btn.disabled = true;
+            if(btn) {
+                btn.textContent = "Analyzing Document...";
+                btn.disabled = true;
+            }
 
             setTimeout(() => {
-                btn.textContent = "Summarise";
-                btn.disabled = false;
-                
-                if(inputVal) {
-                    document.getElementById('scannedFileName').textContent = "Pasted_Contract_Text.txt";
-                } else {
-                    document.getElementById('scannedFileName').textContent = "Document_Scan.jpg";
+                if(btn) {
+                    btn.textContent = "Summarise Document";
+                    btn.disabled = false;
                 }
-
-                document.getElementById('homeView').classList.add('hidden');
-                document.getElementById('resultsView').classList.remove('hidden');
-                window.scrollTo(0, 0);
+                switchView('resultsView');
             }, 800);
         }
 
-        function clearText() {
-            document.getElementById('contractInput').value = '';
-            document.getElementById('resultsView').classList.add('hidden');
-            document.getElementById('homeView').classList.remove('hidden');
-            window.scrollTo(0, 0);
+        function toggleAuthMode() {
+            isSignupMode = !isSignupMode;
+            verificationStep = false;
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+            const btn = document.getElementById('authActionBtn');
+            const toggleLink = document.getElementById('authToggleLink');
+            const verificationContainer = document.getElementById('verificationContainer');
+
+            verificationContainer.classList.add('hidden');
+
+            if(isSignupMode) {
+                title.textContent = "Create Account";
+                subtitle.textContent = "Register with cybersecurity email confirmation.";
+                btn.textContent = "Send Verification Code";
+                toggleLink.textContent = "Already have an account? Login";
+            } else {
+                title.textContent = "Login to DoubleCheck";
+                subtitle.textContent = "Enter your credentials to access your secure account.";
+                btn.textContent = "Login Securely";
+                toggleLink.textContent = "Need an account? Create one";
+            }
+        }
+
+        function handleAuthAction() {
+            const email = document.getElementById('authEmail').value.trim();
+            const pass = document.getElementById('authPassword').value.trim();
+            const code = document.getElementById('authCode').value.trim();
+            const verificationContainer = document.getElementById('verificationContainer');
+            const btn = document.getElementById('authActionBtn');
+
+            if(!email || !pass) {
+                alert("Please enter both email and password.");
+                return;
+            }
+
+            if(isSignupMode && !verificationStep) {
+                verificationContainer.classList.remove('hidden');
+                btn.textContent = "Verify & Complete Signup";
+                verificationStep = true;
+                alert("Cybersecurity verification code sent to " + email + ". (Simulation code: 9999)");
+                return;
+            }
+
+            if(isSignupMode && verificationStep) {
+                if(code !== "9999") {
+                    alert("Invalid verification code. Please enter 9999.");
+                    return;
+                }
+            }
+
+            // Authenticated successfully
+            currentUser = { email: email, loggedIn: true };
+            updateAuthStateUI();
+            alert("Authentication successful. Welcome, " + email);
+            switchView('accountView');
+        }
+
+        function handleLogout() {
+            currentUser = { email: "", loggedIn: false };
+            updateAuthStateUI();
+            switchView('authView');
+            alert("Successfully logged out.");
         }
 
         function copyBox(boxNum) {
             const text = document.getElementById('box' + boxNum + 'Text').innerText;
             navigator.clipboard.writeText(text);
+            alert("Copied box content to clipboard.");
         }
+
+        // Initialize default auth state on load
+        updateAuthStateUI();
     </script>
 </body>
 </html>
