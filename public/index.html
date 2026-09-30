@@ -5,17 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DoubleCheck - AI Legal Document Summariser</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .logo-container img {
+            max-height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
 
     <!-- HEADER -->
     <header class="w-full bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('homeView')">
-            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-eS1X1p7rJ0C6hE4m6P2v9Q8z4X3W2y.png" alt="DoubleCheck Logo" class="h-10 w-auto object-contain" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path d=%22M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z%22 fill=%22%231e3a8a%22/><path d=%22M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z%22 fill=%22white%22 fill-opacity=%220.85%22/><rect x=%22120%22 y=%22220%22 width=%22180%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22272%22 width=%22220%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22324%22 width=%22220%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22376%22 width=%22140%22 height=%2224%22 rx=%2212%22 fill=%22white%22/></svg>'">
+        <div class="flex items-center space-x-3 cursor-pointer logo-container" onclick="switchView('homeView')">
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-eS1X1p7rJ0C6hE4m6P2v9Q8z4X3W2y.png" alt="DoubleCheck Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path d=%22M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z%22 fill=%22%231e3a8a%22/><path d=%22M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z%22 fill=%22white%22 fill-opacity=%220.85%22/><rect x=%22120%22 y=%22220%22 width=%22180%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22272%22 width=%22220%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22324%22 width=%22220%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22376%22 width=%22140%22 height=%2224%22 rx=%2212%22 fill=%22white%22/></svg>'">
             <span class="text-2xl font-extrabold tracking-tight text-slate-900">DoubleCheck</span>
         </div>
         <div class="flex items-center space-x-3">
-            <span id="userStatusDisplay" onclick="switchView('accountView')" class="text-xs font-semibold text-blue-900 hover:underline cursor-pointer hidden sm:inline"></span>
+            <span id="userStatusDisplay" onclick="switchView('accountView')" class="text-xs font-semibold text-blue-900 hover:underline cursor-pointer hidden sm:inline">Not logged in</span>
             <button onclick="toggleMenu()" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -31,7 +38,7 @@
                 <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
                     <span class="text-lg font-bold text-slate-900">Menu</span>
                     <div class="flex items-center space-x-2">
-                        <span id="menuScanCounter" class="text-xs font-bold bg-blue-50 text-blue-900 border border-blue-200 px-2.5 py-1 rounded-lg">20/20</span>
+                        <span id="menuScanCounter" class="text-xs font-bold bg-blue-50 text-blue-900 border border-blue-200 px-2.5 py-1 rounded-lg">0/20</span>
                         <button onclick="toggleMenu()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
                     </div>
                 </div>
@@ -51,7 +58,7 @@
     </div>
 
     <!-- MAIN HOMEPAGE VIEW -->
-    <main id="homeView" class="view-section flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center items-center text-center">
+    <main id="homeView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center items-center text-center">
         <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Summarise Any Legal Document</h1>
         <p class="text-slate-500 mb-8 max-w-lg">Upload an image, upload a PDF file, or paste your legal text below for a structured breakdown.</p>
 
@@ -108,7 +115,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <!-- BASE PLAN -->
             <div class="bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col justify-between">
                 <div>
                     <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">DoubleCheck Base</span>
@@ -118,15 +124,14 @@
                     </div>
                     <ul class="space-y-3 text-sm text-slate-600 mb-6">
                         <li class="flex items-center">✓ 20 Document Scans per month</li>
-                        <li class="flex items-center">✓ Key Information Boxes (Core Essentials)</li>
+                        <li class="flex items-center">✓ Key Information Boxes</li>
                         <li class="flex items-center">✓ Standard Email Support</li>
                     </ul>
                 </div>
                 <button onclick="selectPlan('Base')" id="basePlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Start 3-Month Free Trial</button>
             </div>
 
-            <!-- PRO PLAN -->
-            <div class="bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col justify-between">
                 <div>
                     <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">DoubleCheck Pro</span>
                     <div class="flex items-baseline mt-2 mb-4">
@@ -147,8 +152,9 @@
     <!-- AUTHENTICATION VIEW -->
     <div id="authView" class="view-section hidden flex-1 max-w-md w-full mx-auto p-6 flex flex-col justify-center">
         <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col items-center">
-            <!-- Fixed logo on login screen -->
-            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-eS1X1p7rJ0C6hE4m6P2v9Q8z4X3W2y.png" alt="DoubleCheck Logo" class="h-12 w-auto object-contain mb-4" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path d=%22M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z%22 fill=%22%231e3a8a%22/><path d=%22M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z%22 fill=%22white%22 fill-opacity=%220.85%22/><rect x=%22120%22 y=%22220%22 width=%22180%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22272%22 width=%22220%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22324%22 width=%22220%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22376%22 width=%22140%22 height=%2224%22 rx=%2212%22 fill=%22white%22/></svg>'">
+            <div class="logo-container mb-4">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-eS1X1p7rJ0C6hE4m6P2v9Q8z4X3W2y.png" alt="DoubleCheck Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path d=%22M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z%22 fill=%22%231e3a8a%22/><path d=%22M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z%22 fill=%22white%22 fill-opacity=%220.85%22/><rect x=%22120%22 y=%22220%22 width=%22180%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22272%22 width=%22220%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22324%22 width=%22220%22 height=%2224%22 rx=%2212%22 fill=%22white%22/><rect x=%22120%22 y=%22376%22 width=%22140%22 height=%2224%22 rx=%2212%22 fill=%22white%22/></svg>'">
+            </div>
             <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900 mb-1 text-center">Login to DoubleCheck</h2>
             <p id="authSubtitle" class="text-xs text-slate-500 mb-6 text-center">Enter your secure credentials to access your legal workspace.</p>
 
@@ -181,19 +187,17 @@
         </div>
     </div>
 
-    <!-- MY ACCOUNT VIEW (Expanded Professional SaaS Layout) -->
+    <!-- MY ACCOUNT VIEW (Expanded Professional Layout) -->
     <div id="accountView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center">
         <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-sm space-y-8">
-            <!-- Header section -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-6 gap-4">
                 <div>
                     <p class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-1">Account Dashboard</p>
-                    <h2 id="accUserEmail" class="text-xl sm:text-2xl font-extrabold text-slate-900">theo_kay@icloud.com</h2>
+                    <h2 id="accUserEmail" class="text-xl sm:text-2xl font-extrabold text-slate-900">name@example.com</h2>
                 </div>
                 <span id="accRoleBadge" class="px-3.5 py-1.5 bg-blue-100 text-blue-900 text-xs font-bold rounded-full">Subscriber</span>
             </div>
 
-            <!-- SUBSCRIPTION MANAGEMENT SECTION -->
             <div class="p-6 sm:p-8 bg-slate-50 border border-slate-200 rounded-3xl space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -208,7 +212,7 @@
                 </div>
             </div>
 
-            <!-- EXTRA SAAS DASHBOARD PANELS (Billing, Security, Connected Devices) -->
+            <!-- Professional SaaS Sub-Panels -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between">
                     <div>
@@ -230,17 +234,16 @@
                     <div>
                         <span class="text-[10px] font-bold text-blue-900 uppercase tracking-wider">Connected Devices</span>
                         <p class="text-sm font-bold text-slate-800 mt-2">1 Active Session</p>
-                        <p class="text-xs text-slate-400 mt-1">Current Browser / iPad Session</p>
+                        <p class="text-xs text-slate-400 mt-1">Encrypted SSL Session</p>
                     </div>
-                    <button onclick="alert('Current session is encrypted and securely authenticated.')" class="mt-4 text-xs font-bold text-blue-900 hover:underline text-left">Session Info →</button>
+                    <button onclick="alert('Session is securely authenticated.')" class="mt-4 text-xs font-bold text-blue-900 hover:underline text-left">Session Info →</button>
                 </div>
             </div>
 
-            <!-- SIMPLER MASTER ADMIN PANEL -->
             <div id="adminPanel" class="hidden p-6 sm:p-8 bg-slate-900 text-white rounded-3xl shadow-md space-y-5">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                     <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Admin Overview</span>
-                    <span class="text-[10px] bg-blue-900 px-2.5 py-1 rounded text-white font-mono">THEO KAY</span>
+                    <span class="text-[10px] bg-blue-900 px-2.5 py-1 rounded text-white font-mono">ADMIN ACCESS</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
@@ -254,7 +257,6 @@
                 </div>
             </div>
 
-            <!-- Bottom Action Row -->
             <div class="pt-6 border-t border-slate-100 flex justify-between items-center">
                 <button onclick="handleLogout()" class="px-5 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition">Logout</button>
                 <button onclick="switchView('homeView')" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">Back to Scanner</button>
@@ -273,10 +275,10 @@
         </div>
 
         <div class="space-y-3">
-            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex justify-between items-center hover:border-blue-900 transition cursor-pointer" onclick="loadPastDoc('MASTER PROFESSIONAL SERVICES AGREEMENT')">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex justify-between items-center hover:border-blue-900 transition cursor-pointer" onclick="runSummariser('MASTER PROFESSIONAL SERVICES AGREEMENT')">
                 <div>
                     <span class="text-xs font-bold text-blue-900 uppercase">MASTER PROFESSIONAL SERVICES AGREEMENT</span>
-                    <p class="text-xs text-slate-400">Scanned on September 29, 2026</p>
+                    <p class="text-xs text-slate-400">Scanned Archive Document</p>
                 </div>
                 <span class="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-700 rounded-lg">View</span>
             </div>
@@ -288,7 +290,6 @@
         <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-4">
             <h2 class="text-2xl font-extrabold text-slate-900">About DoubleCheck</h2>
             <p class="text-sm text-slate-600">DoubleCheck summarises any legal documents into clear and simple English so you never get caught out by complicated paperwork.</p>
-            <p class="text-sm text-slate-600">Whether you are reviewing an employment contract or looking over property terms, our platform highlights everything important instantly.</p>
             <button onclick="switchView('homeView')" class="mt-4 px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Return to Home</button>
         </div>
     </div>
@@ -300,9 +301,9 @@
         © 2026 DoubleCheck Ltd. All rights reserved.
     </footer>
 
-    <!-- SECURE SCRIPT -->
+    <!-- SCRIPT LOCKDOWN -->
     <script>
-        // STRICT SECURITY INITIAL STATE: Logged out by default until valid session token is verified.
+        // Default state is strictly logged out
         let currentUser = { 
             email: "", 
             loggedIn: false, 
@@ -313,12 +314,12 @@
             maxScans: 20 
         };
 
-        // Secure Session Verification
+        // Strict Session Verification on Load
         const savedSession = localStorage.getItem('doublecheck_secure_session');
         if(savedSession) {
             try {
                 const parsed = JSON.parse(savedSession);
-                if(parsed && parsed.loggedIn && parsed.email) {
+                if(parsed && parsed.loggedIn === true && parsed.email) {
                     currentUser = parsed;
                 }
             } catch(e) {
@@ -341,7 +342,7 @@
             const basePlanBtn = document.getElementById('basePlanBtn');
             const proPlanBtn = document.getElementById('proPlanBtn');
 
-            if(currentUser && currentUser.loggedIn) {
+            if(currentUser && currentUser.loggedIn === true) {
                 statusDisplay.textContent = currentUser.email;
                 authSection.innerHTML = '<button onclick="toggleMenu(); handleLogout();" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-center border border-slate-200">Logout</button>';
                 accUserEmail.textContent = currentUser.email;
@@ -394,20 +395,20 @@
         }
 
         function switchView(viewId) {
-            // Security check: if user is not logged in and trying to access protected views, redirect to login
+            // STRICT SECURITY ENFORCEMENT: Block unauthorized views and force login screen
             const protectedViews = ['homeView', 'resultsView', 'accountView', 'pastDocumentsView'];
-            if(protectedViews.includes(viewId) && (!currentUser || !currentUser.loggedIn)) {
-                alert("Please log in securely to access your legal workspace.");
+            if(protectedViews.includes(viewId) && (!currentUser || currentUser.loggedIn !== true)) {
                 viewId = 'authView';
             }
 
-            if(currentUser && currentUser.canceled && viewId === 'homeView') {
-                alert("Your subscription or free trial was canceled. Please select a plan to access the website.");
+            if(currentUser && currentUser.loggedIn === true && currentUser.canceled && viewId === 'homeView') {
                 switchView('pricingView');
                 return;
             }
+
             document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
-            document.getElementById(viewId).classList.remove('hidden');
+            const target = document.getElementById(viewId);
+            if(target) target.classList.remove('hidden');
             window.scrollTo(0, 0);
         }
 
@@ -419,25 +420,18 @@
         }
 
         function summarise() {
-            if(!currentUser.loggedIn) {
+            if(!currentUser || currentUser.loggedIn !== true) {
                 switchView('authView');
                 return;
             }
-            if(currentUser.canceled) {
-                alert("Subscription canceled. Please select a plan to continue.");
-                switchView('pricingView');
-                return;
-            }
             if(currentUser.scansRemaining <= 0) {
-                alert("You have reached your monthly scan limit. Please upgrade your plan.");
+                alert("Scan limit reached. Please upgrade your plan.");
                 switchView('pricingView');
                 return;
             }
 
             currentUser.scansRemaining--;
-            if(currentUser.email) {
-                localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
-            }
+            localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
             updateAuthStateUI();
 
             const text = document.getElementById('documentInput').value.trim();
@@ -452,10 +446,6 @@
             runSummariser(docName);
         }
 
-        function loadPastDoc(docName) {
-            runSummariser(docName);
-        }
-
         function runSummariser(docName) {
             document.getElementById('extractedDocName').textContent = docName;
             const container = document.getElementById('boxesContainer');
@@ -463,20 +453,12 @@
 
             const isPro = currentUser.plan === 'Pro';
             const numBoxes = isPro ? 8 : 4;
-
             document.getElementById('resultsSubtitle').textContent = isPro ? "Complete 8-Box Breakdown (Pro Plan)" : "Key Information Breakdown (Base Plan)";
 
             const boxTitles = [
-                "1. Complete Document Summary",
-                "2. Purpose & Scope",
-                "3. Financial Terms",
-                "4. Timeframes & Deadlines",
-                "5. Termination & Notice",
-                "6. Liability & Risk Caps",
-                "7. Auto-Renewal & Lock-Ins",
-                "8. Dispute Resolution & Law"
+                "1. Complete Document Summary", "2. Purpose & Scope", "3. Financial Terms", "4. Timeframes & Deadlines",
+                "5. Termination & Notice", "6. Liability & Risk Caps", "7. Auto-Renewal & Lock-Ins", "8. Dispute Resolution & Law"
             ];
-
             const boxContents = [
                 "Comprehensive document review completed. Establishes formal obligations and legal governance.",
                 "Establishes formal project deliverables, professional responsibilities, and operational scope.",
@@ -501,12 +483,11 @@
                     </div>
                 `;
             }
-
             switchView('resultsView');
         }
 
         function selectPlan(planType) {
-            if(!currentUser.loggedIn) {
+            if(!currentUser || currentUser.loggedIn !== true) {
                 switchView('authView');
                 return;
             }
@@ -516,20 +497,16 @@
                     currentUser.trialUsed = true;
                     currentUser.maxScans = 20;
                     currentUser.scansRemaining = 20;
-                    alert("Successfully started your 3-month free trial for DoubleCheck Base!");
                 } else {
                     currentUser.plan = 'Base';
                     currentUser.maxScans = 20;
                     currentUser.scansRemaining = 20;
-                    alert("Switched to DoubleCheck Base (£9.99/mo). Scans reset to 20/20.");
                 }
             } else if(planType === 'Pro') {
                 currentUser.plan = 'Pro';
                 currentUser.maxScans = 50;
                 currentUser.scansRemaining = 50;
-                alert("Upgraded to DoubleCheck Pro (£19.99/mo). Scans reset to 50/50.");
             }
-
             currentUser.canceled = false;
             localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
             updateAuthStateUI();
@@ -537,12 +514,11 @@
         }
 
         function cancelSubscription() {
-            if(confirm("Are you sure you want to cancel your subscription/trial?")) {
+            if(confirm("Are you sure you want to cancel your subscription?")) {
                 currentUser.canceled = true;
                 currentUser.scansRemaining = 0;
                 localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
                 updateAuthStateUI();
-                alert("Subscription canceled. Access has been restricted until a plan is purchased.");
                 switchView('pricingView');
             }
         }
@@ -574,7 +550,6 @@
             const email = document.getElementById('authEmail').value.trim();
             const pass = document.getElementById('authPassword').value.trim();
             const code = document.getElementById('authCode').value.trim();
-            const rememberMe = document.getElementById('rememberMeCheck').checked;
             const verificationContainer = document.getElementById('verificationContainer');
             const btn = document.getElementById('authActionBtn');
 
@@ -606,16 +581,8 @@
                 maxScans: 20 
             };
             
-            // Only store secure session token if authenticated
-            if(rememberMe) {
-                localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
-            } else {
-                // Session storage only or temporary memory token
-                localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
-            }
-
+            localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
             updateAuthStateUI();
-            alert("Securely logged in!");
             switchView('homeView');
         }
 
@@ -624,14 +591,15 @@
             localStorage.removeItem('doublecheck_secure_session');
             updateAuthStateUI();
             switchView('authView');
-            alert("Logged out securely.");
         }
 
-        // Initial Boot check
-        if(!currentUser.loggedIn) {
-            switchView('authView');
+        // INITIAL BOOT CHECK: Force auth view if session is missing or unverified
+        if(currentUser && currentUser.loggedIn === true) {
+            updateAuthStateUI();
+            switchView('homeView');
         } else {
             updateAuthStateUI();
+            switchView('authView');
         }
     </script>
 </body>
