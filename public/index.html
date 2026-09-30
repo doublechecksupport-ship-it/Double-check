@@ -39,7 +39,7 @@
                 <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
                     <span class="text-lg font-bold text-slate-900">Menu</span>
                     <div class="flex items-center space-x-2">
-                        <span id="menuScanCounter" class="text-xs font-bold bg-blue-50 text-blue-900 border border-blue-200 px-2.5 py-1 rounded-lg text-left">50 left</span>
+                        <span id="menuScanCounter" class="text-xs font-bold bg-blue-50 text-blue-900 border border-blue-200 px-2.5 py-1 rounded-lg">20/20</span>
                         <button onclick="toggleMenu()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
                     </div>
                 </div>
@@ -213,28 +213,20 @@
                 </div>
             </div>
 
-            <!-- MASTER ADMIN PANEL -->
-            <div id="adminPanel" class="hidden p-6 bg-slate-900 text-white rounded-2xl shadow-md space-y-6">
+            <!-- SIMPLER MASTER ADMIN PANEL -->
+            <div id="adminPanel" class="hidden p-6 bg-slate-900 text-white rounded-2xl shadow-md space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Financial & Subscriber Analytics</span>
-                    <span class="text-[10px] bg-blue-900 px-2 py-0.5 rounded text-white font-mono">THEO KAY ADMIN</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Admin Overview</span>
+                    <span class="text-[10px] bg-blue-900 px-2 py-0.5 rounded text-white font-mono">THEO KAY</span>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
-                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Revenue Generated</span>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Monthly Revenue</span>
                         <p id="adminRevenueDisplay" class="text-2xl font-extrabold text-white mt-1">£0.00</p>
                     </div>
                     <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
-                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Subscribers</span>
-                        <div class="text-sm font-semibold text-slate-200 mt-1 space-y-0.5">
-                            <p>Free Trial: <span id="statTrialCount" class="font-bold text-blue-400">1</span></p>
-                            <p>Base (£9.99): <span id="statBaseCount" class="font-bold text-blue-400">0</span></p>
-                            <p>Pro (£19.99): <span id="statProCount" class="font-bold text-blue-400">0</span></p>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-slate-800 rounded-xl border border-slate-700 flex flex-col justify-between">
-                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">System Actions</span>
-                        <button onclick="alert('Exported subscriber database CSV successfully.')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-xs font-bold rounded-lg transition">Export CSV Logs</button>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Plan</span>
+                        <p id="adminPlanDisplay" class="text-lg font-extrabold text-blue-400 mt-1">Free Trial</p>
                     </div>
                 </div>
             </div>
@@ -343,16 +335,14 @@
                     proPlanBtn.textContent = "Active Plan";
                 }
 
-                menuScanCounter.textContent = currentUser.scansRemaining + " left";
+                menuScanCounter.textContent = currentUser.scansRemaining + "/" + currentUser.maxScans;
 
                 if(currentUser.email.toLowerCase() === "theo_kay@icloud.com") {
                     adminPanel.classList.remove('hidden');
                     accRoleBadge.textContent = "Master Admin";
                     accRoleBadge.className = "px-3 py-1 bg-blue-900 text-white text-xs font-bold rounded-full";
                     document.getElementById('adminRevenueDisplay').textContent = (currentUser.plan === 'Pro' ? "£19.99" : currentUser.plan === 'Base' ? "£9.99" : "£0.00");
-                    document.getElementById('statTrialCount').textContent = currentUser.plan === 'Trial' ? "1" : "0";
-                    document.getElementById('statBaseCount').textContent = currentUser.plan === 'Base' ? "1" : "0";
-                    document.getElementById('statProCount').textContent = currentUser.plan === 'Pro' ? "1" : "0";
+                    document.getElementById('adminPlanDisplay').textContent = currentUser.plan === 'Pro' ? "Pro (£19.99/mo)" : currentUser.plan === 'Base' ? "Base (£9.99/mo)" : "Free Trial";
                 } else {
                     adminPanel.classList.add('hidden');
                     accRoleBadge.textContent = "Subscriber";
@@ -362,7 +352,7 @@
                 statusDisplay.textContent = "Not logged in";
                 authSection.innerHTML = '<button onclick="toggleMenu(); switchView(\'authView\');" class="w-full py-3 bg-blue-900 text-white font-bold rounded-xl transition text-center">Login / Register</button>';
                 adminPanel.classList.add('hidden');
-                menuScanCounter.textContent = "0 left";
+                menuScanCounter.textContent = "0/20";
             }
         }
 
@@ -475,19 +465,19 @@
                     currentUser.plan = 'Trial';
                     currentUser.trialUsed = true;
                     currentUser.maxScans = 20;
-                    currentUser.scansRemaining = 20;
+                    currentUser.scansRemaining = 20; // Resets back to 20/20 on renewal/start
                     alert("Successfully started your 3-month free trial for DoubleCheck Base!");
                 } else {
                     currentUser.plan = 'Base';
                     currentUser.maxScans = 20;
-                    currentUser.scansRemaining = 20;
-                    alert("Switched to DoubleCheck Base (£9.99/mo).");
+                    currentUser.scansRemaining = 20; // Resets back to 20/20 on monthly payment
+                    alert("Switched to DoubleCheck Base (£9.99/mo). Scans reset to 20/20.");
                 }
             } else if(planType === 'Pro') {
                 currentUser.plan = 'Pro';
                 currentUser.maxScans = 50;
-                currentUser.scansRemaining = 50;
-                alert("Upgraded to DoubleCheck Pro (£19.99/mo).");
+                currentUser.scansRemaining = 50; // Resets back to 50/50 on upgrade/payment
+                alert("Upgraded to DoubleCheck Pro (£19.99/mo). Scans reset to 50/50.");
             }
 
             currentUser.canceled = false;
@@ -584,7 +574,7 @@
         }
 
         function handleLogout() {
-            currentUser = { email: "", loggedIn: false, plan: null, canceled: false, scansRemaining: 0 };
+            currentUser = { email: "", loggedIn: false, plan: null, canceled: false, scansRemaining: 0, maxScans: 20 };
             localStorage.removeItem('doublecheck_session');
             updateAuthStateUI();
             switchView('authView');
