@@ -12,10 +12,9 @@
     <header class="w-full bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('homeView')">
             <!-- Document Logo Icon -->
-            <svg class="w-10 h-10" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M64 416V96C64 78.3269 78.3269 64 96 64H320L416 160V416C416 433.673 401.673 448 384 448H96C78.3269 448 64 433.673 64 416Z" fill="#1e3a8a"/>
-                <path d="M320 64V160H416" fill="#1e3a8a"/>
-                <path d="M320 64L416 160H336C327.163 160 320 152.837 320 144V64Z" fill="white" fill-opacity="0.9"/>
+            <svg class="w-9 h-9" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z" fill="#1e3a8a"/>
+                <path d="M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z" fill="white" fill-opacity="0.85"/>
                 <rect x="120" y="220" width="180" height="24" rx="12" fill="white"/>
                 <rect x="120" y="272" width="220" height="24" rx="12" fill="white"/>
                 <rect x="120" y="324" width="220" height="24" rx="12" fill="white"/>
@@ -37,24 +36,24 @@
     <div id="menuDrawer" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex justify-end">
         <div class="w-80 bg-white h-full shadow-2xl p-6 flex flex-col border-l border-slate-200 justify-between">
             <div>
-                <div class="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
+                <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
                     <span class="text-lg font-bold text-slate-900">Menu</span>
-                    <button onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
+                    <div class="flex items-center space-x-2">
+                        <span id="menuScanCounter" class="text-xs font-bold bg-blue-50 text-blue-900 border border-blue-200 px-2.5 py-1 rounded-lg text-left">50 left</span>
+                        <button onclick="toggleMenu()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
+                    </div>
                 </div>
                 <nav class="space-y-2">
-                    <a href="#" onclick="toggleMenu(); switchView('homeView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Home Dashboard</a>
-                    <a href="#" onclick="toggleMenu(); switchView('accountView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">My Account</a>
-                    <a href="#" onclick="toggleMenu(); switchView('pricingView');" class="flex justify-between items-center px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">
-                        <span>Pricing & Plans</span>
-                        <span id="menuScanCounter" class="text-xs font-bold bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full">20/20</span>
-                    </a>
-                    <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Past Documents & Scans</a>
-                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">About DoubleCheck</a>
-                    <a href="#" onclick="toggleMenu(); switchView('authView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Login / Create Account</a>
+                    <a href="#" onclick="toggleMenu(); switchView('homeView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Home Dashboard</a>
+                    <a href="#" onclick="toggleMenu(); switchView('accountView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">My Account</a>
+                    <a href="#" onclick="toggleMenu(); switchView('pricingView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Pricing & Plans</a>
+                    <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Past Documents & Scans</a>
+                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">About DoubleCheck</a>
+                    <a href="#" onclick="toggleMenu(); switchView('authView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Login / Create Account</a>
                 </nav>
             </div>
             <div id="drawerAuthSection" class="pt-4 border-t border-slate-100">
-                <button onclick="toggleMenu(); handleLogout();" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-center">Logout</button>
+                <button onclick="toggleMenu(); handleLogout();" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-center border border-slate-200">Logout</button>
             </div>
         </div>
     </div>
@@ -214,7 +213,7 @@
                 </div>
             </div>
 
-            <!-- MASTER ADMIN PANEL (REAL ANALYTICS ONLY) -->
+            <!-- MASTER ADMIN PANEL -->
             <div id="adminPanel" class="hidden p-6 bg-slate-900 text-white rounded-2xl shadow-md space-y-6">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                     <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Financial & Subscriber Analytics</span>
@@ -319,10 +318,9 @@
 
             if(currentUser && currentUser.loggedIn) {
                 statusDisplay.textContent = currentUser.email;
-                authSection.innerHTML = '<button onclick="toggleMenu(); handleLogout();" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-center">Logout</button>';
+                authSection.innerHTML = '<button onclick="toggleMenu(); handleLogout();" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-center border border-slate-200">Logout</button>';
                 accUserEmail.textContent = currentUser.email;
 
-                // Update pricing buttons based on trial/cancellation rules
                 if(currentUser.canceled) {
                     currentPlanName.textContent = "Subscription Canceled (Access Restricted)";
                     trialRenewalText.textContent = "Your plan is canceled. Please select a plan to regain access.";
@@ -345,7 +343,7 @@
                     proPlanBtn.textContent = "Active Plan";
                 }
 
-                menuScanCounter.textContent = currentUser.scansRemaining + "/" + currentUser.maxScans;
+                menuScanCounter.textContent = currentUser.scansRemaining + " left";
 
                 if(currentUser.email.toLowerCase() === "theo_kay@icloud.com") {
                     adminPanel.classList.remove('hidden');
@@ -364,6 +362,7 @@
                 statusDisplay.textContent = "Not logged in";
                 authSection.innerHTML = '<button onclick="toggleMenu(); switchView(\'authView\');" class="w-full py-3 bg-blue-900 text-white font-bold rounded-xl transition text-center">Login / Register</button>';
                 adminPanel.classList.add('hidden');
+                menuScanCounter.textContent = "0 left";
             }
         }
 
