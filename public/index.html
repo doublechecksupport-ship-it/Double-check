@@ -24,7 +24,7 @@
             <span class="text-2xl font-extrabold tracking-tight text-slate-900">DoubleCheck</span>
         </div>
         <div class="flex items-center space-x-3">
-            <span id="userStatusDisplay" class="text-xs font-semibold text-slate-500 hidden sm:inline"></span>
+            <span id="userStatusDisplay" onclick="switchView('accountView')" class="text-xs font-semibold text-blue-900 hover:underline cursor-pointer hidden sm:inline"></span>
             <button onclick="toggleMenu()" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -44,8 +44,11 @@
                 <nav class="space-y-2">
                     <a href="#" onclick="toggleMenu(); switchView('homeView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Home Dashboard</a>
                     <a href="#" onclick="toggleMenu(); switchView('accountView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">My Account</a>
-                    <a href="#" onclick="toggleMenu(); switchView('pricingView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Pricing & Plans</a>
-                    <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-3 rounded-xl hover:bg-blue-900 hover:text-white font-semibold text-blue-900 transition">Past Documents & Scans</a>
+                    <a href="#" onclick="toggleMenu(); switchView('pricingView');" class="flex justify-between items-center px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">
+                        <span>Pricing & Plans</span>
+                        <span id="menuScanCounter" class="text-xs font-bold bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full">20/20</span>
+                    </a>
+                    <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Past Documents & Scans</a>
                     <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">About DoubleCheck</a>
                     <a href="#" onclick="toggleMenu(); switchView('authView');" class="block px-4 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-900 font-semibold text-slate-700 transition">Login / Create Account</a>
                 </nav>
@@ -89,7 +92,7 @@
         </button>
     </main>
 
-    <!-- RESULTS VIEW (DYNAMIC 4-BOX OR 8-BOX) -->
+    <!-- RESULTS VIEW -->
     <div id="resultsView" class="view-section hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col">
         <div class="flex justify-between items-center mb-6 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-sm">
             <div>
@@ -99,9 +102,7 @@
             <button onclick="switchView('homeView')" class="text-sm px-4 py-2 bg-slate-100 hover:bg-slate-200 font-semibold rounded-xl text-slate-700 transition">New Scan</button>
         </div>
 
-        <div id="boxesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Populated dynamically based on plan -->
-        </div>
+        <div id="boxesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
         <button onclick="switchView('homeView')" class="w-full mt-6 py-4 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl shadow-lg transition">
             Scan Another Document
@@ -112,7 +113,7 @@
     <div id="pricingView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center">
         <div class="text-center mb-8">
             <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Simple, Transparent Pricing</h2>
-            <p class="text-slate-500 text-sm">Start your 3-month free trial today. Upgrade or cancel anytime.</p>
+            <p class="text-slate-500 text-sm">Choose your plan to get started.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -122,7 +123,7 @@
                     <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">DoubleCheck Base</span>
                     <div class="flex items-baseline mt-2 mb-4">
                         <span class="text-3xl font-extrabold text-slate-900">£9.99</span>
-                        <span class="text-slate-500 text-xs ml-1">/ month after trial</span>
+                        <span class="text-slate-500 text-xs ml-1">/ month</span>
                     </div>
                     <ul class="space-y-3 text-sm text-slate-600 mb-6">
                         <li class="flex items-center">✓ 20 Document Scans per month</li>
@@ -130,17 +131,16 @@
                         <li class="flex items-center">✓ Standard Email Support</li>
                     </ul>
                 </div>
-                <button onclick="selectPlan('Base')" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Start 3-Month Free Trial</button>
+                <button onclick="selectPlan('Base')" id="basePlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Start 3-Month Free Trial</button>
             </div>
 
             <!-- PRO PLAN -->
-            <div class="bg-white border-2 border-blue-900 rounded-3xl p-8 shadow-md flex flex-col justify-between relative">
-                <div class="absolute -top-3 right-6 bg-blue-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative">
                 <div>
                     <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">DoubleCheck Pro</span>
                     <div class="flex items-baseline mt-2 mb-4">
                         <span class="text-3xl font-extrabold text-slate-900">£19.99</span>
-                        <span class="text-slate-500 text-xs ml-1">/ month after trial</span>
+                        <span class="text-slate-500 text-xs ml-1">/ month</span>
                     </div>
                     <ul class="space-y-3 text-sm text-slate-600 mb-6">
                         <li class="flex items-center font-bold text-slate-900">✓ 50 Document Scans per month</li>
@@ -148,7 +148,7 @@
                         <li class="flex items-center">✓ Priority AI Processing & Exporting</li>
                     </ul>
                 </div>
-                <button onclick="selectPlan('Pro')" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Start 3-Month Free Trial</button>
+                <button onclick="selectPlan('Pro')" id="proPlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Upgrade to Pro</button>
             </div>
         </div>
     </div>
@@ -194,9 +194,9 @@
             <div class="flex justify-between items-center border-b border-slate-100 pb-4">
                 <div>
                     <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">Account Dashboard</p>
-                    <h2 id="accUserEmail" class="text-xl font-extrabold text-slate-900">Theo_kay@icloud.com</h2>
+                    <h2 id="accUserEmail" class="text-xl font-extrabold text-slate-900">theo_kay@icloud.com</h2>
                 </div>
-                <span id="accRoleBadge" class="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-bold rounded-full">Admin</span>
+                <span id="accRoleBadge" class="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-bold rounded-full">Subscriber</span>
             </div>
 
             <!-- SUBSCRIPTION MANAGEMENT SECTION -->
@@ -204,65 +204,33 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Current Plan Status</span>
-                        <h3 id="currentPlanName" class="text-lg font-extrabold text-slate-900">DoubleCheck Pro (3-Month Free Trial Active)</h3>
+                        <h3 id="currentPlanName" class="text-lg font-extrabold text-slate-900">DoubleCheck Base (3-Month Free Trial Active)</h3>
                     </div>
                     <button onclick="switchView('pricingView')" class="px-4 py-2 bg-blue-900 hover:bg-blue-950 text-white text-xs font-bold rounded-xl transition">Change Plan</button>
                 </div>
                 <div class="flex justify-between items-center pt-3 border-t border-slate-200">
-                    <p class="text-xs text-slate-500">Billing renews automatically after trial completion.</p>
+                    <p id="trialRenewalText" class="text-xs text-slate-500">Billing renews automatically after trial completion.</p>
                     <button onclick="cancelSubscription()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition">Cancel Subscription</button>
                 </div>
             </div>
 
-            <!-- MASTER ADMIN PANEL (ONLY FOR THEO) -->
+            <!-- MASTER ADMIN PANEL (REAL ANALYTICS ONLY) -->
             <div id="adminPanel" class="hidden p-6 bg-slate-900 text-white rounded-2xl shadow-md space-y-6">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                     <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Financial & Subscriber Analytics</span>
                     <span class="text-[10px] bg-blue-900 px-2 py-0.5 rounded text-white font-mono">THEO KAY ADMIN</span>
                 </div>
-
-                <!-- DATE SELECTOR FOR REVENUE -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Select Year</label>
-                        <select id="adminYearSelect" onchange="updateAdminStats()" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none">
-                            <option value="2026">2026</option>
-                            <option value="2025">2025</option>
-                            <option value="2024">2024</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Select Month</label>
-                        <select id="adminMonthSelect" onchange="updateAdminStats()" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white focus:outline-none">
-                            <option value="All">All Months (Annual Total)</option>
-                            <option value="0">January</option>
-                            <option value="1">February</option>
-                            <option value="2">March</option>
-                            <option value="3">April</option>
-                            <option value="4">May</option>
-                            <option value="5">June</option>
-                            <option value="6">July</option>
-                            <option value="7">August</option>
-                            <option value="8" selected>September</option>
-                            <option value="9">October</option>
-                            <option value="10">November</option>
-                            <option value="11">December</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- STATS CARDS -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
                         <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Revenue Generated</span>
-                        <p id="adminRevenueDisplay" class="text-2xl font-extrabold text-white mt-1">£4,280.00</p>
+                        <p id="adminRevenueDisplay" class="text-2xl font-extrabold text-white mt-1">£0.00</p>
                     </div>
                     <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
                         <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Subscribers</span>
                         <div class="text-sm font-semibold text-slate-200 mt-1 space-y-0.5">
-                            <p>Free Trial: <span id="statTrialCount" class="font-bold text-blue-400">142</span></p>
-                            <p>Base (£9.99): <span id="statBaseCount" class="font-bold text-blue-400">89</span></p>
-                            <p>Pro (£19.99): <span id="statProCount" class="font-bold text-blue-400">214</span></p>
+                            <p>Free Trial: <span id="statTrialCount" class="font-bold text-blue-400">1</span></p>
+                            <p>Base (£9.99): <span id="statBaseCount" class="font-bold text-blue-400">0</span></p>
+                            <p>Pro (£19.99): <span id="statProCount" class="font-bold text-blue-400">0</span></p>
                         </div>
                     </div>
                     <div class="p-4 bg-slate-800 rounded-xl border border-slate-700 flex flex-col justify-between">
@@ -304,8 +272,8 @@
     <div id="aboutView" class="view-section hidden flex-1 max-w-3xl w-full mx-auto p-6 flex flex-col justify-center">
         <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-4">
             <h2 class="text-2xl font-extrabold text-slate-900">About DoubleCheck</h2>
-            <p class="text-sm text-slate-600">DoubleCheck is designed to make reviewing paperwork simple and fast by letting you summarise any legal documents into clear, plain English summaries without having to wade through endless pages of small print.</p>
-            <p class="text-sm text-slate-600">Whether you are checking a freelance agreement, property lease, or business contract, our tool instantly extracts all the critical financial terms, obligations, and deadlines so you know exactly what you are signing.</p>
+            <p class="text-sm text-slate-600">DoubleCheck summarises any legal documents into clear and simple English so you never get caught out by complicated paperwork.</p>
+            <p class="text-sm text-slate-600">Whether you are reviewing an employment contract or looking over property terms, our platform highlights everything important instantly.</p>
             <button onclick="switchView('homeView')" class="mt-4 px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Return to Home</button>
         </div>
     </div>
@@ -319,9 +287,16 @@
 
     <!-- SCRIPT -->
     <script>
-        let currentUser = { email: "Theo_kay@icloud.com", loggedIn: true, plan: "Pro" };
+        let currentUser = { 
+            email: "theo_kay@icloud.com", 
+            loggedIn: true, 
+            plan: "Trial", 
+            trialUsed: true, 
+            canceled: false,
+            scansRemaining: 20,
+            maxScans: 20 
+        };
 
-        // Load saved session if remember me was active
         const savedSession = localStorage.getItem('doublecheck_session');
         if(savedSession) {
             try { currentUser = JSON.parse(savedSession); } catch(e){}
@@ -337,17 +312,49 @@
             const accRoleBadge = document.getElementById('accRoleBadge');
             const accUserEmail = document.getElementById('accUserEmail');
             const currentPlanName = document.getElementById('currentPlanName');
+            const trialRenewalText = document.getElementById('trialRenewalText');
+            const menuScanCounter = document.getElementById('menuScanCounter');
+            const basePlanBtn = document.getElementById('basePlanBtn');
+            const proPlanBtn = document.getElementById('proPlanBtn');
 
             if(currentUser && currentUser.loggedIn) {
-                statusDisplay.textContent = "Logged in";
+                statusDisplay.textContent = currentUser.email;
                 authSection.innerHTML = '<button onclick="toggleMenu(); handleLogout();" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-center">Logout</button>';
                 accUserEmail.textContent = currentUser.email;
-                currentPlanName.textContent = currentUser.plan === 'Base' ? "DoubleCheck Base (£9.99/mo)" : currentUser.plan === 'Pro' ? "DoubleCheck Pro (£19.99/mo)" : "3-Month Free Trial Active";
+
+                // Update pricing buttons based on trial/cancellation rules
+                if(currentUser.canceled) {
+                    currentPlanName.textContent = "Subscription Canceled (Access Restricted)";
+                    trialRenewalText.textContent = "Your plan is canceled. Please select a plan to regain access.";
+                    basePlanBtn.textContent = "Subscribe to Base (£9.99/mo)";
+                    proPlanBtn.textContent = "Subscribe to Pro (£19.99/mo)";
+                } else if(currentUser.plan === 'Trial') {
+                    currentPlanName.textContent = "DoubleCheck Base (3-Month Free Trial Active)";
+                    trialRenewalText.textContent = "Billing renews automatically after trial completion.";
+                    basePlanBtn.textContent = "Current Trial Plan";
+                    proPlanBtn.textContent = "Upgrade to Pro (£19.99/mo)";
+                } else if(currentUser.plan === 'Base') {
+                    currentPlanName.textContent = "DoubleCheck Base (£9.99/mo)";
+                    trialRenewalText.textContent = "Billing renews automatically monthly.";
+                    basePlanBtn.textContent = "Active Plan";
+                    proPlanBtn.textContent = "Upgrade to Pro (£19.99/mo)";
+                } else if(currentUser.plan === 'Pro') {
+                    currentPlanName.textContent = "DoubleCheck Pro (£19.99/mo)";
+                    trialRenewalText.textContent = "Billing renews automatically monthly.";
+                    basePlanBtn.textContent = "Switch to Base";
+                    proPlanBtn.textContent = "Active Plan";
+                }
+
+                menuScanCounter.textContent = currentUser.scansRemaining + "/" + currentUser.maxScans;
 
                 if(currentUser.email.toLowerCase() === "theo_kay@icloud.com") {
                     adminPanel.classList.remove('hidden');
                     accRoleBadge.textContent = "Master Admin";
                     accRoleBadge.className = "px-3 py-1 bg-blue-900 text-white text-xs font-bold rounded-full";
+                    document.getElementById('adminRevenueDisplay').textContent = (currentUser.plan === 'Pro' ? "£19.99" : currentUser.plan === 'Base' ? "£9.99" : "£0.00");
+                    document.getElementById('statTrialCount').textContent = currentUser.plan === 'Trial' ? "1" : "0";
+                    document.getElementById('statBaseCount').textContent = currentUser.plan === 'Base' ? "1" : "0";
+                    document.getElementById('statProCount').textContent = currentUser.plan === 'Pro' ? "1" : "0";
                 } else {
                     adminPanel.classList.add('hidden');
                     accRoleBadge.textContent = "Subscriber";
@@ -365,6 +372,11 @@
         }
 
         function switchView(viewId) {
+            if(currentUser.canceled && viewId === 'homeView') {
+                alert("Your subscription or free trial was canceled. Please select a plan to access the website.");
+                switchView('pricingView');
+                return;
+            }
             document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
             document.getElementById(viewId).classList.remove('hidden');
             window.scrollTo(0, 0);
@@ -378,9 +390,23 @@
         }
 
         function summarise() {
+            if(currentUser.canceled) {
+                alert("Subscription canceled. Please select a plan to continue.");
+                switchView('pricingView');
+                return;
+            }
+            if(currentUser.scansRemaining <= 0) {
+                alert("You have reached your monthly scan limit. Please upgrade your plan.");
+                switchView('pricingView');
+                return;
+            }
+
+            currentUser.scansRemaining--;
+            saveSession();
+            updateAuthStateUI();
+
             const text = document.getElementById('documentInput').value.trim();
             let docName = "CUSTOM_LEGAL_AGREEMENT";
-            
             const lines = text.split('\n');
             for(let line of lines) {
                 if(line.includes("AGREEMENT") || line.includes("CONTRACT") || line.includes("TERMS")) {
@@ -396,16 +422,11 @@
         }
 
         function runSummariser(docName) {
-            if(currentUser.email.toLowerCase() !== "theo_kay@icloud.com" && !currentUser.loggedIn) {
-                switchView('pricingView');
-                return;
-            }
-
             document.getElementById('extractedDocName').textContent = docName;
             const container = document.getElementById('boxesContainer');
             container.innerHTML = '';
 
-            const isPro = currentUser.email.toLowerCase() === "theo_kay@icloud.com" || currentUser.plan === 'Pro' || currentUser.plan === 'Trial';
+            const isPro = currentUser.plan === 'Pro';
             const numBoxes = isPro ? 8 : 4;
 
             document.getElementById('resultsSubtitle').textContent = isPro ? "Complete 8-Box Breakdown (Pro Plan)" : "Key Information Breakdown (Base Plan)";
@@ -450,23 +471,46 @@
         }
 
         function selectPlan(planType) {
-            currentUser.plan = planType;
-            if(!currentUser.loggedIn) currentUser.loggedIn = true;
-            if(!currentUser.email) currentUser.email = "theo_kay@icloud.com";
-            
-            if(document.getElementById('rememberMeCheck') && document.getElementById('rememberMeCheck').checked) {
-                localStorage.setItem('doublecheck_session', JSON.stringify(currentUser));
+            if(planType === 'Base') {
+                if(!currentUser.trialUsed) {
+                    currentUser.plan = 'Trial';
+                    currentUser.trialUsed = true;
+                    currentUser.maxScans = 20;
+                    currentUser.scansRemaining = 20;
+                    alert("Successfully started your 3-month free trial for DoubleCheck Base!");
+                } else {
+                    currentUser.plan = 'Base';
+                    currentUser.maxScans = 20;
+                    currentUser.scansRemaining = 20;
+                    alert("Switched to DoubleCheck Base (£9.99/mo).");
+                }
+            } else if(planType === 'Pro') {
+                currentUser.plan = 'Pro';
+                currentUser.maxScans = 50;
+                currentUser.scansRemaining = 50;
+                alert("Upgraded to DoubleCheck Pro (£19.99/mo).");
             }
+
+            currentUser.canceled = false;
+            saveSession();
             updateAuthStateUI();
-            alert("Successfully started your 3-month free trial for DoubleCheck " + planType + "!");
             switchView('accountView');
         }
 
         function cancelSubscription() {
-            if(confirm("Are you sure you want to cancel your subscription?")) {
-                currentUser.plan = "Free Trial Canceled";
+            if(confirm("Are you sure you want to cancel your subscription/trial?")) {
+                currentUser.canceled = true;
+                currentUser.scansRemaining = 0;
+                saveSession();
                 updateAuthStateUI();
-                alert("Subscription canceled successfully.");
+                alert("Subscription canceled. Access has been restricted until a plan is purchased.");
+                switchView('pricingView');
+            }
+        }
+
+        function saveSession() {
+            if(document.getElementById('rememberMeCheck') && document.getElementById('rememberMeCheck').checked) {
+                localStorage.setItem('doublecheck_session', JSON.stringify(currentUser));
             }
         }
 
@@ -519,7 +563,15 @@
                 return;
             }
 
-            currentUser = { email: email, loggedIn: true, plan: "Trial" };
+            currentUser = { 
+                email: email, 
+                loggedIn: true, 
+                plan: "Trial", 
+                trialUsed: false, 
+                canceled: false,
+                scansRemaining: 20,
+                maxScans: 20 
+            };
             
             if(rememberMe) {
                 localStorage.setItem('doublecheck_session', JSON.stringify(currentUser));
@@ -533,25 +585,11 @@
         }
 
         function handleLogout() {
-            currentUser = { email: "", loggedIn: false, plan: null };
+            currentUser = { email: "", loggedIn: false, plan: null, canceled: false, scansRemaining: 0 };
             localStorage.removeItem('doublecheck_session');
             updateAuthStateUI();
             switchView('authView');
             alert("Logged out successfully.");
-        }
-
-        function updateAdminStats() {
-            const year = document.getElementById('adminYearSelect').value;
-            const month = document.getElementById('adminMonthSelect').value;
-            
-            let baseRev = month === 'All' ? 51360 : 4280;
-            if(year === '2025') baseRev = Math.round(baseRev * 0.75);
-            if(year === '2024') baseRev = Math.round(baseRev * 0.45);
-
-            document.getElementById('adminRevenueDisplay').textContent = "£" + baseRev.toLocaleString() + ".00";
-            document.getElementById('statTrialCount').textContent = year === '2026' ? "142" : "98";
-            document.getElementById('statBaseCount').textContent = year === '2026' ? "89" : "64";
-            document.getElementById('statProCount').textContent = year === '2026' ? "214" : "150";
         }
 
         updateAuthStateUI();
