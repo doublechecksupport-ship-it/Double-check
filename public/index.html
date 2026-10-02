@@ -609,13 +609,21 @@
 
         function handleAuthAction() {
             const email = document.getElementById('authEmail').value.trim();
-            const pass = document.getElementById('authPassword').value.trim();
+            const pass = document.getElementById('authPassword').value;
             const code = document.getElementById('authCode').value.trim();
             const verificationContainer = document.getElementById('verificationContainer');
             const btn = document.getElementById('authActionBtn');
 
-            if(!email || !pass) {
-                alert("Please enter both email and password.");
+            // Strict Email Validation Regex (ensures standard format like name@domain.com)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if(!emailRegex.test(email)) {
+                alert("Please enter a valid email address (e.g., name@example.com).");
+                return;
+            }
+
+            // Secure Password Length Check
+            if(pass.length < 6) {
+                alert("Password must be at least 6 characters long.");
                 return;
             }
 
