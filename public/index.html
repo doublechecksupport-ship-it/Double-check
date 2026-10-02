@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DoubleCheck - AI Legal Document Summariser</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- EmailJS for sending real emails from doublecheck.support@gmail.com -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         .logo-icon {
@@ -49,13 +48,9 @@
                     <span class="text-lg font-bold text-slate-900">Menu</span>
                     <button onclick="toggleMenu()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
                 </div>
-                <nav id="drawerNavLinks" class="space-y-2">
-                    <!-- Dynamically populated -->
-                </nav>
+                <nav id="drawerNavLinks" class="space-y-2"></nav>
             </div>
-            <div id="drawerAuthSection" class="pt-4 border-t border-slate-100">
-                <!-- Dynamically populated -->
-            </div>
+            <div id="drawerAuthSection" class="pt-4 border-t border-slate-100"></div>
         </div>
     </div>
 
@@ -64,7 +59,6 @@
         <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Summarise Any Legal Document</h1>
         <p class="text-slate-500 mb-8 max-w-lg">Upload an image, upload a PDF file, or paste your legal text below for a structured breakdown.</p>
 
-        <!-- TOP UPLOAD ROW -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-6">
             <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:border-blue-900 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
                 <span class="text-blue-900 font-bold mb-1">Upload Image</span>
@@ -78,7 +72,6 @@
             </label>
         </div>
 
-        <!-- BIG PASTE BOX -->
         <div class="w-full bg-white border border-slate-200 rounded-3xl p-4 shadow-sm mb-6 text-left">
             <div class="flex justify-between items-center px-2 mb-2">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paste Legal Document Text</span>
@@ -216,7 +209,6 @@
                 </div>
             </div>
 
-            <!-- Sub-Panels -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between">
                     <div>
@@ -236,27 +228,32 @@
                 </div>
                 <div class="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between">
                     <div>
-                        <span class="text-[10px] font-bold text-blue-900 uppercase tracking-wider">Connected Devices</span>
-                        <p class="text-sm font-bold text-slate-800 mt-2">1 Active Session</p>
-                        <p class="text-xs text-slate-400 mt-1">Encrypted SSL Session</p>
+                        <span class="text-[10px] font-bold text-blue-900 uppercase tracking-wider">Danger Zone</span>
+                        <p class="text-sm font-bold text-red-600 mt-2">Delete Account</p>
+                        <p class="text-xs text-slate-400 mt-1">Permanently remove data</p>
                     </div>
-                    <button onclick="alert('Session is securely authenticated.')" class="mt-4 text-xs font-bold text-blue-900 hover:underline text-left">Session Info →</button>
+                    <button onclick="deleteAccount()" class="mt-4 text-xs font-bold text-red-600 hover:underline text-left">Delete Account →</button>
                 </div>
             </div>
 
+            <!-- MASTER ADMIN STATISTICS PANEL (Only visible to Theo-Kay@gmail.com) -->
             <div id="adminPanel" class="hidden p-6 sm:p-8 bg-slate-900 text-white rounded-3xl shadow-md space-y-5">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                    <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Admin Overview</span>
-                    <span class="text-[10px] bg-blue-900 px-2.5 py-1 rounded text-white font-mono">ADMIN ACCESS</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Admin Statistics Overview</span>
+                    <span class="text-[10px] bg-blue-900 px-2.5 py-1 rounded text-white font-mono">EXCLUSIVE ADMIN ACCESS</span>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
                     <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
-                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Monthly Revenue</span>
-                        <p id="adminRevenueDisplay" class="text-2xl font-extrabold text-white mt-1">£0.00</p>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Total Registered Users</span>
+                        <p id="adminTotalUsers" class="text-2xl font-extrabold text-white mt-1">1</p>
                     </div>
                     <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
-                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Plan</span>
-                        <p id="adminPlanDisplay" class="text-lg font-extrabold text-blue-400 mt-1">Free Trial</p>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Subscriptions</span>
+                        <p id="adminActiveSubs" class="text-2xl font-extrabold text-emerald-400 mt-1">1</p>
+                    </div>
+                    <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">System Status</span>
+                        <p class="text-lg font-extrabold text-blue-400 mt-1">Secure & Online</p>
                     </div>
                 </div>
             </div>
@@ -315,24 +312,15 @@
 
             <div class="space-y-4 text-sm text-slate-700 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
                 <h3 class="font-bold text-slate-900 text-base">1. Acceptance of Terms</h3>
-                <p>By accessing or using DoubleCheck (&quot;the Service&quot;), you agree to be bound by these Terms of Conditions. If you do not agree to all of these terms, you must not use our web application or services.</p>
+                <p>By accessing or using DoubleCheck (&quot;the Service&quot;), you agree to be bound by these Terms of Conditions.</p>
 
                 <h3 class="font-bold text-slate-900 text-base">2. Not Formal Legal Advice (Critical Disclaimer)</h3>
                 <p class="bg-blue-50 border border-blue-200 p-4 rounded-2xl text-blue-900 font-medium">
-                    DoubleCheck is an AI-powered informational utility designed solely to assist in breaking down and summarising complex text. <strong>DoubleCheck is not a law firm, does not provide legal representation, and does not offer formal legal counsel.</strong> The summaries generated by our AI should never replace professional consultation with a qualified, licensed attorney in your jurisdiction.
+                    DoubleCheck is an AI-powered informational utility. <strong>DoubleCheck is not a law firm and does not offer formal legal counsel.</strong>
                 </p>
 
                 <h3 class="font-bold text-slate-900 text-base">3. Limitation of Liability</h3>
-                <p>To the maximum extent permitted by applicable law, DoubleCheck Ltd and its operators shall not be held liable for any direct, indirect, incidental, consequential, or punitive damages arising out of or related to your use of the service, reliance upon any AI-generated summary, or omission of crucial clauses in uploaded documents.</p>
-
-                <h3 class="font-bold text-slate-900 text-base">4. User Responsibilities & Document Confidentiality</h3>
-                <p>You warrant that you hold the legal right to upload, view, and process any documents or text submitted through your account. You agree not to upload classified, highly sensitive personal government credentials, or illegal material.</p>
-
-                <h3 class="font-bold text-slate-900 text-base">5. Subscriptions, Free Trials, and Billing</h3>
-                <p>Subscriptions renew automatically according to your chosen plan (Base or Pro) unless canceled prior to the renewal date. Free trials convert into paid subscriptions upon expiration unless terminated directly through your account dashboard.</p>
-
-                <h3 class="font-bold text-slate-900 text-base">6. Modifications to Terms</h3>
-                <p>We reserve the right to modify these terms at any time. Continued use of DoubleCheck following any modifications indicates your acceptance of the updated terms.</p>
+                <p>DoubleCheck Ltd and its operators shall not be held liable for any damages arising out of or related to your use of the service.</p>
             </div>
 
             <div class="pt-6 border-t border-slate-100 flex justify-end">
@@ -348,7 +336,7 @@
         © 2026 DoubleCheck Ltd. All rights reserved.
     </footer>
 
-    <!-- SCRIPT LOCKDOWN & AUTH ENGINE -->
+    <!-- SCRIPT ENGINE -->
     <script>
         let currentUser = { 
             email: "", 
@@ -360,7 +348,6 @@
             maxScans: 20 
         };
 
-        // Persistent database simulation in LocalStorage for accounts
         function getUsersDB() {
             try {
                 return JSON.parse(localStorage.getItem('doublecheck_users_db')) || {};
@@ -373,6 +360,7 @@
             localStorage.setItem('doublecheck_users_db', JSON.stringify(db));
         }
 
+        // Persistent Remember-Me Session Initialization
         const savedSession = localStorage.getItem('doublecheck_secure_session');
         if(savedSession) {
             try {
@@ -385,7 +373,7 @@
             }
         }
 
-        let authStepState = 'EMAIL_INPUT'; // 'EMAIL_INPUT', 'LOGIN_PASSWORD', 'SIGNUP_DETAILS', 'VERIFY_CODE'
+        let authStepState = 'EMAIL_INPUT';
         let generatedVerificationCode = "";
         let pendingEmail = "";
 
@@ -443,12 +431,16 @@
                     pageScanCounter.textContent = currentUser.scansRemaining + "/" + currentUser.maxScans;
                 }
 
-                if(currentUser.email.toLowerCase() === "theo_kay@icloud.com" || currentUser.email.toLowerCase() === "theoamani99@gmail.com") {
+                // STRICT ADMIN CHECK: Only Theo-Kay@gmail.com can see statistics
+                if(currentUser.email.toLowerCase() === "theo-kay@gmail.com") {
                     adminPanel.classList.remove('hidden');
                     accRoleBadge.textContent = "Master Admin";
                     accRoleBadge.className = "px-3.5 py-1.5 bg-blue-900 text-white text-xs font-bold rounded-full";
-                    document.getElementById('adminRevenueDisplay').textContent = (currentUser.plan === 'Pro' ? "£19.99" : currentUser.plan === 'Base' ? "£9.99" : "£0.00");
-                    document.getElementById('adminPlanDisplay').textContent = currentUser.plan === 'Pro' ? "Pro (£19.99/mo)" : currentUser.plan === 'Base' ? "Base (£9.99/mo)" : "Free Trial";
+                    
+                    const db = getUsersDB();
+                    const totalUsersCount = Object.keys(db).length || 1;
+                    document.getElementById('adminTotalUsers').textContent = totalUsersCount;
+                    document.getElementById('adminActiveSubs').textContent = totalUsersCount;
                 } else {
                     adminPanel.classList.add('hidden');
                     accRoleBadge.textContent = "Subscriber";
@@ -588,7 +580,6 @@
             currentUser.canceled = false;
             localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
             
-            // Sync with users DB
             const db = getUsersDB();
             if(db[currentUser.email]) {
                 db[currentUser.email].plan = currentUser.plan;
@@ -616,7 +607,20 @@
             }
         }
 
-        // --- ENHANCED AUTH & REAL EMAIL VERIFICATION FLOW ---
+        function deleteAccount() {
+            if(confirm("WARNING: Are you sure you want to permanently delete your account? All data and scans will be wiped.")) {
+                const db = getUsersDB();
+                if(db[currentUser.email]) {
+                    delete db[currentUser.email];
+                    saveUsersDB(db);
+                }
+                localStorage.removeItem('doublecheck_secure_session');
+                currentUser = { email: "", loggedIn: false, plan: null, trialUsed: false, canceled: false, scansRemaining: 0, maxScans: 20 };
+                alert("Your account has been successfully deleted.");
+                handleLogout();
+            }
+        }
+
         function checkEmailAccountStatus() {
             const email = document.getElementById('authEmail').value.trim().toLowerCase();
             const feedback = document.getElementById('emailStatusFeedback');
@@ -630,7 +634,22 @@
                 return;
             }
 
+            // Auto-seed admin account on first check if not present
             const db = getUsersDB();
+            if(email === "theo-kay@gmail.com" && !db["theo-kay@gmail.com"]) {
+                db["theo-kay@gmail.com"] = {
+                    email: "theo-kay@gmail.com",
+                    password: "Theo9*89",
+                    loggedIn: false,
+                    plan: "Pro",
+                    trialUsed: true,
+                    canceled: false,
+                    scansRemaining: 50,
+                    maxScans: 50
+                };
+                saveUsersDB(db);
+            }
+
             if (db[email]) {
                 feedback.textContent = "✓ Existing account found. Enter password to login.";
                 feedback.className = "text-[11px] text-blue-900 font-semibold mt-1";
@@ -661,16 +680,36 @@
 
             const db = getUsersDB();
 
+            // Handle Admin Direct login match
+            if(email === "theo-kay@gmail.com" && pass === "Theo9*89" && (!db[email] || db[email].password === "Theo9*89")) {
+                const adminUser = {
+                    email: "theo-kay@gmail.com",
+                    password: "Theo9*89",
+                    loggedIn: true,
+                    plan: "Pro",
+                    trialUsed: true,
+                    canceled: false,
+                    scansRemaining: 50,
+                    maxScans: 50
+                };
+                db[email] = adminUser;
+                saveUsersDB(db);
+                currentUser = adminUser;
+                localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
+                updateAuthStateUI();
+                switchView('homeView');
+                return;
+            }
+
             if (authStepState === 'LOGIN_PASSWORD') {
                 if (!pass) {
                     alert("Please enter your password.");
                     return;
                 }
-                if (db[email].password !== pass) {
+                if (!db[email] || db[email].password !== pass) {
                     alert("Incorrect password for this account.");
                     return;
                 }
-                // Successful login
                 currentUser = db[email];
                 currentUser.loggedIn = true;
                 localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
@@ -678,19 +717,13 @@
                 switchView('homeView');
             } 
             else if (authStepState === 'SIGNUP_DETAILS') {
-                // Enterprise Password Policy: Min 8 chars, 1 uppercase, 1 number, 1 special symbol
                 const passwordPolicy = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
                 if (!passwordPolicy.test(pass)) {
                     alert("Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special symbol.");
                     return;
                 }
 
-                // Generate 6-digit verification code
                 generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-                
-                // Simulate sending email from doublecheck.support@gmail.com using EmailJS or direct dispatch
-                console.log("Sending email from doublecheck.support@gmail.com to " + email + " with code: " + generatedVerificationCode);
-                
                 document.getElementById('verificationContainer').classList.remove('hidden');
                 document.getElementById('authActionBtn').textContent = "Verify & Create Account";
                 authStepState = 'VERIFY_CODE';
@@ -703,7 +736,6 @@
                     return;
                 }
 
-                // Create new user in DB
                 const newUser = {
                     email: email,
                     password: pass,
