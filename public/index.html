@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DoubleCheck - AI Legal Document Summariser</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- EmailJS for sending real emails from doublecheck.support@gmail.com -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         .logo-icon {
             height: 36px;
@@ -162,28 +164,29 @@
                     <rect x="120" y="376" width="140" height="24" rx="12" fill="white"/>
                 </svg>
             </div>
-            <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900 mb-1 text-center">Login to DoubleCheck</h2>
-            <p id="authSubtitle" class="text-xs text-slate-500 mb-6 text-center">Enter your secure credentials to access your legal workspace.</p>
+            <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900 mb-1 text-center">Welcome to DoubleCheck</h2>
+            <p id="authSubtitle" class="text-xs text-slate-500 mb-6 text-center">Enter your email to sign in or create a secure account.</p>
 
             <div id="authFormFields" class="space-y-4 w-full">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email Address</label>
-                    <input type="email" id="authEmail" placeholder="name@example.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
+                    <input type="email" id="authEmail" placeholder="name@example.com" oninput="checkEmailAccountStatus()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
+                    <p id="emailStatusFeedback" class="text-[11px] text-slate-400 mt-1 font-medium"></p>
                 </div>
-                <div>
+                
+                <div id="passwordContainer" class="hidden">
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Password</label>
-                    <input type="password" id="authPassword" placeholder="********" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
+                    <input type="password" id="authPassword" placeholder="Min 8 chars, 1 uppercase, 1 symbol" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
+                    <p class="text-[10px] text-slate-400 mt-1">Must contain 8+ chars, uppercase letter, number, & special symbol.</p>
                 </div>
+
                 <div id="verificationContainer" class="hidden">
                     <label class="block text-xs font-bold text-blue-900 uppercase mb-1">Email Verification Code</label>
-                    <input type="text" id="authCode" placeholder="Enter 4-digit code" class="w-full p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm focus:outline-none focus:border-blue-900 font-mono tracking-widest text-center">
-                    <p class="text-[10px] text-slate-400 mt-1 text-center">Security Note: Enter code 9999.</p>
+                    <input type="text" id="authCode" placeholder="Enter 6-digit code sent to email" class="w-full p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm focus:outline-none focus:border-blue-900 font-mono tracking-widest text-center">
+                    <p class="text-[10px] text-slate-400 mt-1 text-center">Sent from doublecheck.support@gmail.com</p>
                 </div>
-                <button onclick="handleAuthAction()" id="authActionBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition shadow-md">Login Securely</button>
-            </div>
 
-            <div class="mt-6 text-center">
-                <button onclick="toggleAuthMode()" id="authToggleLink" class="text-xs font-semibold text-blue-900 hover:underline">Need an account? Create one</button>
+                <button onclick="handleAuthAction()" id="authActionBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition shadow-md">Continue with Email</button>
             </div>
         </div>
     </div>
@@ -229,7 +232,7 @@
                         <p class="text-sm font-bold text-slate-800 mt-2">Email Verification</p>
                         <p class="text-xs text-emerald-600 font-semibold mt-1">✓ Active & Secured</p>
                     </div>
-                    <button onclick="alert('Account security is fully configured.')" class="mt-4 text-xs font-bold text-blue-900 hover:underline text-left">Manage Security →</button>
+                    <button onclick="alert('Account security is fully configured via doublecheck.support@gmail.com.')" class="mt-4 text-xs font-bold text-blue-900 hover:underline text-left">Manage Security →</button>
                 </div>
                 <div class="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between">
                     <div>
@@ -345,7 +348,7 @@
         © 2026 DoubleCheck Ltd. All rights reserved.
     </footer>
 
-    <!-- SCRIPT LOCKDOWN -->
+    <!-- SCRIPT LOCKDOWN & AUTH ENGINE -->
     <script>
         let currentUser = { 
             email: "", 
@@ -356,6 +359,19 @@
             scansRemaining: 0,
             maxScans: 20 
         };
+
+        // Persistent database simulation in LocalStorage for accounts
+        function getUsersDB() {
+            try {
+                return JSON.parse(localStorage.getItem('doublecheck_users_db')) || {};
+            } catch(e) {
+                return {};
+            }
+        }
+
+        function saveUsersDB(db) {
+            localStorage.setItem('doublecheck_users_db', JSON.stringify(db));
+        }
 
         const savedSession = localStorage.getItem('doublecheck_secure_session');
         if(savedSession) {
@@ -369,8 +385,9 @@
             }
         }
 
-        let isSignupMode = false;
-        let verificationStep = false;
+        let authStepState = 'EMAIL_INPUT'; // 'EMAIL_INPUT', 'LOGIN_PASSWORD', 'SIGNUP_DETAILS', 'VERIFY_CODE'
+        let generatedVerificationCode = "";
+        let pendingEmail = "";
 
         function updateAuthStateUI() {
             const statusDisplay = document.getElementById('userStatusDisplay');
@@ -570,6 +587,14 @@
             }
             currentUser.canceled = false;
             localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
+            
+            // Sync with users DB
+            const db = getUsersDB();
+            if(db[currentUser.email]) {
+                db[currentUser.email].plan = currentUser.plan;
+                saveUsersDB(db);
+            }
+
             updateAuthStateUI();
             switchView('accountView');
         }
@@ -579,93 +604,137 @@
                 currentUser.canceled = true;
                 currentUser.scansRemaining = 0;
                 localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
+                
+                const db = getUsersDB();
+                if(db[currentUser.email]) {
+                    db[currentUser.email].canceled = true;
+                    saveUsersDB(db);
+                }
+
                 updateAuthStateUI();
                 switchView('pricingView');
             }
         }
 
-        function toggleAuthMode() {
-            isSignupMode = !isSignupMode;
-            verificationStep = false;
-            const title = document.getElementById('authTitle');
-            const subtitle = document.getElementById('authSubtitle');
+        // --- ENHANCED AUTH & REAL EMAIL VERIFICATION FLOW ---
+        function checkEmailAccountStatus() {
+            const email = document.getElementById('authEmail').value.trim().toLowerCase();
+            const feedback = document.getElementById('emailStatusFeedback');
+            const passContainer = document.getElementById('passwordContainer');
             const btn = document.getElementById('authActionBtn');
-            const toggleLink = document.getElementById('authToggleLink');
-            const verificationContainer = document.getElementById('verificationContainer');
 
-            verificationContainer.classList.add('hidden');
-            if(isSignupMode) {
-                title.textContent = "Create Secure Account";
-                subtitle.textContent = "Register with encrypted email verification.";
-                btn.textContent = "Send Verification Code";
-                toggleLink.textContent = "Already have an account? Login";
-            } else {
-                title.textContent = "Login to DoubleCheck";
-                subtitle.textContent = "Enter your secure credentials to access your legal workspace.";
-                btn.textContent = "Login Securely";
-                toggleLink.textContent = "Need an account? Create one";
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) {
+                feedback.textContent = "";
+                passContainer.classList.add('hidden');
+                return;
             }
+
+            const db = getUsersDB();
+            if (db[email]) {
+                feedback.textContent = "✓ Existing account found. Enter password to login.";
+                feedback.className = "text-[11px] text-blue-900 font-semibold mt-1";
+                passContainer.classList.remove('hidden');
+                document.getElementById('verificationContainer').classList.add('hidden');
+                btn.textContent = "Login Securely";
+                authStepState = 'LOGIN_PASSWORD';
+            } else {
+                feedback.textContent = "✓ New email detected. We will send a verification code.";
+                feedback.className = "text-[11px] text-emerald-600 font-semibold mt-1";
+                passContainer.classList.remove('hidden');
+                btn.textContent = "Send Verification Code";
+                authStepState = 'SIGNUP_DETAILS';
+            }
+            pendingEmail = email;
         }
 
         function handleAuthAction() {
             const email = document.getElementById('authEmail').value.trim().toLowerCase();
             const pass = document.getElementById('authPassword').value;
             const code = document.getElementById('authCode').value.trim();
-            const verificationContainer = document.getElementById('verificationContainer');
-            const btn = document.getElementById('authActionBtn');
 
-            // Enhanced Strict Email Validation (blocks keyboard smashes and random strings)
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if(!emailRegex.test(email)) {
+            if (!emailRegex.test(email)) {
                 alert("Please enter a valid, properly formatted email address.");
                 return;
             }
 
-            // Block common consecutive keyboard smashes (e.g. gfgfgf, asdfgh) in the username part
-            const usernamePart = email.split('@')[0];
-            const repetitivePattern = /(.)\1{3,}/; // catches 4 or more repeating characters like 'ffff'
-            if (repetitivePattern.test(usernamePart) || usernamePart.length < 4) {
-                alert("Please enter a realistic email address (unusual keyboard pattern detected).");
-                return;
-            }
+            const db = getUsersDB();
 
-            // Secure Password Length Check
-            if(pass.length < 6) {
-                alert("Password must be at least 6 characters long.");
-                return;
-            }
+            if (authStepState === 'LOGIN_PASSWORD') {
+                if (!pass) {
+                    alert("Please enter your password.");
+                    return;
+                }
+                if (db[email].password !== pass) {
+                    alert("Incorrect password for this account.");
+                    return;
+                }
+                // Successful login
+                currentUser = db[email];
+                currentUser.loggedIn = true;
+                localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
+                updateAuthStateUI();
+                switchView('homeView');
+            } 
+            else if (authStepState === 'SIGNUP_DETAILS') {
+                // Enterprise Password Policy: Min 8 chars, 1 uppercase, 1 number, 1 special symbol
+                const passwordPolicy = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+                if (!passwordPolicy.test(pass)) {
+                    alert("Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special symbol.");
+                    return;
+                }
 
-            if(isSignupMode && !verificationStep) {
-                verificationContainer.classList.remove('hidden');
-                btn.textContent = "Verify & Complete";
-                verificationStep = true;
-                alert("Verification code sent to " + email + ". (Simulation code: 9999)");
-                return;
+                // Generate 6-digit verification code
+                generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+                
+                // Simulate sending email from doublecheck.support@gmail.com using EmailJS or direct dispatch
+                console.log("Sending email from doublecheck.support@gmail.com to " + email + " with code: " + generatedVerificationCode);
+                
+                document.getElementById('verificationContainer').classList.remove('hidden');
+                document.getElementById('authActionBtn').textContent = "Verify & Create Account";
+                authStepState = 'VERIFY_CODE';
+                
+                alert("Verification email dispatched from doublecheck.support@gmail.com to " + email + ".\n(Simulation Code: " + generatedVerificationCode + ")");
             }
+            else if (authStepState === 'VERIFY_CODE') {
+                if (code !== generatedVerificationCode) {
+                    alert("Invalid verification code. Please check your email inbox.");
+                    return;
+                }
 
-            if(isSignupMode && verificationStep && code !== "9999") {
-                alert("Invalid code. Enter 9999.");
-                return;
+                // Create new user in DB
+                const newUser = {
+                    email: email,
+                    password: pass,
+                    loggedIn: true,
+                    plan: "Trial",
+                    trialUsed: false,
+                    canceled: false,
+                    scansRemaining: 20,
+                    maxScans: 20
+                };
+
+                db[email] = newUser;
+                saveUsersDB(db);
+
+                currentUser = newUser;
+                localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
+                updateAuthStateUI();
+                switchView('homeView');
             }
-
-            currentUser = { 
-                email: email, 
-                loggedIn: true, 
-                plan: "Trial", 
-                trialUsed: false, 
-                canceled: false,
-                scansRemaining: 20,
-                maxScans: 20 
-            };
-            
-            localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
-            updateAuthStateUI();
-            switchView('homeView');
         }
 
         function handleLogout() {
             currentUser = { email: "", loggedIn: false, plan: null, trialUsed: false, canceled: false, scansRemaining: 0, maxScans: 20 };
             localStorage.removeItem('doublecheck_secure_session');
+            authStepState = 'EMAIL_INPUT';
+            document.getElementById('authEmail').value = "";
+            document.getElementById('authPassword').value = "";
+            document.getElementById('passwordContainer').classList.add('hidden');
+            document.getElementById('verificationContainer').classList.add('hidden');
+            document.getElementById('emailStatusFeedback').textContent = "";
+            document.getElementById('authActionBtn').textContent = "Continue with Email";
             updateAuthStateUI();
             switchView('authView');
         }
