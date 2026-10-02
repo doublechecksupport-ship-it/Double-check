@@ -103,40 +103,60 @@
     </div>
 
     <!-- PRICING & PLANS VIEW -->
-    <div id="pricingView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center">
+    <div id="pricingView" class="view-section hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col justify-center">
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Simple, Transparent Pricing</h2>
-            <p class="text-slate-500 text-sm">Choose your plan to get started.</p>
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Flexible Plans for Every Need</h2>
+            <p class="text-slate-500 text-sm max-w-lg mx-auto">Experience full power with our Free Trial, choose the Base plan for casual reviewing, or upgrade to Pro for professional freelance security.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col justify-between">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Free Trial Tier -->
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
                 <div>
-                    <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">DoubleCheck Base</span>
+                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">1. Free Trial Hook</span>
+                    <div class="flex items-baseline mt-2 mb-4">
+                        <span class="text-3xl font-extrabold text-slate-900">£0</span>
+                        <span class="text-slate-500 text-xs ml-1">/ first 3 contracts</span>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
+                        <li class="flex items-center">✓ Full Pro 8-box deep-dive dashboard</li>
+                        <li class="flex items-center">✓ Test real critical contracts instantly</li>
+                        <li class="flex items-center">✓ Zero upfront payment required</li>
+                    </ul>
+                </div>
+                <button onclick="selectPlan('Trial')" id="trialPlanBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition text-sm">Start Free Trial</button>
+            </div>
+
+            <!-- Base Plan -->
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">2. Base Plan (Casual)</span>
                     <div class="flex items-baseline mt-2 mb-4">
                         <span class="text-3xl font-extrabold text-slate-900">£9.99</span>
                         <span class="text-slate-500 text-xs ml-1">/ month</span>
                     </div>
                     <ul class="space-y-3 text-sm text-slate-600 mb-6">
-                        <li class="flex items-center">✓ 20 Document Scans per month</li>
-                        <li class="flex items-center">✓ Key Information Boxes</li>
-                        <li class="flex items-center">✓ Standard Email Support</li>
+                        <li class="flex items-center">✓ 4-Box Core Information Summary</li>
+                        <li class="flex items-center">✓ Perfect for leases & gig work</li>
+                        <li class="flex items-center">✓ Key dates & payment terms</li>
                     </ul>
                 </div>
-                <button onclick="selectPlan('Base')" id="basePlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Start 3-Month Free Trial</button>
+                <button onclick="selectPlan('Base')" id="basePlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Select Base Plan</button>
             </div>
 
-            <div class="bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col justify-between">
+            <!-- Pro Plan -->
+            <div class="bg-white border-2 border-blue-900 rounded-3xl p-6 shadow-md flex flex-col justify-between relative">
+                <div class="absolute -top-3 right-6 bg-blue-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
                 <div>
-                    <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">DoubleCheck Pro</span>
+                    <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">3. Pro Plan (Power User)</span>
                     <div class="flex items-baseline mt-2 mb-4">
                         <span class="text-3xl font-extrabold text-slate-900">£19.99</span>
                         <span class="text-slate-500 text-xs ml-1">/ month</span>
                     </div>
                     <ul class="space-y-3 text-sm text-slate-600 mb-6">
-                        <li class="flex items-center font-bold text-slate-900">✓ 50 Document Scans per month</li>
-                        <li class="flex items-center font-bold text-slate-900">✓ Full 8-Box Complete Breakdown</li>
-                        <li class="flex items-center">✓ Priority AI Processing & Exporting</li>
+                        <li class="flex items-center font-bold text-slate-900">✓ Full 8-Box Deep-Dive Dashboard</li>
+                        <li class="flex items-center">✓ Risk flags, hidden penalties, IP rights</li>
+                        <li class="flex items-center">✓ Built for active freelancers & creators</li>
                     </ul>
                 </div>
                 <button onclick="selectPlan('Pro')" id="proPlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Upgrade to Pro</button>
@@ -158,7 +178,7 @@
                 </svg>
             </div>
             <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900 mb-1 text-center">Welcome to DoubleCheck</h2>
-            <p id="authSubtitle" class="text-xs text-slate-500 mb-6 text-center">Enter your email to sign in or create a secure account.</p>
+            <p id="authSubtitle" class="text-xs text-slate-500 mb-6 text-center">Please sign in or create an account to continue.</p>
 
             <div id="authFormFields" class="space-y-4 w-full">
                 <div>
@@ -176,7 +196,15 @@
                 <div id="verificationContainer" class="hidden">
                     <label class="block text-xs font-bold text-blue-900 uppercase mb-1">Email Verification Code</label>
                     <input type="text" id="authCode" placeholder="Enter 6-digit code sent to email" class="w-full p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm focus:outline-none focus:border-blue-900 font-mono tracking-widest text-center">
-                    <p class="text-[10px] text-slate-400 mt-1 text-center">Sent from doublecheck.support@gmail.com</p>
+                    <p class="text-[10px] text-slate-400 mt-1 text-center">Sent from Doubecheck.support@gmail.com</p>
+                </div>
+
+                <!-- Terms agreement checkbox for new accounts -->
+                <div id="termsAgreementContainer" class="hidden flex items-start space-x-2 pt-2">
+                    <input type="checkbox" id="agreeTermsCheckbox" class="mt-1 rounded border-slate-300 text-blue-900 focus:ring-blue-900">
+                    <label for="agreeTermsCheckbox" class="text-xs text-slate-600 leading-normal">
+                        I agree to the <a href="#" onclick="switchView('termsView'); return false;" class="text-blue-900 underline font-semibold">Terms of Conditions & Liability Disclaimer</a>.
+                    </label>
                 </div>
 
                 <button onclick="handleAuthAction()" id="authActionBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition shadow-md">Continue with Email</button>
@@ -192,20 +220,19 @@
                     <p class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-1">Account Dashboard</p>
                     <h2 id="accUserEmail" class="text-xl sm:text-2xl font-extrabold text-slate-900">name@example.com</h2>
                 </div>
-                <span id="accRoleBadge" class="px-3.5 py-1.5 bg-blue-100 text-blue-900 text-xs font-bold rounded-full">Subscriber</span>
             </div>
 
             <div class="p-6 sm:p-8 bg-slate-50 border border-slate-200 rounded-3xl space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Current Plan Status</span>
-                        <h3 id="currentPlanName" class="text-lg font-extrabold text-slate-900 mt-1">DoubleCheck Base (3-Month Free Trial Active)</h3>
+                        <h3 id="currentPlanName" class="text-lg font-extrabold text-slate-900 mt-1">Free Trial (Active)</h3>
                     </div>
                     <button onclick="switchView('pricingView')" class="px-5 py-2.5 bg-blue-900 hover:bg-blue-950 text-white text-xs font-bold rounded-xl transition">Change Plan</button>
                 </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-5 border-t border-slate-200 gap-4">
-                    <p id="trialRenewalText" class="text-xs text-slate-500">Billing renews automatically after trial completion.</p>
-                    <button onclick="cancelSubscription()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition">Cancel Subscription</button>
+                    <p id="trialRenewalText" class="text-xs text-slate-500">Enjoy full Pro features for your first 3 contracts.</p>
+                    <button onclick="cancelSubscription()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition">Cancel Subscription / Plan</button>
                 </div>
             </div>
 
@@ -224,11 +251,11 @@
                         <p class="text-sm font-bold text-slate-800 mt-2">Email Verification</p>
                         <p class="text-xs text-emerald-600 font-semibold mt-1">✓ Active & Secured</p>
                     </div>
-                    <button onclick="alert('Account security is fully configured via doublecheck.support@gmail.com.')" class="mt-4 text-xs font-bold text-blue-900 hover:underline text-left">Manage Security →</button>
+                    <button onclick="alert('Account security is fully configured via Doubecheck.support@gmail.com.')" class="mt-4 text-xs font-bold text-blue-900 hover:underline text-left">Manage Security →</button>
                 </div>
                 <div class="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between">
                     <div>
-                        <span class="text-[10px] font-bold text-blue-900 uppercase tracking-wider">Danger Zone</span>
+                        <span class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Danger Zone</span>
                         <p class="text-sm font-bold text-red-600 mt-2">Delete Account</p>
                         <p class="text-xs text-slate-400 mt-1">Permanently remove data</p>
                     </div>
@@ -275,7 +302,7 @@
             <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
                 <div class="text-right">
                     <span class="text-[10px] font-bold text-slate-400 uppercase block">Scans Remaining</span>
-                    <span id="pageScanCounter" class="text-sm font-extrabold text-blue-900 bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl">0/20</span>
+                    <span id="pageScanCounter" class="text-sm font-extrabold text-blue-900 bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl">0/3</span>
                 </div>
                 <button onclick="switchView('homeView')" class="text-sm px-4 py-2 bg-blue-900 hover:bg-blue-950 font-semibold rounded-xl text-white transition">New Scan</button>
             </div>
@@ -294,9 +321,19 @@
 
     <!-- ABOUT VIEW -->
     <div id="aboutView" class="view-section hidden flex-1 max-w-3xl w-full mx-auto p-6 flex flex-col justify-center">
-        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-4">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
             <h2 class="text-2xl font-extrabold text-slate-900">About DoubleCheck</h2>
-            <p class="text-sm text-slate-600">DoubleCheck summarises any legal documents into clear and simple English so you never get caught out by complicated paperwork.</p>
+            <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                <p>
+                    <strong>DoubleCheck</strong> was built with a clear mission: to simplify complex legal documents, making them completely transparent, easy to understand, and accessible to everyone without expensive solicitor fees.
+                </p>
+                <p>
+                    Whether you are an everyday consumer signing a residential housing lease, a gig worker reviewing an employment agreement, or a freelance creator handling client contracts and NDAs every week, legal jargon can easily catch you out. Hiring a lawyer for every single document review can cost hundreds of pounds.
+                </p>
+                <p>
+                    By leveraging advanced artificial intelligence, DoubleCheck instantly extracts critical payment terms, key deadlines, hidden penalties, and risk clauses. We save you time, eliminate stress, protect you from unfavorable lock-ins, and ultimately save you significant money while maintaining exceptional analytical accuracy.
+                </p>
+            </div>
             <button onclick="switchView('homeView')" class="mt-4 px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Return to Home</button>
         </div>
     </div>
@@ -305,26 +342,56 @@
     <div id="termsView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col">
         <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-sm space-y-6">
             <div class="border-b border-slate-100 pb-4">
-                <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Legal Framework</span>
+                <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Legal Framework & Agreement</span>
                 <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Terms of Conditions & Liability Disclaimer</h2>
-                <p class="text-xs text-slate-400 mt-1">Last updated: September 2026</p>
+                <p class="text-xs text-slate-400 mt-1">Last updated: October 2026</p>
             </div>
 
             <div class="space-y-4 text-sm text-slate-700 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
                 <h3 class="font-bold text-slate-900 text-base">1. Acceptance of Terms</h3>
-                <p>By accessing or using DoubleCheck (&quot;the Service&quot;), you agree to be bound by these Terms of Conditions.</p>
+                <p>By registering an account, accessing, or using DoubleCheck ("the Service"), you expressly agree to be bound by these Terms of Conditions and acknowledge that your usage is subject to these legal conditions.</p>
 
                 <h3 class="font-bold text-slate-900 text-base">2. Not Formal Legal Advice (Critical Disclaimer)</h3>
                 <p class="bg-blue-50 border border-blue-200 p-4 rounded-2xl text-blue-900 font-medium">
-                    DoubleCheck is an AI-powered informational utility. <strong>DoubleCheck is not a law firm and does not offer formal legal counsel.</strong>
+                    DoubleCheck is an AI-powered informational utility. <strong>DoubleCheck is not a law firm, does not practice law, and does not offer formal legal counsel or guarantees.</strong> Users should consult a qualified solicitor for binding legal advice.
                 </p>
 
-                <h3 class="font-bold text-slate-900 text-base">3. Limitation of Liability</h3>
-                <p>DoubleCheck Ltd and its operators shall not be held liable for any damages arising out of or related to your use of the service.</p>
+                <h3 class="font-bold text-slate-900 text-base">3. Subscription, Trials, and Billing</h3>
+                <p>Free trial allowances provide limited full-dashboard summaries (such as your first 3 contracts). Upon trial exhaustion, users must select either the Base Plan or Pro Plan to continue scanning. Subscriptions renew automatically unless canceled prior to the billing cycle.</p>
+
+                <h3 class="font-bold text-slate-900 text-base">4. Limitation of Liability</h3>
+                <p>DoubleCheck Ltd and its operators shall not be held liable for any direct, indirect, or incidental damages arising out of or related to your interpretation or use of automated contract summaries.</p>
             </div>
 
             <div class="pt-6 border-t border-slate-100 flex justify-end">
                 <button onclick="switchView('homeView')" class="px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs rounded-xl transition">Accept & Return to App</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEEDBACK MODAL VIEW -->
+    <div id="feedbackView" class="view-section hidden flex-1 max-w-lg w-full mx-auto p-6 flex flex-col justify-center">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
+            <div>
+                <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Support & Community</span>
+                <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Send Us Feedback</h2>
+                <p class="text-xs text-slate-500 mt-1">Have a suggestion or feature request? Email us directly at <span class="font-mono text-blue-900">Doubecheck.support@gmail.com</span> or use the form below.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Your Email</label>
+                    <input type="email" id="feedbackEmail" placeholder="name@example.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Your Message / Suggestion</label>
+                    <textarea id="feedbackMessage" placeholder="Tell us how we can improve DoubleCheck..." class="w-full h-32 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-900 resize-none"></textarea>
+                </div>
+                <button onclick="submitFeedback()" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Send Feedback</button>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 text-center">
+                <button onclick="switchView('homeView')" class="text-xs font-bold text-slate-500 hover:text-slate-800">Cancel & Return Home</button>
             </div>
         </div>
     </div>
@@ -341,11 +408,11 @@
         let currentUser = { 
             email: "", 
             loggedIn: false, 
-            plan: null, 
+            plan: 'Trial', 
             trialUsed: false, 
             canceled: false,
-            scansRemaining: 0,
-            maxScans: 20 
+            scansRemaining: 3,
+            maxScans: 3 
         };
 
         function getUsersDB() {
@@ -360,7 +427,13 @@
             localStorage.setItem('doublecheck_users_db', JSON.stringify(db));
         }
 
-        // Persistent Remember-Me Session Initialization
+        // REQUIRE LOGIN ON EVERY FRESH BROWSER / NEW DEVICE SESSION
+        // We track session initialization in sessionStorage so opening a new browser tab/session forces login
+        const sessionActiveCheck = sessionStorage.getItem('doublecheck_session_active');
+        if(!sessionActiveCheck) {
+            localStorage.removeItem('doublecheck_secure_session');
+        }
+
         const savedSession = localStorage.getItem('doublecheck_secure_session');
         if(savedSession) {
             try {
@@ -382,11 +455,11 @@
             const authSection = document.getElementById('drawerAuthSection');
             const drawerNavLinks = document.getElementById('drawerNavLinks');
             const adminPanel = document.getElementById('adminPanel');
-            const accRoleBadge = document.getElementById('accRoleBadge');
             const accUserEmail = document.getElementById('accUserEmail');
             const currentPlanName = document.getElementById('currentPlanName');
             const trialRenewalText = document.getElementById('trialRenewalText');
             const pageScanCounter = document.getElementById('pageScanCounter');
+            const trialPlanBtn = document.getElementById('trialPlanBtn');
             const basePlanBtn = document.getElementById('basePlanBtn');
             const proPlanBtn = document.getElementById('proPlanBtn');
 
@@ -399,6 +472,7 @@
                     <a href="#" onclick="toggleMenu(); switchView('pricingView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Pricing & Plans</a>
                     <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Past Documents & Scans</a>
                     <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">About DoubleCheck</a>
+                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Send Feedback</a>
                     <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Terms of Conditions</a>
                 `;
 
@@ -408,23 +482,27 @@
                 if(currentUser.canceled) {
                     currentPlanName.textContent = "Subscription Canceled (Access Restricted)";
                     trialRenewalText.textContent = "Your plan is canceled. Please select a plan to regain access.";
+                    trialPlanBtn.textContent = "Start Free Trial";
                     basePlanBtn.textContent = "Subscribe to Base (£9.99/mo)";
                     proPlanBtn.textContent = "Subscribe to Pro (£19.99/mo)";
                 } else if(currentUser.plan === 'Trial') {
-                    currentPlanName.textContent = "DoubleCheck Base (3-Month Free Trial Active)";
-                    trialRenewalText.textContent = "Billing renews automatically after trial completion.";
-                    basePlanBtn.textContent = "Current Trial Plan";
+                    currentPlanName.textContent = "1-Time Free Trial (Pro 8-Box Dashboard Active)";
+                    trialRenewalText.textContent = "Enjoy full Pro access for your first 3 contracts before choosing a plan.";
+                    trialPlanBtn.textContent = "Active Trial Plan";
+                    basePlanBtn.textContent = "Select Base Plan (£9.99/mo)";
                     proPlanBtn.textContent = "Upgrade to Pro (£19.99/mo)";
                 } else if(currentUser.plan === 'Base') {
-                    currentPlanName.textContent = "DoubleCheck Base (£9.99/mo)";
+                    currentPlanName.textContent = "Base Plan (Casual User / 4-Box Summary)";
                     trialRenewalText.textContent = "Billing renews automatically monthly.";
-                    basePlanBtn.textContent = "Active Plan";
+                    trialPlanBtn.textContent = "Trial Completed";
+                    basePlanBtn.textContent = "Active Base Plan";
                     proPlanBtn.textContent = "Upgrade to Pro (£19.99/mo)";
                 } else if(currentUser.plan === 'Pro') {
-                    currentPlanName.textContent = "DoubleCheck Pro (£19.99/mo)";
+                    currentPlanName.textContent = "Pro Plan (Power User / 8-Box Deep-Dive)";
                     trialRenewalText.textContent = "Billing renews automatically monthly.";
+                    trialPlanBtn.textContent = "Trial Completed";
                     basePlanBtn.textContent = "Switch to Base";
-                    proPlanBtn.textContent = "Active Plan";
+                    proPlanBtn.textContent = "Active Pro Plan";
                 }
 
                 if(pageScanCounter) {
@@ -434,17 +512,12 @@
                 // STRICT ADMIN CHECK: Only Theo-Kay@gmail.com can see statistics
                 if(currentUser.email.toLowerCase() === "theo-kay@gmail.com") {
                     adminPanel.classList.remove('hidden');
-                    accRoleBadge.textContent = "Master Admin";
-                    accRoleBadge.className = "px-3.5 py-1.5 bg-blue-900 text-white text-xs font-bold rounded-full";
-                    
                     const db = getUsersDB();
                     const totalUsersCount = Object.keys(db).length || 1;
                     document.getElementById('adminTotalUsers').textContent = totalUsersCount;
                     document.getElementById('adminActiveSubs').textContent = totalUsersCount;
                 } else {
                     adminPanel.classList.add('hidden');
-                    accRoleBadge.textContent = "Subscriber";
-                    accRoleBadge.className = "px-3.5 py-1.5 bg-blue-100 text-blue-900 text-xs font-bold rounded-full";
                 }
             } else {
                 statusDisplay.textContent = "Not logged in";
@@ -452,12 +525,13 @@
                 drawerNavLinks.innerHTML = `
                     <a href="#" onclick="toggleMenu(); switchView('pricingView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Pricing & Plans</a>
                     <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">About DoubleCheck</a>
+                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Send Feedback</a>
                     <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Terms of Conditions</a>
                 `;
 
                 authSection.innerHTML = '<button onclick="toggleMenu(); switchView(\'authView\');" class="w-full py-3 bg-blue-900 text-white font-bold rounded-xl transition text-center">Login / Register</button>';
                 if(adminPanel) adminPanel.classList.add('hidden');
-                if(pageScanCounter) pageScanCounter.textContent = "0/20";
+                if(pageScanCounter) pageScanCounter.textContent = "0/3";
             }
         }
 
@@ -495,7 +569,7 @@
                 return;
             }
             if(currentUser.scansRemaining <= 0) {
-                alert("Scan limit reached. Please upgrade your plan.");
+                alert("Scan credits limit reached for your current tier. Please select a plan.");
                 switchView('pricingView');
                 return;
             }
@@ -521,9 +595,9 @@
             const container = document.getElementById('boxesContainer');
             container.innerHTML = '';
 
-            const isPro = currentUser.plan === 'Pro';
-            const numBoxes = isPro ? 8 : 4;
-            document.getElementById('resultsSubtitle').textContent = isPro ? "Complete 8-Box Breakdown (Pro Plan)" : "Key Information Breakdown (Base Plan)";
+            const isProOrTrial = currentUser.plan === 'Pro' || currentUser.plan === 'Trial';
+            const numBoxes = isProOrTrial ? 8 : 4;
+            document.getElementById('resultsSubtitle').textContent = isProOrTrial ? "Complete 8-Box Deep-Dive Breakdown (Pro / Trial)" : "4-Box Core Information Summary (Base Plan)";
 
             const boxTitles = [
                 "1. Complete Document Summary", "2. Purpose & Scope", "3. Financial Terms", "4. Timeframes & Deadlines",
@@ -535,7 +609,7 @@
                 "Financial consideration identified: Total agreed pricing with structured installments.",
                 "Commencing from effective date with active milestones and delivery windows specified.",
                 "Cancellation terms require prior notice along with settlement for rendered services.",
-                "Risk allocation includes standard limitation of liability clauses.",
+                "Risk allocation includes standard limitation of liability clauses and risk caps.",
                 "Contains automatic renewal mechanisms unless advance cancellation notice is submitted.",
                 "Standard legal jurisdiction applies to all governance and contractual disagreements."
             ];
@@ -561,17 +635,14 @@
                 switchView('authView');
                 return;
             }
-            if(planType === 'Base') {
-                if(!currentUser.trialUsed) {
-                    currentUser.plan = 'Trial';
-                    currentUser.trialUsed = true;
-                    currentUser.maxScans = 20;
-                    currentUser.scansRemaining = 20;
-                } else {
-                    currentUser.plan = 'Base';
-                    currentUser.maxScans = 20;
-                    currentUser.scansRemaining = 20;
-                }
+            if(planType === 'Trial') {
+                currentUser.plan = 'Trial';
+                currentUser.maxScans = 3;
+                currentUser.scansRemaining = 3;
+            } else if(planType === 'Base') {
+                currentUser.plan = 'Base';
+                currentUser.maxScans = 20;
+                currentUser.scansRemaining = 20;
             } else if(planType === 'Pro') {
                 currentUser.plan = 'Pro';
                 currentUser.maxScans = 50;
@@ -583,6 +654,8 @@
             const db = getUsersDB();
             if(db[currentUser.email]) {
                 db[currentUser.email].plan = currentUser.plan;
+                db[currentUser.email].maxScans = currentUser.maxScans;
+                db[currentUser.email].scansRemaining = currentUser.scansRemaining;
                 saveUsersDB(db);
             }
 
@@ -591,7 +664,7 @@
         }
 
         function cancelSubscription() {
-            if(confirm("Are you sure you want to cancel your subscription?")) {
+            if(confirm("Are you sure you want to cancel your subscription or plan?")) {
                 currentUser.canceled = true;
                 currentUser.scansRemaining = 0;
                 localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
@@ -615,22 +688,36 @@
                     saveUsersDB(db);
                 }
                 localStorage.removeItem('doublecheck_secure_session');
-                currentUser = { email: "", loggedIn: false, plan: null, trialUsed: false, canceled: false, scansRemaining: 0, maxScans: 20 };
+                currentUser = { email: "", loggedIn: false, plan: 'Trial', trialUsed: false, canceled: false, scansRemaining: 0, maxScans: 3 };
                 alert("Your account has been successfully deleted.");
                 handleLogout();
             }
+        }
+
+        function submitFeedback() {
+            const email = document.getElementById('feedbackEmail').value.trim();
+            const msg = document.getElementById('feedbackMessage').value.trim();
+            if(!msg) {
+                alert("Please enter a message for your feedback.");
+                return;
+            }
+            alert("Thank you! Your feedback has been sent to Doubecheck.support@gmail.com.");
+            document.getElementById('feedbackMessage').value = "";
+            switchView('homeView');
         }
 
         function checkEmailAccountStatus() {
             const email = document.getElementById('authEmail').value.trim().toLowerCase();
             const feedback = document.getElementById('emailStatusFeedback');
             const passContainer = document.getElementById('passwordContainer');
+            const termsContainer = document.getElementById('termsAgreementContainer');
             const btn = document.getElementById('authActionBtn');
 
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(email)) {
                 feedback.textContent = "";
                 passContainer.classList.add('hidden');
+                termsContainer.classList.add('hidden');
                 return;
             }
 
@@ -654,13 +741,15 @@
                 feedback.textContent = "✓ Existing account found. Enter password to login.";
                 feedback.className = "text-[11px] text-blue-900 font-semibold mt-1";
                 passContainer.classList.remove('hidden');
+                termsContainer.classList.add('hidden');
                 document.getElementById('verificationContainer').classList.add('hidden');
                 btn.textContent = "Login Securely";
                 authStepState = 'LOGIN_PASSWORD';
             } else {
-                feedback.textContent = "✓ New email detected. We will send a verification code.";
+                feedback.textContent = "✓ New account detected. Please review terms and verify email.";
                 feedback.className = "text-[11px] text-emerald-600 font-semibold mt-1";
                 passContainer.classList.remove('hidden');
+                termsContainer.classList.remove('hidden');
                 btn.textContent = "Send Verification Code";
                 authStepState = 'SIGNUP_DETAILS';
             }
@@ -681,7 +770,7 @@
             const db = getUsersDB();
 
             // Handle Admin Direct login match
-            if(email === "theo-kay@gmail.com" && pass === "Theo9*89" && (!db[email] || db[email].password === "Theo9*89")) {
+            if(email === "theo-kay@gmail.com" && pass === "Theo9*89") {
                 const adminUser = {
                     email: "theo-kay@gmail.com",
                     password: "Theo9*89",
@@ -695,6 +784,7 @@
                 db[email] = adminUser;
                 saveUsersDB(db);
                 currentUser = adminUser;
+                sessionStorage.setItem('doublecheck_session_active', 'true');
                 localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
                 updateAuthStateUI();
                 switchView('homeView');
@@ -712,6 +802,7 @@
                 }
                 currentUser = db[email];
                 currentUser.loggedIn = true;
+                sessionStorage.setItem('doublecheck_session_active', 'true');
                 localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
                 updateAuthStateUI();
                 switchView('homeView');
@@ -723,12 +814,18 @@
                     return;
                 }
 
+                const agreed = document.getElementById('agreeTermsCheckbox').checked;
+                if (!agreed) {
+                    alert("You must agree to the Terms of Conditions to create an account.");
+                    return;
+                }
+
                 generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
                 document.getElementById('verificationContainer').classList.remove('hidden');
                 document.getElementById('authActionBtn').textContent = "Verify & Create Account";
                 authStepState = 'VERIFY_CODE';
                 
-                alert("Verification email dispatched from doublecheck.support@gmail.com to " + email + ".\n(Simulation Code: " + generatedVerificationCode + ")");
+                alert("Verification email dispatched from Doubecheck.support@gmail.com to " + email + ".\n(Simulation Code: " + generatedVerificationCode + ")");
             }
             else if (authStepState === 'VERIFY_CODE') {
                 if (code !== generatedVerificationCode) {
@@ -740,17 +837,18 @@
                     email: email,
                     password: pass,
                     loggedIn: true,
-                    plan: "Trial",
+                    plan: 'Trial',
                     trialUsed: false,
                     canceled: false,
-                    scansRemaining: 20,
-                    maxScans: 20
+                    scansRemaining: 3,
+                    maxScans: 3
                 };
 
                 db[email] = newUser;
                 saveUsersDB(db);
 
                 currentUser = newUser;
+                sessionStorage.setItem('doublecheck_session_active', 'true');
                 localStorage.setItem('doublecheck_secure_session', JSON.stringify(currentUser));
                 updateAuthStateUI();
                 switchView('homeView');
@@ -758,13 +856,15 @@
         }
 
         function handleLogout() {
-            currentUser = { email: "", loggedIn: false, plan: null, trialUsed: false, canceled: false, scansRemaining: 0, maxScans: 20 };
+            currentUser = { email: "", loggedIn: false, plan: 'Trial', trialUsed: false, canceled: false, scansRemaining: 0, maxScans: 3 };
             localStorage.removeItem('doublecheck_secure_session');
+            sessionStorage.removeItem('doublecheck_session_active');
             authStepState = 'EMAIL_INPUT';
             document.getElementById('authEmail').value = "";
             document.getElementById('authPassword').value = "";
             document.getElementById('passwordContainer').classList.add('hidden');
             document.getElementById('verificationContainer').classList.add('hidden');
+            document.getElementById('termsAgreementContainer').classList.add('hidden');
             document.getElementById('emailStatusFeedback').textContent = "";
             document.getElementById('authActionBtn').textContent = "Continue with Email";
             updateAuthStateUI();
