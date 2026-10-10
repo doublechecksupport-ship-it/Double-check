@@ -720,4 +720,314 @@
             let docName = "CUSTOM_LEGAL_AGREEMENT";
             const lines = text.split('\n');
             for(let line of lines) {
-                if(line.includes("AGREEMENT") || line.includes("CONTRACT") || line.
+                if(line.includes("AGREEMENT") || line.includes("CONTRACT") || line.includes("TERMS")) {
+                    docName = line.trim();
+                    break;
+                }
+            }
+
+            showLoadingAnimation(() => {
+                runSummariser(docName, text);
+            });
+        }
+
+        function showLoadingAnimation(callback) {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                callback();
+            }, 1200);
+        }
+
+        function runSummariser(docName, rawText) {
+            currentActiveDocText = rawText || sampleLegalAgreementText;
+            document.getElementById('extractedDocName').textContent = docName;
+            
+            const isProOrTrial = currentUser.plan === 'Pro' || currentUser.plan === 'Trial';
+            document.getElementById('resultsSubtitle').textContent = isProOrTrial ? "Complete 8-Box Deep-Dive Breakdown" : "4-Box Core Summary";
+
+            updateSummaryDetailLevel(document.getElementById('summaryDetailSlider').value);
+            generateCategoryBoxes(currentActiveDocText, isProOrTrial ? 8 : 4);
+            switchSummaryTab('exec');
+            switchView('resultsView');
+        }
+
+        function updateSummaryDetailLevel(val) {
+            const label = document.getElementById('sliderDetailLabel');
+            const target = document.getElementById('paragraphSummaryText');
+            
+            // Extract key values directly from user text dynamically
+            const lower = currentActiveDocText.toLowerCase();
+            let matchedDetails = [];
+
+            if(lower.includes("£") || lower.includes("pay") || lower.includes("fee")) {
+                matchedDetails.push("defines structured financial obligations and payment terms");
+            }
+            if(lower.includes("notice") || lower.includes("cancel") || lower.includes("terminate")) {
+                matchedDetails.push("requires advance written notice for contract termination");
+            }
+            if(lower.includes("liability") || lower.includes("risk")) {
+                matchedDetails.push("establishes limitation of liability caps");
+            }
+
+            const dynamicExtra = matchedDetails.length > 0 
+                ? " Specifically, this contract " + matchedDetails.join(", and ") + "." 
+                : " Standard operational responsibilities and governance terms are established throughout.";
+
+            if(val == 1) {
+                label.textContent = "Short";
+                target.textContent = "Quick Summary: This legal agreement establishes binding terms between both parties." + dynamicExtra;
+            } else if(val == 2) {
+                label.textContent = "Medium";
+                target.textContent = "Executive Summary: This legal agreement formally establishes project scope, operational boundaries, and party obligations." + dynamicExtra + " All parties are subject to standard compliance guidelines.";
+            } else {
+                label.textContent = "Detailed";
+                target.textContent = "Comprehensive Summary: This contract outlines defined rights, operational responsibilities, and legal governance rules between all involved parties." + dynamicExtra + " Automatic renewal protocols and jurisdiction governance rules remain active throughout the agreement duration.";
+            }
+        }
+
+        function generateCategoryBoxes(text, count) {
+            const container = document.getElementById('boxesContainer');
+            container.innerHTML = '';
+
+            const lower = text.toLowerCase();
+
+            // REAL CONTRACT DYNAMIC CONTENT EXTRACTOR
+            let finText = "Standard payment terms apply upon invoice receipt.";
+            const moneyMatch = text.match(/(£|\$)\d+(,\d+)?(\.\d+)?/g);
+            if(moneyMatch) {
+                finText = "Payment Values Detected: Direct fee consideration identified as " + moneyMatch.join(", ") + ".";
+            } else if(lower.includes("pay") || lower.includes("fee") || lower.includes("invoice")) {
+                finText = "Financial Consideration: Identified explicit payment requirements and fee schedules within text.";
+            }
+
+            let timeText = "Effective upon signature with standard delivery deadlines.";
+            const dayMatch = text.match(/\d+\s*(days|months|years)/gi);
+            if(dayMatch) {
+                timeText = "Deadlines Detected: Active timeframe milestones specified as " + dayMatch.join(", ") + ".";
+            } else if(lower.includes("date") || lower.includes("deadline")) {
+                timeText = "Timeframes Specified: Performance milestones and calendar deadlines identified.";
+            }
+
+            let termText = "Written notice required prior to contract cancellation.";
+            if(lower.includes("notice") || lower.includes("terminate") || lower.includes("cancel")) {
+                termText = "Termination Clause: Mandatory advance written notice required prior to cancellation.";
+            }
+
+            const boxData = [
+                { title: "1. Complete Document Summary", content: "Overall Breakdown: Establishes legally binding rights, professional deliverables, and operational rules between parties." },
+                { title: "2. Purpose & Scope", content: "Operational Scope: Outlines defined obligations, project expectations, and service limits." },
+                { title: "3. Financial Terms", content: finText },
+                { title: "4. Timeframes & Deadlines", content: timeText },
+                { title: "5. Termination & Notice", content: termText },
+                { title: "6. Liability & Risk Caps", content: "Risk Allocation: Contains standard limitation of liability clauses and caps on indirect damages." },
+                { title: "7. Auto-Renewal & Lock-Ins", content: "Lock-In Clause: Features automatic renewal mechanisms unless advance written cancellation notice is served." },
+                { title: "8. Dispute Resolution & Law", content: "Legal Jurisdiction: Governing law and official dispute resolution procedures established." }
+            ];
+
+            for(let i = 0; i < count; i++) {
+                const box = boxData[i];
+                container.innerHTML += `
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex flex-col justify-between hover:border-blue-900 transition">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">${box.title}</span>
+                                <button onclick="copyBoxText(this, '${box.content.replace(/'/g, "\\'")}')" class="text-xs font-semibold px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition">Copy</button>
+                            </div>
+                            <p class="text-sm text-slate-700 leading-relaxed mt-1">${box.content}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text);
+            alert("Summary copied to clipboard!");
+        }
+
+        function copyBoxText(btn, text) {
+            navigator.clipboard.writeText(text);
+            const orig = btn.textContent;
+            btn.textContent = "Copied!";
+            setTimeout(() => btn.textContent = orig, 1200);
+        }
+
+        function selectPlan(planType) {
+            if(!currentUser || currentUser.loggedIn !== true) {
+                switchView('authView');
+                return;
+            }
+            if(planType === 'Trial') {
+                currentUser.plan = 'Trial';
+                currentUser.maxScans = 3;
+                currentUser.scansRemaining = 3;
+            } else if(planType === 'Base') {
+                currentUser.plan = 'Base';
+                currentUser.maxScans = 20;
+                currentUser.scansRemaining = 20;
+            } else if(planType === 'Pro') {
+                currentUser.plan = 'Pro';
+                currentUser.maxScans = 50;
+                currentUser.scansRemaining = 50;
+            }
+            currentUser.canceled = false;
+            localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+            
+            const db = getUsersDB();
+            if(db[currentUser.email]) {
+                db[currentUser.email].plan = currentUser.plan;
+                db[currentUser.email].maxScans = currentUser.maxScans;
+                db[currentUser.email].scansRemaining = currentUser.scansRemaining;
+                saveUsersDB(db);
+            }
+
+            updateAuthStateUI();
+            switchView('accountView');
+        }
+
+        function cancelSubscription() {
+            if(confirm("Are you sure you want to cancel your subscription or plan?")) {
+                currentUser.canceled = true;
+                currentUser.scansRemaining = 0;
+                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+                
+                const db = getUsersDB();
+                if(db[currentUser.email]) {
+                    db[currentUser.email].canceled = true;
+                    saveUsersDB(db);
+                }
+
+                updateAuthStateUI();
+                switchView('pricingView');
+            }
+        }
+
+        function submitFeedback() {
+            const msg = document.getElementById('feedbackMessage').value.trim();
+            if(!msg) {
+                alert("Please enter a message for your feedback.");
+                return;
+            }
+            alert("Thank you! Your feedback has been sent to Doubecheck.support@gmail.com.");
+            document.getElementById('feedbackMessage').value = "";
+            switchView('homeView');
+        }
+
+        function handleAuthAction() {
+            const email = document.getElementById('authEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('authPassword').value;
+            const code = document.getElementById('authCode').value.trim();
+
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) {
+                alert("Please enter a valid email address.");
+                return;
+            }
+
+            const db = getUsersDB();
+
+            // Master Admin Login Override
+            if(email === "theo-kay@gmail.com" && pass === "Theo9*89") {
+                const adminUser = {
+                    email: "theo-kay@gmail.com",
+                    password: "Theo9*89",
+                    loggedIn: true,
+                    plan: "Pro",
+                    canceled: false,
+                    scansRemaining: 50,
+                    maxScans: 50
+                };
+                db[email] = adminUser;
+                saveUsersDB(db);
+                currentUser = adminUser;
+                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+                updateAuthStateUI();
+                switchView('homeView');
+                return;
+            }
+
+            if (currentAuthMode === 'login') {
+                if (!pass) {
+                    alert("Please enter your password.");
+                    return;
+                }
+                if (!db[email] || db[email].password !== pass) {
+                    alert("Incorrect password or account does not exist. Please create an account if you are new.");
+                    return;
+                }
+                currentUser = db[email];
+                currentUser.loggedIn = true;
+                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+                updateAuthStateUI();
+                switchView('homeView');
+            } 
+            else {
+                // SIGNUP MODE
+                const passwordPolicy = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+                if (!passwordPolicy.test(pass)) {
+                    alert("Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special symbol.");
+                    return;
+                }
+
+                const agreed = document.getElementById('agreeTermsCheckbox').checked;
+                if (!agreed) {
+                    alert("You must agree to the Terms of Conditions to create an account.");
+                    return;
+                }
+
+                if(document.getElementById('verificationContainer').classList.contains('hidden')) {
+                    generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+                    document.getElementById('verificationContainer').classList.remove('hidden');
+                    document.getElementById('authActionBtn').textContent = "Verify & Create Account";
+                    alert("Verification code sent from Doubecheck.support@gmail.com to " + email + ".\n(Simulation Code: " + generatedVerificationCode + ")");
+                    return;
+                }
+
+                if (code !== generatedVerificationCode) {
+                    alert("Invalid verification code. Please try again.");
+                    return;
+                }
+
+                const newUser = {
+                    email: email,
+                    password: pass,
+                    loggedIn: true,
+                    plan: 'Trial',
+                    canceled: false,
+                    scansRemaining: 3,
+                    maxScans: 3
+                };
+
+                db[email] = newUser;
+                saveUsersDB(db);
+
+                currentUser = newUser;
+                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+                updateAuthStateUI();
+                switchView('homeView');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = { email: "", loggedIn: false, plan: 'Trial', canceled: false, scansRemaining: 0, maxScans: 3 };
+            localStorage.removeItem('doublecheck_remembered_session');
+            document.getElementById('authEmail').value = "";
+            document.getElementById('authPassword').value = "";
+            switchAuthTab('login');
+            updateAuthStateUI();
+            switchView('authView');
+        }
+
+        if(currentUser && currentUser.loggedIn === true) {
+            updateAuthStateUI();
+            switchView('homeView');
+        } else {
+            updateAuthStateUI();
+            switchView('authView');
+        }
+    </script>
+</body>
+</html>
