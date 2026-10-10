@@ -1053,4 +1053,68 @@
                 switchView('homeView');
             } 
             else {
-                const passwordPolicy = /^(?=.*
+                const passwordPolicy = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+                if (!passwordPolicy.test(pass)) {
+                    alert("Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special symbol.");
+                    return;
+                }
+
+                const agreed = document.getElementById('agreeTermsCheckbox').checked;
+                if (!agreed) {
+                    alert("You must agree to the Terms of Conditions to create an account.");
+                    return;
+                }
+
+                if(document.getElementById('verificationContainer').classList.contains('hidden')) {
+                    generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+                    document.getElementById('verificationContainer').classList.remove('hidden');
+                    document.getElementById('authActionBtn').textContent = "Verify & Create Account";
+                    alert("Verification code sent from Doubecheck.support@gmail.com to " + email + ".\n(Simulation Code: " + generatedVerificationCode + ")");
+                    return;
+                }
+
+                if (code !== generatedVerificationCode) {
+                    alert("Invalid verification code. Please try again.");
+                    return;
+                }
+
+                const newUser = {
+                    email: email,
+                    password: pass,
+                    loggedIn: true,
+                    plan: 'Trial',
+                    canceled: false,
+                    scansRemaining: 3,
+                    maxScans: 3
+                };
+
+                db[email] = newUser;
+                saveUsersDB(db);
+
+                currentUser = newUser;
+                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+                updateAuthStateUI();
+                switchView('homeView');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = { email: "", loggedIn: false, plan: 'Trial', canceled: false, scansRemaining: 0, maxScans: 3 };
+            localStorage.removeItem('doublecheck_remembered_session');
+            document.getElementById('authEmail').value = "";
+            document.getElementById('authPassword').value = "";
+            switchAuthTab('login');
+            updateAuthStateUI();
+            switchView('authView');
+        }
+
+        if(currentUser && currentUser.loggedIn === true) {
+            updateAuthStateUI();
+            switchView('homeView');
+        } else {
+            updateAuthStateUI();
+            switchView('authView');
+        }
+    </script>
+</body>
+</html>
