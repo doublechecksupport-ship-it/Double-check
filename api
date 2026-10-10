@@ -47,7 +47,8 @@ ${documentText}`;
       }
     });
 
-    let rawText = response.text;
+    // Safely extract text from response and clean markdown code blocks
+    let rawText = response.text || (response.candidates?.[0]?.content?.parts?.[0]?.text) || '';
     rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
     const data = JSON.parse(rawText);
