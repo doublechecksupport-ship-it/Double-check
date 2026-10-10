@@ -428,7 +428,6 @@
         }
 
         // REQUIRE LOGIN ON EVERY FRESH BROWSER / NEW DEVICE SESSION
-        // We track session initialization in sessionStorage so opening a new browser tab/session forces login
         const sessionActiveCheck = sessionStorage.getItem('doublecheck_session_active');
         if(!sessionActiveCheck) {
             localStorage.removeItem('doublecheck_secure_session');
