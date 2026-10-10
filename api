@@ -1,0 +1,54 @@
+// api/summarise.js
+import { GoogleGenAI } from "@google/genai";
+
+export default async function handler(req, res) {
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+        const { documentText, detailLevel } = req.body;
+
+        if (!documentText || documentText.trim().length < 20) {
+            return res.status(400).json({ error: 'Document text is too short or missing.' });
+        }
+
+        // Initialize the Gemini SDK using your environment API key
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+        const prompt = `You are an expert legal AI assistant. Analyze the following legal agreement/contract text and provide a structured JSON response.
+        
+        Detail level requested: ${detailLevel} (1 = Short, 2 = Medium, 3 = Detailed).
+
+        Return a valid JSON object with the following exact keys:
+        - "docTitle": The detected title of the agreement.
+        - "executiveSummary": A concise summary paragraph appropriate for the requested detail level.
+        - "categories": An array of 8 objects representing key legal breakdowns. Each object must have "title" and "content". The 8 categories should be:
+          1. Complete Document Summary
+          2. Purpose & Scope
+          3. Financial Terms & Consideration
+          4. Timeframes & Deadlines
+          5. Termination & Notice
+          6. Liability & Risk Caps
+          7. Auto-Renewal & Lock-Ins
+          8. Dispute Resolution & Jurisdiction
+
+        Contract Text:
+        ${documentText}`;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                responseMimeType: 'application/json'
+            }
+        });
+
+        const resultData = JSON.parse(response.text);
+        return res.status(200).json(resultData);
+
+    } catch (error) {
+        console.error("Gemini API Error:", error);
+        return res.status(500).json({ error: 'Failed to process document with AI.' });
+    }
+}
