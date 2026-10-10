@@ -7,13 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .logo-icon {
-            height: 36px;
-            width: 36px;
-            min-width: 36px;
+            height: 38px;
+            width: 38px;
+            min-width: 38px;
             display: inline-block;
         }
 
-        /* Loading Spinner Animation */
+        /* Smooth Spinner Animation */
         @keyframes spinSmooth {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -26,27 +26,55 @@
             height: 32px;
             animation: spinSmooth 0.8s linear infinite;
         }
+
+        /* Pulse Ring */
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 2.5s infinite ease-in-out;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.35s ease-out forwards;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans selection:bg-blue-100">
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans selection:bg-blue-100 antialiased">
 
     <!-- HEADER -->
-    <header class="w-full bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-20 shadow-xs">
-        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('homeView')">
-            <svg class="logo-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                <path d="M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z" fill="#1e3a8a"/>
-                <path d="M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z" fill="white" fill-opacity="0.85"/>
-                <rect x="120" y="220" width="180" height="24" rx="12" fill="white"/>
-                <rect x="120" y="272" width="220" height="24" rx="12" fill="white"/>
-                <rect x="120" y="324" width="220" height="24" rx="12" fill="white"/>
-                <rect x="120" y="376" width="140" height="24" rx="12" fill="white"/>
-            </svg>
-            <span class="text-2xl font-extrabold tracking-tight text-slate-900">DoubleCheck</span>
+    <header class="w-full bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-xs transition-all">
+        <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('homeView')">
+            <div class="p-1 rounded-xl group-hover:scale-105 transition-transform">
+                <svg class="logo-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z" fill="#1e3a8a"/>
+                    <path d="M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z" fill="white" fill-opacity="0.85"/>
+                    <rect x="120" y="220" width="180" height="24" rx="12" fill="white"/>
+                    <rect x="120" y="272" width="220" height="24" rx="12" fill="white"/>
+                    <rect x="120" y="324" width="220" height="24" rx="12" fill="white"/>
+                    <rect x="120" y="376" width="140" height="24" rx="12" fill="white"/>
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-2xl font-extrabold tracking-tight text-slate-900 group-hover:text-blue-900 transition-colors">DoubleCheck</span>
+                <span class="text-[10px] font-bold text-blue-900 tracking-widest uppercase -mt-1 opacity-80">AI Legal Intelligence</span>
+            </div>
         </div>
+
         <div class="flex items-center space-x-3">
-            <span id="userStatusDisplay" onclick="switchView('accountView')" class="text-xs font-semibold text-blue-900 hover:underline cursor-pointer hidden sm:inline">Not logged in</span>
-            <button onclick="toggleMenu()" class="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 transition text-slate-700">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div id="liveBadge" class="hidden sm:flex items-center space-x-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200/60 rounded-full text-[11px] font-semibold text-emerald-700">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>AI Engine Ready</span>
+            </div>
+            <span id="userStatusDisplay" onclick="switchView('accountView')" class="text-xs font-semibold text-blue-900 hover:text-blue-950 hover:underline cursor-pointer hidden sm:inline px-2 py-1 rounded-lg hover:bg-slate-100 transition">Not logged in</span>
+            <button onclick="toggleMenu()" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 transition active:scale-95 text-slate-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
@@ -54,12 +82,14 @@
     </header>
 
     <!-- SLIDE-OUT DRAWER MENU -->
-    <div id="menuDrawer" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex justify-end">
+    <div id="menuDrawer" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex justify-end transition-opacity">
         <div class="w-80 bg-white h-full shadow-2xl p-6 flex flex-col justify-between border-l border-slate-200">
             <div>
                 <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-                    <span class="text-lg font-bold text-slate-900">Menu</span>
-                    <button onclick="toggleMenu()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg font-extrabold text-slate-900">Menu</span>
+                    </div>
+                    <button onclick="toggleMenu()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 font-bold transition">✕</button>
                 </div>
                 <nav id="drawerNavLinks" class="space-y-2"></nav>
             </div>
@@ -68,88 +98,145 @@
     </div>
 
     <!-- MAIN HOMEPAGE VIEW -->
-    <main id="homeView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center items-center text-center">
-        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Summarise Any Legal Document</h1>
-        <p class="text-slate-500 mb-8 max-w-lg">Upload an image, upload a PDF file, or paste your legal text below for a clear breakdown.</p>
-
-        <!-- VALIDATION WARNING NOTICE -->
-        <div id="validationError" class="hidden w-full mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-xs font-semibold text-left">
-            ⚠️ Invalid Legal Document: DoubleCheck only processes valid legal agreements, contracts, leases, NDAs, or terms of service. Random text or non-legal content cannot be summarised.
+    <main id="homeView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center items-center text-center animate-fade-in">
+        
+        <!-- HERO BADGE -->
+        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-blue-50 border border-blue-200/80 rounded-full text-xs font-bold text-blue-900 mb-4 shadow-2xs">
+            <svg class="w-3.5 h-3.5 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Legal-Grade AI Document Analysis</span>
         </div>
 
+        <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-3 leading-tight">
+            Summarise Any Legal Document
+        </h1>
+        <p class="text-slate-500 mb-8 max-w-lg text-sm sm:text-base">Upload image, PDF, or paste contract terms for instant risk checks, payment terms, and executive breakdowns.</p>
+
+        <!-- VALIDATION WARNING NOTICE -->
+        <div id="validationError" class="hidden w-full mb-6 p-4 bg-red-50 border border-red-200/80 rounded-2xl text-red-700 text-xs font-semibold text-left shadow-2xs animate-fade-in">
+            <div class="flex items-start space-x-3">
+                <span class="text-base">⚠️</span>
+                <div>
+                    <strong class="block text-red-800 font-bold mb-0.5">Invalid Legal Document Content</strong>
+                    DoubleCheck only processes valid legal agreements, contracts, leases, NDAs, or terms of service. Random text or non-legal content cannot be summarised.
+                </div>
+            </div>
+        </div>
+
+        <!-- UPLOAD DROP ZONE CARDS -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-6">
-            <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs hover:border-blue-900 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
-                <span class="text-blue-900 font-bold mb-1">Upload Image</span>
-                <span class="text-xs text-slate-400">Select photo (JPG, PNG)</span>
+            <label class="group bg-white border border-slate-200 rounded-3xl p-6 shadow-2xs hover:border-blue-900 hover:shadow-md transition-all cursor-pointer flex flex-col items-center justify-center relative overflow-hidden active:scale-98">
+                <div class="w-12 h-12 bg-blue-50 text-blue-900 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <span class="text-blue-900 font-extrabold text-sm mb-0.5">Upload Image</span>
+                <span class="text-xs text-slate-400">Scan contract photo (JPG, PNG)</span>
                 <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload('Image', event)">
             </label>
-            <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs hover:border-blue-900 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
-                <span class="text-blue-900 font-bold mb-1">Upload File</span>
-                <span class="text-xs text-slate-400">Select PDF document</span>
+
+            <label class="group bg-white border border-slate-200 rounded-3xl p-6 shadow-2xs hover:border-blue-900 hover:shadow-md transition-all cursor-pointer flex flex-col items-center justify-center relative overflow-hidden active:scale-98">
+                <div class="w-12 h-12 bg-blue-50 text-blue-900 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <span class="text-blue-900 font-extrabold text-sm mb-0.5">Upload PDF File</span>
+                <span class="text-xs text-slate-400">Select official document (PDF)</span>
                 <input type="file" accept=".pdf" class="hidden" onchange="handleFileUpload('PDF', event)">
             </label>
         </div>
 
-        <div class="w-full bg-white border border-slate-200 rounded-3xl p-4 shadow-xs mb-6 text-left">
-            <div class="flex justify-between items-center px-2 mb-2">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paste Legal Document Text</span>
-                <button onclick="document.getElementById('documentInput').value=''; hideValidationError();" class="text-xs font-semibold text-slate-500 hover:text-slate-800">Clear</button>
+        <!-- TEXT INPUT AREA WITH DYNAMIC LEGAL SCORE DETECTOR -->
+        <div class="w-full bg-white border border-slate-200 rounded-3xl p-5 shadow-2xs mb-6 text-left transition-all focus-within:border-blue-900 focus-within:ring-2 focus-within:ring-blue-900/10">
+            <div class="flex justify-between items-center px-1 mb-2">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paste Legal Document Text</span>
+                    <span id="textSignalBadge" class="hidden px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 text-blue-900 border border-blue-200">Legal Text Detected</span>
+                </div>
+                <button onclick="document.getElementById('documentInput').value=''; hideValidationError(); updateTextSignal();" class="text-xs font-semibold text-slate-400 hover:text-slate-700 transition">Clear Text</button>
             </div>
-            <textarea id="documentInput" placeholder="Paste legal contract text, employment terms, lease, or agreement terms here..." class="w-full h-36 bg-transparent text-slate-800 placeholder-slate-400 resize-none focus:outline-none p-2 text-sm"></textarea>
+            <textarea id="documentInput" oninput="updateTextSignal()" placeholder="Paste contract agreements, lease details, freelance terms, or NDAs here..." class="w-full h-40 bg-transparent text-slate-800 placeholder-slate-400 resize-none focus:outline-none p-1 text-sm leading-relaxed"></textarea>
         </div>
 
-        <button onclick="summarise()" class="w-full py-4 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl shadow-md transition transform active:scale-98">
-            Summarise Document
+        <button onclick="summarise()" class="w-full py-4 bg-blue-900 hover:bg-blue-950 text-white font-extrabold rounded-2xl shadow-md transition-all transform active:scale-98 flex items-center justify-center space-x-2 group">
+            <span>Summarise Legal Document</span>
+            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            </svg>
         </button>
     </main>
 
-    <!-- LOADING / ANIMATION OVERLAY -->
-    <div id="loadingOverlay" class="hidden fixed inset-0 z-50 bg-white/90 backdrop-blur-xs flex flex-col items-center justify-center p-6 text-center">
-        <div class="spinner mb-4"></div>
-        <h3 class="text-xl font-extrabold text-slate-900 mb-1">Analyzing Legal Document...</h3>
-        <p class="text-xs text-slate-500">Reading clauses, payment terms, deadlines, and risk allocations.</p>
+    <!-- ANIMATED MULTI-STEP AI LOADING OVERLAY -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-fade-in">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-100 flex flex-col items-center">
+            <div class="spinner mb-5"></div>
+            <h3 class="text-xl font-extrabold text-slate-900 mb-1">Analyzing Legal Clauses</h3>
+            <p class="text-xs text-slate-500 mb-6">Extracting critical payment rules, liability caps, and notice deadlines.</p>
+            
+            <div class="w-full space-y-2 text-left text-xs font-bold text-slate-600 border-t border-slate-100 pt-4">
+                <div id="step1" class="flex items-center space-x-2 text-emerald-600">
+                    <span>✓</span> <span>Structure & Validation Check</span>
+                </div>
+                <div id="step2" class="flex items-center space-x-2 text-blue-900 animate-pulse">
+                    <span>⚡</span> <span>Extracting Monetary Values & Dates</span>
+                </div>
+                <div id="step3" class="flex items-center space-x-2 text-slate-300">
+                    <span>○</span> <span>Generating Executive Synthesis</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- TABBED RESULTS SUMMARY VIEW -->
-    <div id="resultsView" class="view-section hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col">
-        <!-- TOP NAVIGATION BAR BETWEEN EXECUTIVE SUMMARY & CATEGORY BOXES -->
-        <div class="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-xs mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <!-- RESULTS VIEW -->
+    <div id="resultsView" class="view-section hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col animate-fade-in">
+        
+        <!-- HEADER TOP BAR WITH TAB SWITCHING -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-2xs mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <p id="resultsSubtitle" class="text-xs font-bold text-blue-900 uppercase tracking-wider">Document Summary Analysis</p>
-                <h2 id="extractedDocName" class="text-xl font-extrabold text-slate-900">Document Title</h2>
+                <p id="resultsSubtitle" class="text-xs font-extrabold text-blue-900 uppercase tracking-widest">Document Analysis Complete</p>
+                <h2 id="extractedDocName" class="text-xl font-black text-slate-900 mt-0.5">Custom Legal Agreement</h2>
             </div>
 
-            <!-- VIEW SELECTOR TABS -->
-            <div class="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 w-full sm:w-auto">
-                <button id="tabExecSummary" onclick="switchSummaryTab('exec')" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-bold transition bg-blue-900 text-white shadow-xs">
+            <!-- TAB SWITCHER BUTTONS -->
+            <div class="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80 w-full sm:w-auto">
+                <button id="tabExecSummary" onclick="switchSummaryTab('exec')" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all bg-blue-900 text-white shadow-2xs">
                     Executive Summary
                 </button>
-                <button id="tabCategoryBoxes" onclick="switchSummaryTab('boxes')" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-bold transition text-slate-600 hover:text-slate-900">
+                <button id="tabCategoryBoxes" onclick="switchSummaryTab('boxes')" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all text-slate-600 hover:text-slate-900">
                     Category Breakdown
                 </button>
             </div>
         </div>
 
         <!-- PAGE 1: EXECUTIVE PARAGRAPH SUMMARY -->
-        <div id="execSummaryContent" class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col justify-between mb-8">
+        <div id="execSummaryContent" class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xs flex flex-col justify-between mb-8">
             <div>
                 <div class="flex justify-between items-center mb-4">
-                    <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Executive Overview</span>
-                    <button onclick="copyText('paragraphSummaryText')" class="text-xs font-semibold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition">Copy Summary</button>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-900"></span>
+                        <span class="text-xs font-extrabold text-blue-900 uppercase tracking-wider">Executive Overview</span>
+                    </div>
+                    <button onclick="copyText('paragraphSummaryText')" class="text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition active:scale-95 flex items-center space-x-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        <span>Copy Summary</span>
+                    </button>
                 </div>
 
-                <p id="paragraphSummaryText" class="text-sm sm:text-base text-slate-700 leading-relaxed min-h-[160px] p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                <p id="paragraphSummaryText" class="text-sm sm:text-base text-slate-700 leading-relaxed min-h-[160px] p-5 bg-slate-50/80 rounded-2xl border border-slate-100">
                     Reading document content...
                 </p>
             </div>
 
             <div class="mt-8 pt-6 border-t border-slate-100">
                 <div class="flex justify-between items-center mb-2">
-                    <label for="summaryDetailSlider" class="text-xs font-bold text-slate-500 uppercase">Length / Detail Slider</label>
-                    <span id="sliderDetailLabel" class="text-xs font-extrabold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">Medium</span>
+                    <label for="summaryDetailSlider" class="text-xs font-extrabold text-slate-500 uppercase">Length / Detail Slider</label>
+                    <span id="sliderDetailLabel" class="text-xs font-black text-blue-900 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">Medium</span>
                 </div>
                 <input type="range" id="summaryDetailSlider" min="1" max="3" value="2" onchange="updateSummaryDetailLevel(this.value)" class="w-full accent-blue-900 cursor-pointer">
-                <p class="text-[11px] text-slate-400 mt-2">Adjust slider to generate Short, Medium, or Detailed executive contract breakdowns.</p>
+                <p class="text-[11px] text-slate-400 mt-2 font-medium">Adjust slider to generate Short, Medium, or Detailed executive contract breakdowns.</p>
             </div>
         </div>
 
@@ -158,75 +245,75 @@
             <div id="boxesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <button onclick="switchView('homeView')" class="w-full py-4 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl shadow-md transition">
+        <button onclick="switchView('homeView')" class="w-full py-4 bg-blue-900 hover:bg-blue-950 text-white font-extrabold rounded-2xl shadow-md transition-all active:scale-98">
             Scan Another Document
         </button>
     </div>
 
     <!-- PRICING & PLANS VIEW -->
-    <div id="pricingView" class="view-section hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col justify-center">
+    <div id="pricingView" class="view-section hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col justify-center animate-fade-in">
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Flexible Plans for Every Need</h2>
+            <h2 class="text-3xl font-black text-slate-900 mb-2">Flexible Plans for Every Need</h2>
             <p class="text-slate-500 text-sm max-w-lg mx-auto">Choose a plan that fits your legal document scanning volume.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <!-- Free Trial Tier -->
-            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-2xs flex flex-col justify-between hover:border-emerald-500 transition-all">
                 <div>
-                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">1. Free Trial</span>
+                    <span class="text-xs font-black text-emerald-600 uppercase tracking-wider">1. Free Trial</span>
                     <div class="flex items-baseline mt-2 mb-4">
-                        <span class="text-3xl font-extrabold text-slate-900">£0</span>
-                        <span class="text-slate-500 text-xs ml-1">/ first 3 contracts</span>
+                        <span class="text-3xl font-black text-slate-900">£0</span>
+                        <span class="text-slate-500 text-xs ml-1 font-medium">/ first 3 contracts</span>
                     </div>
-                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
-                        <li class="flex items-center">✓ Full deep-dive contract analysis</li>
-                        <li class="flex items-center">✓ Test real critical contracts instantly</li>
-                        <li class="flex items-center">✓ Zero upfront payment required</li>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6 font-medium">
+                        <li class="flex items-center"><span class="text-emerald-500 font-bold mr-2">✓</span> Full deep-dive contract analysis</li>
+                        <li class="flex items-center"><span class="text-emerald-500 font-bold mr-2">✓</span> Test real critical contracts instantly</li>
+                        <li class="flex items-center"><span class="text-emerald-500 font-bold mr-2">✓</span> Zero upfront payment required</li>
                     </ul>
                 </div>
-                <button onclick="selectPlan('Trial')" id="trialPlanBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition text-sm">Start Free Trial</button>
+                <button onclick="selectPlan('Trial')" id="trialPlanBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition text-sm shadow-2xs active:scale-95">Start Free Trial</button>
             </div>
 
             <!-- Base Plan -->
-            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-2xs flex flex-col justify-between hover:border-blue-900 transition-all">
                 <div>
-                    <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">2. Base Plan</span>
+                    <span class="text-xs font-black text-blue-900 uppercase tracking-wider">2. Base Plan</span>
                     <div class="flex items-baseline mt-2 mb-4">
-                        <span class="text-3xl font-extrabold text-slate-900">£9.99</span>
-                        <span class="text-slate-500 text-xs ml-1">/ month</span>
+                        <span class="text-3xl font-black text-slate-900">£9.99</span>
+                        <span class="text-slate-500 text-xs ml-1 font-medium">/ month</span>
                     </div>
-                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
-                        <li class="flex items-center">✓ 4-Box Core Summary + Overview</li>
-                        <li class="flex items-center">✓ Perfect for leases & gig work</li>
-                        <li class="flex items-center">✓ Key dates & payment terms</li>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6 font-medium">
+                        <li class="flex items-center"><span class="text-blue-900 font-bold mr-2">✓</span> 4-Box Core Summary + Overview</li>
+                        <li class="flex items-center"><span class="text-blue-900 font-bold mr-2">✓</span> Perfect for leases & gig work</li>
+                        <li class="flex items-center"><span class="text-blue-900 font-bold mr-2">✓</span> Key dates & payment terms</li>
                     </ul>
                 </div>
-                <button onclick="selectPlan('Base')" id="basePlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Select Base Plan</button>
+                <button onclick="selectPlan('Base')" id="basePlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm shadow-2xs active:scale-95">Select Base Plan</button>
             </div>
 
             <!-- Pro Plan -->
-            <div class="bg-white border-2 border-blue-900 rounded-3xl p-6 shadow-xs flex flex-col justify-between">
+            <div class="bg-white border-2 border-blue-900 rounded-3xl p-6 shadow-2xs flex flex-col justify-between hover:scale-102 transition-all relative">
                 <div>
-                    <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">3. Pro Plan</span>
+                    <span class="text-xs font-black text-blue-900 uppercase tracking-wider">3. Pro Plan</span>
                     <div class="flex items-baseline mt-2 mb-4">
-                        <span class="text-3xl font-extrabold text-slate-900">£19.99</span>
-                        <span class="text-slate-500 text-xs ml-1">/ month</span>
+                        <span class="text-3xl font-black text-slate-900">£19.99</span>
+                        <span class="text-slate-500 text-xs ml-1 font-medium">/ month</span>
                     </div>
-                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
-                        <li class="flex items-center font-bold text-slate-900">✓ Full 8-Box Deep-Dive Breakdown</li>
-                        <li class="flex items-center">✓ Risk flags, hidden penalties, IP rights</li>
-                        <li class="flex items-center">✓ Built for active freelancers & creators</li>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6 font-medium">
+                        <li class="flex items-center font-bold text-slate-900"><span class="text-blue-900 font-bold mr-2">✓</span> Full 8-Box Deep-Dive Breakdown</li>
+                        <li class="flex items-center"><span class="text-blue-900 font-bold mr-2">✓</span> Risk flags, hidden penalties, IP rights</li>
+                        <li class="flex items-center"><span class="text-blue-900 font-bold mr-2">✓</span> Built for active freelancers & creators</li>
                     </ul>
                 </div>
-                <button onclick="selectPlan('Pro')" id="proPlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Select Pro Plan</button>
+                <button onclick="selectPlan('Pro')" id="proPlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm shadow-2xs active:scale-95">Select Pro Plan</button>
             </div>
         </div>
     </div>
 
     <!-- AUTHENTICATION VIEW -->
-    <div id="authView" class="view-section hidden flex-1 max-w-md w-full mx-auto p-6 flex flex-col justify-center">
-        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-xs flex flex-col items-center">
+    <div id="authView" class="view-section hidden flex-1 max-w-md w-full mx-auto p-6 flex flex-col justify-center animate-fade-in">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-2xs flex flex-col items-center">
             <div class="mb-4">
                 <svg class="logo-icon h-12 w-12" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
                     <path d="M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z" fill="#1e3a8a"/>
@@ -239,8 +326,8 @@
             </div>
 
             <div class="flex border-b border-slate-200 w-full mb-6 text-center">
-                <button id="tabLogin" onclick="switchAuthTab('login')" class="w-1/2 py-2 font-bold text-sm text-blue-900 border-b-2 border-blue-900">Log In</button>
-                <button id="tabSignup" onclick="switchAuthTab('signup')" class="w-1/2 py-2 font-bold text-sm text-slate-400 hover:text-slate-700">Create Account</button>
+                <button id="tabLogin" onclick="switchAuthTab('login')" class="w-1/2 py-2 font-black text-sm text-blue-900 border-b-2 border-blue-900 transition-all">Log In</button>
+                <button id="tabSignup" onclick="switchAuthTab('signup')" class="w-1/2 py-2 font-bold text-sm text-slate-400 hover:text-slate-700 transition-all">Create Account</button>
             </div>
 
             <h2 id="authTitle" class="text-xl font-extrabold text-slate-900 mb-1 text-center">Welcome Back</h2>
@@ -264,103 +351,103 @@
                 </div>
 
                 <div id="termsAgreementContainer" class="hidden flex items-start space-x-2 pt-2">
-                    <input type="checkbox" id="agreeTermsCheckbox" class="mt-1 rounded border-slate-300 text-blue-900 focus:ring-blue-900">
-                    <label for="agreeTermsCheckbox" class="text-xs text-slate-600 leading-normal">
+                    <input type="checkbox" id="agreeTermsCheckbox" class="mt-1 rounded border-slate-300 text-blue-900 focus:ring-blue-900 cursor-pointer">
+                    <label for="agreeTermsCheckbox" class="text-xs text-slate-600 leading-normal cursor-pointer">
                         I agree to the <a href="#" onclick="switchView('termsView'); return false;" class="text-blue-900 underline font-semibold">Terms of Conditions & Liability Disclaimer</a>.
                     </label>
                 </div>
 
-                <button onclick="handleAuthAction()" id="authActionBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition shadow-xs">Log In</button>
+                <button onclick="handleAuthAction()" id="authActionBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-extrabold rounded-xl transition shadow-2xs active:scale-98">Log In</button>
             </div>
         </div>
     </div>
 
     <!-- STREAMLINED MY ACCOUNT VIEW -->
-    <div id="accountView" class="view-section hidden flex-1 max-w-2xl w-full mx-auto p-6 flex flex-col justify-center">
-        <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-xs space-y-6">
+    <div id="accountView" class="view-section hidden flex-1 max-w-2xl w-full mx-auto p-6 flex flex-col justify-center animate-fade-in">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-2xs space-y-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-6 gap-4">
                 <div>
-                    <p class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-1">Account Dashboard</p>
-                    <h2 id="accUserEmail" class="text-xl sm:text-2xl font-extrabold text-slate-900">name@example.com</h2>
+                    <p class="text-xs font-extrabold text-blue-900 uppercase tracking-widest mb-1">Account Dashboard</p>
+                    <h2 id="accUserEmail" class="text-xl sm:text-2xl font-black text-slate-900">name@example.com</h2>
                 </div>
             </div>
 
             <!-- STREAMLINED PLAN MANAGEMENT -->
-            <div class="p-6 bg-slate-50 border border-slate-200 rounded-3xl space-y-6">
+            <div class="p-6 bg-slate-50 border border-slate-200/80 rounded-3xl space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Current Plan Status</span>
-                        <h3 id="currentPlanName" class="text-lg font-extrabold text-slate-900 mt-1">Free Trial</h3>
+                        <span class="text-xs font-extrabold text-blue-900 uppercase tracking-widest">Current Plan Status</span>
+                        <h3 id="currentPlanName" class="text-lg font-black text-slate-900 mt-1">Free Trial</h3>
                     </div>
-                    <button onclick="switchView('pricingView')" class="px-5 py-2.5 bg-blue-900 hover:bg-blue-950 text-white text-xs font-bold rounded-xl transition">Change / Upgrade Plan</button>
+                    <button onclick="switchView('pricingView')" class="px-5 py-2.5 bg-blue-900 hover:bg-blue-950 text-white text-xs font-extrabold rounded-xl transition shadow-2xs active:scale-95">Change / Upgrade Plan</button>
                 </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-5 border-t border-slate-200 gap-4">
-                    <p id="trialRenewalText" class="text-xs text-slate-500">Enjoy full access for your first 3 contracts.</p>
-                    <button onclick="cancelSubscription()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition">Cancel Subscription</button>
+                    <p id="trialRenewalText" class="text-xs text-slate-500 font-medium">Enjoy full access for your first 3 contracts.</p>
+                    <button onclick="cancelSubscription()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition active:scale-95">Cancel Subscription</button>
                 </div>
             </div>
 
             <!-- MASTER ADMIN STATISTICS PANEL (Only visible to Theo-Kay@gmail.com) -->
             <div id="adminPanel" class="hidden p-6 sm:p-8 bg-slate-900 text-white rounded-3xl shadow-md space-y-5">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                    <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Admin Statistics Overview</span>
-                    <span class="text-[10px] bg-blue-900 px-2.5 py-1 rounded text-white font-mono">EXCLUSIVE ADMIN ACCESS</span>
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-blue-400">Master Admin Overview</span>
+                    <span class="text-[10px] bg-blue-900 px-2.5 py-1 rounded text-white font-mono font-bold">EXCLUSIVE ACCESS</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
                     <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
-                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Total Registered Users</span>
-                        <p id="adminTotalUsers" class="text-2xl font-extrabold text-white mt-1">1</p>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Total Users</span>
+                        <p id="adminTotalUsers" class="text-2xl font-black text-white mt-1">1</p>
                     </div>
                     <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
                         <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Subscriptions</span>
-                        <p id="adminActiveSubs" class="text-2xl font-extrabold text-emerald-400 mt-1">1</p>
+                        <p id="adminActiveSubs" class="text-2xl font-black text-emerald-400 mt-1">1</p>
                     </div>
                     <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
                         <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">System Status</span>
-                        <p class="text-lg font-extrabold text-blue-400 mt-1">Secure & Online</p>
+                        <p class="text-lg font-black text-blue-400 mt-1">Secure & Online</p>
                     </div>
                 </div>
             </div>
 
             <div class="pt-6 border-t border-slate-100 flex justify-between items-center">
-                <button onclick="handleLogout()" class="px-5 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition">Logout</button>
-                <button onclick="switchView('homeView')" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">Back to Scanner</button>
+                <button onclick="handleLogout()" class="px-5 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition active:scale-95">Logout</button>
+                <button onclick="switchView('homeView')" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition active:scale-95">Back to Scanner</button>
             </div>
         </div>
     </div>
 
     <!-- PAST DOCUMENTS VIEW -->
-    <div id="pastDocumentsView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-xs gap-4">
+    <div id="pastDocumentsView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col animate-fade-in">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-2xs gap-4">
             <div>
-                <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">Archive</p>
-                <h2 class="text-lg font-extrabold text-slate-900">Past Documents & Scans</h2>
+                <p class="text-xs font-extrabold text-blue-900 uppercase tracking-widest">Archive</p>
+                <h2 class="text-lg font-black text-slate-900">Past Documents & Scans</h2>
             </div>
             <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
                 <div class="text-right">
                     <span class="text-[10px] font-bold text-slate-400 uppercase block">Scans Remaining</span>
-                    <span id="pageScanCounter" class="text-sm font-extrabold text-blue-900 bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl">0/3</span>
+                    <span id="pageScanCounter" class="text-sm font-black text-blue-900 bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl">0/3</span>
                 </div>
-                <button onclick="switchView('homeView')" class="text-sm px-4 py-2 bg-blue-900 hover:bg-blue-950 font-semibold rounded-xl text-white transition">New Scan</button>
+                <button onclick="switchView('homeView')" class="text-sm px-4 py-2 bg-blue-900 hover:bg-blue-950 font-bold rounded-xl text-white transition active:scale-95">New Scan</button>
             </div>
         </div>
 
         <div class="space-y-3">
-            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex justify-between items-center hover:border-blue-900 transition cursor-pointer" onclick="runSummariser('MASTER PROFESSIONAL SERVICES AGREEMENT', sampleLegalAgreementText)">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs flex justify-between items-center hover:border-blue-900 transition-all cursor-pointer group" onclick="runSummariser('MASTER PROFESSIONAL SERVICES AGREEMENT', sampleLegalAgreementText)">
                 <div>
-                    <span class="text-xs font-bold text-blue-900 uppercase">MASTER PROFESSIONAL SERVICES AGREEMENT</span>
-                    <p class="text-xs text-slate-400">Scanned Archive Document</p>
+                    <span class="text-xs font-extrabold text-blue-900 uppercase group-hover:underline">MASTER PROFESSIONAL SERVICES AGREEMENT</span>
+                    <p class="text-xs text-slate-400 mt-0.5">Scanned Archive Document</p>
                 </div>
-                <span class="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-700 rounded-lg">View Summary</span>
+                <span class="text-xs font-bold px-3 py-1.5 bg-slate-100 text-slate-700 rounded-xl group-hover:bg-blue-900 group-hover:text-white transition-colors">View Summary</span>
             </div>
         </div>
     </div>
 
     <!-- ABOUT VIEW -->
-    <div id="aboutView" class="view-section hidden flex-1 max-w-3xl w-full mx-auto p-6 flex flex-col justify-center">
-        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-xs space-y-6">
-            <h2 class="text-2xl font-extrabold text-slate-900">About DoubleCheck</h2>
-            <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+    <div id="aboutView" class="view-section hidden flex-1 max-w-3xl w-full mx-auto p-6 flex flex-col justify-center animate-fade-in">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-2xs space-y-6">
+            <h2 class="text-2xl font-black text-slate-900">About DoubleCheck</h2>
+            <div class="space-y-4 text-sm text-slate-600 leading-relaxed font-medium">
                 <p>
                     <strong>DoubleCheck</strong> was built to simplify complex legal documents, making them completely transparent, easy to understand, and accessible without expensive solicitor fees.
                 </p>
@@ -371,25 +458,25 @@
                     DoubleCheck instantly extracts key payment terms, deadlines, hidden penalties, and risk clauses, saving you time and protecting your legal interests.
                 </p>
             </div>
-            <button onclick="switchView('homeView')" class="mt-4 px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Return to Home</button>
+            <button onclick="switchView('homeView')" class="mt-4 px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm active:scale-95">Return to Home</button>
         </div>
     </div>
 
     <!-- TERMS OF CONDITIONS VIEW -->
-    <div id="termsView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col">
-        <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-xs space-y-6">
+    <div id="termsView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col animate-fade-in">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-2xs space-y-6">
             <div class="border-b border-slate-100 pb-4">
-                <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Legal Framework & Agreement</span>
-                <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Terms of Conditions & Liability Disclaimer</h2>
-                <p class="text-xs text-slate-400 mt-1">Last updated: October 2026</p>
+                <span class="text-xs font-extrabold text-blue-900 uppercase tracking-widest">Legal Framework & Agreement</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Terms of Conditions & Liability Disclaimer</h2>
+                <p class="text-xs text-slate-400 mt-1 font-medium">Last updated: October 2026</p>
             </div>
 
-            <div class="space-y-4 text-sm text-slate-700 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+            <div class="space-y-4 text-sm text-slate-700 leading-relaxed max-h-[60vh] overflow-y-auto pr-2 font-medium">
                 <h3 class="font-bold text-slate-900 text-base">1. Acceptance of Terms</h3>
                 <p>By registering an account, accessing, or using DoubleCheck, you agree to be bound by these Terms of Conditions.</p>
 
                 <h3 class="font-bold text-slate-900 text-base">2. Informational Utility Disclaimer</h3>
-                <p class="bg-blue-50 border border-blue-200 p-4 rounded-2xl text-blue-900 font-medium">
+                <p class="bg-blue-50 border border-blue-200 p-4 rounded-2xl text-blue-900 font-semibold">
                     DoubleCheck is an AI-powered informational utility. <strong>DoubleCheck is not a law firm, does not practice law, and does not offer formal legal counsel or guarantees.</strong>
                 </p>
 
@@ -398,18 +485,18 @@
             </div>
 
             <div class="pt-6 border-t border-slate-100 flex justify-end">
-                <button onclick="switchView('homeView')" class="px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs rounded-xl transition">Accept & Return</button>
+                <button onclick="switchView('homeView')" class="px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs rounded-xl transition active:scale-95">Accept & Return</button>
             </div>
         </div>
     </div>
 
     <!-- FEEDBACK VIEW -->
-    <div id="feedbackView" class="view-section hidden flex-1 max-w-lg w-full mx-auto p-6 flex flex-col justify-center">
-        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-xs space-y-6">
+    <div id="feedbackView" class="view-section hidden flex-1 max-w-lg w-full mx-auto p-6 flex flex-col justify-center animate-fade-in">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-2xs space-y-6">
             <div>
-                <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Support</span>
-                <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Send Us Feedback</h2>
-                <p class="text-xs text-slate-500 mt-1">Email us at <span class="font-mono text-blue-900">Doubecheck.support@gmail.com</span> or send your message below.</p>
+                <span class="text-xs font-extrabold text-blue-900 uppercase tracking-widest">Support</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Send Us Feedback</h2>
+                <p class="text-xs text-slate-500 mt-1">Email us at <span class="font-mono text-blue-900 font-bold">Doubecheck.support@gmail.com</span> or send your message below.</p>
             </div>
 
             <div class="space-y-4">
@@ -421,17 +508,17 @@
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Your Message / Suggestion</label>
                     <textarea id="feedbackMessage" placeholder="Tell us how we can improve DoubleCheck..." class="w-full h-32 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-900 resize-none"></textarea>
                 </div>
-                <button onclick="submitFeedback()" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Send Feedback</button>
+                <button onclick="submitFeedback()" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-extrabold rounded-xl transition text-sm active:scale-98">Send Feedback</button>
             </div>
 
             <div class="pt-4 border-t border-slate-100 text-center">
-                <button onclick="switchView('homeView')" class="text-xs font-bold text-slate-500 hover:text-slate-800">Cancel & Return Home</button>
+                <button onclick="switchView('homeView')" class="text-xs font-bold text-slate-400 hover:text-slate-700">Cancel & Return Home</button>
             </div>
         </div>
     </div>
 
     <!-- FOOTER (ONLY VISIBLE ON HOME & SUMMARY RESULTS PAGES) -->
-    <footer id="appFooter" class="w-full bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500 mt-auto">
+    <footer id="appFooter" class="w-full bg-white border-t border-slate-200/80 py-4 px-6 text-center text-xs text-slate-500 mt-auto font-medium">
         DoubleCheck is an AI information utility and does not provide formal legal counsel or guarantees. <br>
         By using DoubleCheck, you agree to our <a href="#" onclick="switchView('termsView'); return false;" class="text-blue-900 font-semibold underline hover:text-blue-950">Terms of Conditions & Liability Disclaimer</a>. <br>
         © 2026 DoubleCheck Ltd. All rights reserved.
@@ -485,6 +572,17 @@
             }
         }
 
+        // DYNAMIC LEGAL SIGNAL INDICATOR
+        function updateTextSignal() {
+            const input = document.getElementById('documentInput').value;
+            const badge = document.getElementById('textSignalBadge');
+            if(isValidLegalDocument(input)) {
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
         // STRICT LEGAL DOCUMENT VALIDATOR ENGINE
         function isValidLegalDocument(text) {
             if(!text || text.trim().length < 35) return false;
@@ -535,12 +633,12 @@
                 statusDisplay.textContent = currentUser.email;
                 
                 drawerNavLinks.innerHTML = `
-                    <a href="#" onclick="toggleMenu(); switchView('homeView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Home Dashboard</a>
-                    <a href="#" onclick="toggleMenu(); switchView('accountView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">My Account & Plans</a>
-                    <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Past Documents & Scans</a>
-                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">About DoubleCheck</a>
-                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Send Feedback</a>
-                    <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Terms of Conditions</a>
+                    <a href="#" onclick="toggleMenu(); switchView('homeView');" class="block px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-bold text-slate-700 transition">Home Dashboard</a>
+                    <a href="#" onclick="toggleMenu(); switchView('accountView');" class="block px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-bold text-slate-700 transition">My Account & Plans</a>
+                    <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-bold text-slate-700 transition">Past Documents & Scans</a>
+                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-bold text-slate-700 transition">About DoubleCheck</a>
+                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-bold text-slate-700 transition">Send Feedback</a>
+                    <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-bold text-slate-700 transition">Terms of Conditions</a>
                 `;
 
                 authSection.innerHTML = '<button onclick="toggleMenu(); handleLogout();" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-center border border-slate-200">Logout</button>';
@@ -589,12 +687,12 @@
                 statusDisplay.textContent = "Not logged in";
                 
                 drawerNavLinks.innerHTML = `
-                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">About DoubleCheck</a>
-                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Send Feedback</a>
-                    <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Terms of Conditions</a>
+                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-bold text-slate-700 transition">About DoubleCheck</a>
+                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-bold text-slate-700 transition">Send Feedback</a>
+                    <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-bold text-slate-700 transition">Terms of Conditions</a>
                 `;
 
-                authSection.innerHTML = '<button onclick="toggleMenu(); switchView(\'authView\');" class="w-full py-3 bg-blue-900 text-white font-bold rounded-xl transition text-center">Login / Register</button>';
+                authSection.innerHTML = '<button onclick="toggleMenu(); switchView(\'authView\');" class="w-full py-3 bg-blue-900 text-white font-bold rounded-xl transition text-center shadow-2xs">Login / Register</button>';
                 if(adminPanel) adminPanel.classList.add('hidden');
                 if(pageScanCounter) pageScanCounter.textContent = "0/3";
             }
@@ -636,13 +734,13 @@
             const boxesContent = document.getElementById('categoryBoxesContent');
 
             if(tab === 'exec') {
-                btnExec.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-bold transition bg-blue-900 text-white shadow-xs";
-                btnBoxes.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-bold transition text-slate-600 hover:text-slate-900";
+                btnExec.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all bg-blue-900 text-white shadow-2xs";
+                btnBoxes.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all text-slate-600 hover:text-slate-900";
                 execContent.classList.remove('hidden');
                 boxesContent.classList.add('hidden');
             } else {
-                btnBoxes.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-bold transition bg-blue-900 text-white shadow-xs";
-                btnExec.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-bold transition text-slate-600 hover:text-slate-900";
+                btnBoxes.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all bg-blue-900 text-white shadow-2xs";
+                btnExec.className = "flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all text-slate-600 hover:text-slate-900";
                 boxesContent.classList.remove('hidden');
                 execContent.classList.add('hidden');
             }
@@ -662,16 +760,16 @@
             verificationContainer.classList.add('hidden');
 
             if(mode === 'login') {
-                tabLogin.className = "w-1/2 py-2 font-bold text-sm text-blue-900 border-b-2 border-blue-900";
-                tabSignup.className = "w-1/2 py-2 font-bold text-sm text-slate-400 hover:text-slate-700 border-b-0";
+                tabLogin.className = "w-1/2 py-2 font-black text-sm text-blue-900 border-b-2 border-blue-900 transition-all";
+                tabSignup.className = "w-1/2 py-2 font-bold text-sm text-slate-400 hover:text-slate-700 transition-all";
                 authTitle.textContent = "Welcome Back";
                 authSubtitle.textContent = "Sign in to access your contract summaries.";
                 passwordReqText.classList.add('hidden');
                 termsContainer.classList.add('hidden');
                 btn.textContent = "Log In";
             } else {
-                tabSignup.className = "w-1/2 py-2 font-bold text-sm text-blue-900 border-b-2 border-blue-900";
-                tabLogin.className = "w-1/2 py-2 font-bold text-sm text-slate-400 hover:text-slate-700 border-b-0";
+                tabSignup.className = "w-1/2 py-2 font-black text-sm text-blue-900 border-b-2 border-blue-900 transition-all";
+                tabLogin.className = "w-1/2 py-2 font-bold text-sm text-slate-400 hover:text-slate-700 transition-all";
                 authTitle.textContent = "Create Account";
                 authSubtitle.textContent = "Sign up for a free trial account.";
                 passwordReqText.classList.remove('hidden');
@@ -737,7 +835,7 @@
             setTimeout(() => {
                 overlay.classList.add('hidden');
                 callback();
-            }, 1200);
+            }, 1400);
         }
 
         function runSummariser(docName, rawText) {
@@ -829,13 +927,13 @@
             for(let i = 0; i < count; i++) {
                 const box = boxData[i];
                 container.innerHTML += `
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex flex-col justify-between hover:border-blue-900 transition">
+                    <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-2xs flex flex-col justify-between hover:border-blue-900 hover:shadow-xs transition-all">
                         <div>
                             <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">${box.title}</span>
-                                <button onclick="copyBoxText(this, '${box.content.replace(/'/g, "\\'")}')" class="text-xs font-semibold px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition">Copy</button>
+                                <span class="text-xs font-extrabold text-blue-900 uppercase tracking-wider">${box.title}</span>
+                                <button onclick="copyBoxText(this, '${box.content.replace(/'/g, "\\'")}')" class="text-xs font-bold px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition active:scale-95">Copy</button>
                             </div>
-                            <p class="text-sm text-slate-700 leading-relaxed mt-1">${box.content}</p>
+                            <p class="text-sm text-slate-700 leading-relaxed font-medium mt-1">${box.content}</p>
                         </div>
                     </div>
                 `;
