@@ -1,61 +1,60 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from '@google/genai';
 
 export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { documentText, detailLevel } = req.body || {};
+
+    if (!documentText || documentText.length < 20) {
+      return res.status(400).json({ error: 'Document text is too short or missing.' });
     }
 
-    try {
-        const { documentText, detailLevel } = req.body || {};
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'GEMINI_API_KEY environment variable is missing.' });
+    }
 
-        if (!documentText || documentText.trim().length < 20) {
-            return res.status(400).json({ error: 'Document text is too short or missing.' });
-        }
+    const ai = new GoogleGenAI({ apiKey });
 
-        const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) {
-            return res.status(500).json({ error: 'GEMINI_API_KEY environment variable is missing.' });
-        }
+    const prompt = `You are an expert legal AI assistant. Analyze the following legal agreement/contract text and provide a structured JSON response.
 
-        const ai = new GoogleGenAI({ apiKey });
-
-        const prompt = `You are an expert legal AI assistant. Analyze the following legal agreement/contract text and provide a structured JSON response.
-
-Detail level requested: ${detailLevel || 2} (1 = Short, 2 = Medium, 3 = Detailed).
+Detail level requested: ${detailLevel} (1 = Short, 2 = Medium, 3 = Detailed).
 
 Return a valid JSON object with the following exact keys:
 - "docTitle": The detected title of the agreement.
-- "executiveSummary": A concise summary paragraph appropriate for the requested detail level.
+- "executiveSummary": A concise paragraph appropriate for the requested detail level.
 - "categories": An array of 8 objects representing key legal breakdowns. Each object must have "title" and "content". The 8 categories should be:
-  1. Complete Document Summary
-  2. Purpose & Scope
-  3. Financial Terms & Consideration
-  4. Timeframes & Deadlines
-  5. Termination & Notice
-  6. Liability & Risk Caps
-  7. Auto-Renewal & Lock-Ins
-  8. Dispute Resolution & Jurisdiction
+  1. Purpose & Scope
+  2. Financial Terms & Compensation
+  3. Term & Termination
+  4. Confidentiality & IP Rights
+  5. Liability & Risk Caps
+  6. Governing Law & Jurisdiction
+  7. Dispute Resolution & Jurisdiction
+  8. Auto-Renewal & Lock-Ins
 
 Contract Text:
 ${documentText}`;
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-            config: {
-                responseMimeType: 'application/json'
-            }
-        });
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json'
+      }
+    });
 
-        const resultText = response.text || (response.response && response.response.text);
-        const resultData = JSON.parse(resultText);
-        
-        return res.status(200).json(resultData);
+    let rawText = response.text;
+    rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
-    } catch (error) {
-        console.error("Gemini API Error:", error);
-        return res.status(500).json({ 
-            error: 'Failed to process document with AI: ' + (error.message || 'Unknown server error') 
-        });
-    }
+    const data = JSON.parse(rawText);
+    return res.status(200).json(data);
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to process document with AI: ' + (err.message || 'Unknown server error') });
+  }
 }
