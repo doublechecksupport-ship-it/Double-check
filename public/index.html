@@ -517,572 +517,285 @@
         © 2026 DoubleCheck Ltd. All rights reserved.
     </footer>
 
-    <!-- SCRIPT ENGINE WITH GEMINI API CONNECTION -->
+    <!-- SCRIPT ENGINE WITH GEMINI API CONNECTION & PERSISTENT ACCOUNTS -->
     <script>
-        let currentUser = { 
-            email: "", 
-            loggedIn: false, 
-            planSelected: false,
-            plan: '', 
-            canceled: false,
-            scansRemaining: 0,
-            maxScans: 0 
+        let currentUser = JSON.parse(localStorage.getItem('doublecheck_logged_in_user')) || {
+            email: "Not logged in",
+            plan: "Trial",
+            scansUsed: 0
         };
 
-        let currentActiveDocText = "";
-        let currentAuthMode = 'login';
-        let generatedVerificationCode = "";
-        let tempSignupEmail = "";
-        let tempSignupPass = "";
-        let lastAiData = null;
+        let usersDatabase = JSON.parse(localStorage.getItem('doublecheck_users')) || [];
+        let authMode = 'login';
+        let simulatedVerificationCode = '';
+        let pendingUserRegistration = null;
 
-        const sampleLegalAgreementText = `MASTER PROFESSIONAL SERVICES AGREEMENT.
-        This Agreement is made between Client and Service Provider.
-        1. FINANCIAL CONSIDERATION & FEES: Client shall pay total fee of £1,500 due in net 30 days upon invoice receipt.
-        2. TIMEFRAMES & DEADLINES: Services shall commence on effective date and remain active for 12 months.
-        3. TERMINATION & NOTICE: Either party may terminate with 30 days written notice.
-        4. LIABILITY CAPS: Total aggregate liability is limited to total fees paid under this agreement.
-        5. GOVERNING LAW: Governed under jurisdiction of UK law.`;
+        const sampleLegalAgreementText = `MASTER PROFESSIONAL SERVICES AGREEMENT...`;
 
-        function getUsersDB() {
-            try {
-                return JSON.parse(localStorage.getItem('doublecheck_users_db')) || {};
-            } catch(e) {
-                return {};
+        window.onload = function() {
+            syncUserSession();
+            updateDrawerLinks();
+            if (!localStorage.getItem('doublecheck_logged_in_user')) {
+                switchView('authView');
+            } else {
+                switchView('homeView');
+            }
+        };
+
+        function syncUserSession() {
+            localStorage.setItem('doublecheck_logged_in_user', JSON.stringify(currentUser));
+            localStorage.setItem('doublecheck_users', JSON.stringify(usersDatabase));
+            
+            const display = document.getElementById('userStatusDisplay');
+            if (currentUser.email !== "Not logged in") {
+                display.innerText = currentUser.email;
+            } else {
+                display.innerText = "Not logged in";
             }
         }
 
-        function saveUsersDB(db) {
-            localStorage.setItem('doublecheck_users_db', JSON.stringify(db));
+        function toggleMenu() {
+            const drawer = document.getElementById('menuDrawer');
+            drawer.classList.toggle('hidden');
         }
 
-        const savedSession = localStorage.getItem('doublecheck_remembered_session');
-        if(savedSession) {
-            try {
-                const parsed = JSON.parse(savedSession);
-                if(parsed && parsed.loggedIn === true && parsed.email) {
-                    currentUser = parsed;
+        function updateDrawerLinks() {
+            const nav = document.getElementById('drawerNavLinks');
+            const authSec = document.getElementById('drawerAuthSection');
+            
+            nav.innerHTML = `
+                <button onclick="toggleMenu(); navigateHome();" class="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium text-[#1d1d1f] hover:bg-black/5 transition">Home Scanner</button>
+                <button onclick="toggleMenu(); switchView('pastDocumentsView');" class="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium text-[#1d1d1f] hover:bg-black/5 transition">Past Documents & Archive</button>
+                <button onclick="toggleMenu(); switchView('pricingView');" class="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium text-[#1d1d1f] hover:bg-black/5 transition">Pricing Plans</button>
+                <button onclick="toggleMenu(); switchView('aboutView');" class="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium text-[#1d1d1f] hover:bg-black/5 transition">About DoubleCheck</button>
+                <button onclick="toggleMenu(); switchView('feedbackView');" class="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium text-[#1d1d1f] hover:bg-black/5 transition">Send Feedback</button>
+            `;
+
+            if (currentUser.email !== "Not logged in") {
+                authSec.innerHTML = `
+                    <button onclick="toggleMenu(); switchView('accountView');" class="w-full mb-2 apple-button-secondary py-2.5 text-xs">My Account Dashboard</button>
+                    <button onclick="toggleMenu(); handleLogout();" class="w-full text-xs font-medium text-red-600 hover:text-red-800 transition py-1">Log Out</button>
+                `;
+            } else {
+                authSec.innerHTML = `
+                    <button onclick="toggleMenu(); switchView('authView');" class="w-full apple-button py-2.5 text-xs">Log In / Register</button>
+                `;
+            }
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(viewId).classList.remove('hidden');
+            updateDrawerLinks();
+        }
+
+        function navigateHome() {
+            if (currentUser.email === "Not logged in") {
+                switchView('authView');
+            } else {
+                switchView('homeView');
+            }
+        }
+
+        function switchAuthTab(mode) {
+            authMode = mode;
+            const tabLogin = document.getElementById('tabLogin');
+            const tabSignup = document.getElementById('tabSignup');
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+            const btn = document.getElementById('authActionBtn');
+            const pwdReq = document.getElementById('passwordReqText');
+            const termsBox = document.getElementById('termsAgreementContainer');
+
+            if (mode === 'login') {
+                tabLogin.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-white bg-[#1d1d1f]";
+                tabSignup.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-[#86868b] hover:text-[#1d1d1f]";
+                title.innerText = "Welcome Back";
+                subtitle.innerText = "Sign in to access your summaries.";
+                btn.innerText = "Log In";
+                pwdReq.classList.add('hidden');
+                termsBox.classList.add('hidden');
+            } else {
+                tabSignup.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-white bg-[#1d1d1f]";
+                tabLogin.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-[#86868b] hover:text-[#1d1d1f]";
+                title.innerText = "Create Account";
+                subtitle.innerText = "Start scanning contracts with AI.";
+                btn.innerText = "Continue to Verification";
+                pwdReq.classList.remove('hidden');
+                termsBox.classList.remove('hidden');
+            }
+        }
+
+        function handleAuthAction() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+
+            if (!email || !password) {
+                alert("Please fill in both email and password.");
+                return;
+            }
+
+            if (authMode === 'signup') {
+                const agree = document.getElementById('agreeTermsCheckbox').checked;
+                if (!agree) {
+                    alert("You must agree to the Terms of Conditions.");
+                    return;
                 }
-            } catch(e) {
-                localStorage.removeItem('doublecheck_remembered_session');
+                pendingUserRegistration = { email, password, plan: 'Trial', scansUsed: 0 };
+                simulatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+                document.getElementById('verifyingEmailText').innerText = email;
+                document.getElementById('simulatedCodeDisplay').innerText = simulatedVerificationCode;
+                document.getElementById('verificationModal').classList.remove('hidden');
+            } else {
+                const found = usersDatabase.find(u => u.email === email && u.password === password);
+                if (found || (email === currentUser.email && password === currentUser.password)) {
+                    currentUser = found || currentUser;
+                    syncUserSession();
+                    navigateHome();
+                } else {
+                    alert("Incorrect email or password, or account does not exist.");
+                }
             }
         }
 
-        function isValidLegalDocument(text) {
-            if(!text || text.trim().length < 35) return false;
-            const clean = text.toLowerCase();
-            const uniqueChars = new Set(clean.replace(/\s+/g, '')).size;
-            if(uniqueChars < 6) return false;
-
-            const legalKeywords = [
-                'agreement', 'contract', 'terms', 'clause', 'liability', 'payment', 
-                'fee', 'shall', 'party', 'parties', 'termination', 'notice', 'governed', 
-                'confidential', 'lease', 'tenant', 'landlord', 'services', 'employer', 
-                'employee', 'nda', 'dispute', 'jurisdiction', 'rights', 'intellectual property'
-            ];
-
-            let matches = 0;
-            for(let word of legalKeywords) {
-                if(clean.includes(word)) matches++;
+        function verifyCodeAndProceed() {
+            const code = document.getElementById('authCodeInput').value.trim();
+            if (code === simulatedVerificationCode) {
+                currentUser = pendingUserRegistration;
+                usersDatabase.push(currentUser);
+                syncUserSession();
+                document.getElementById('verificationModal').classList.add('hidden');
+                switchView('pricingView');
+            } else {
+                alert("Invalid verification code.");
             }
-            return matches >= 2;
+        }
+
+        function resendVerificationCode() {
+            simulatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('simulatedCodeDisplay').innerText = simulatedVerificationCode;
+            alert("New verification code generated!");
+        }
+
+        function selectPlan(planName) {
+            currentUser.plan = planName;
+            syncUserSession();
+            navigateHome();
+        }
+
+        function handleLogout() {
+            currentUser = { email: "Not logged in", plan: "Trial", scansUsed: 0 };
+            localStorage.removeItem('doublecheck_logged_in_user');
+            syncUserSession();
+            switchView('authView');
         }
 
         function hideValidationError() {
             document.getElementById('validationError').classList.add('hidden');
         }
 
-        function showValidationError() {
-            document.getElementById('validationError').classList.remove('hidden');
-        }
-
-        function updateAuthStateUI() {
-            const statusDisplay = document.getElementById('userStatusDisplay');
-            const authSection = document.getElementById('drawerAuthSection');
-            const drawerNavLinks = document.getElementById('drawerNavLinks');
-            const adminPanel = document.getElementById('adminPanel');
-            const accUserEmail = document.getElementById('accUserEmail');
-            const currentPlanName = document.getElementById('currentPlanName');
-            const trialRenewalText = document.getElementById('trialRenewalText');
-            const pageScanCounter = document.getElementById('pageScanCounter');
-
-            if(currentUser && currentUser.loggedIn === true) {
-                statusDisplay.textContent = currentUser.email;
-                
-                drawerNavLinks.innerHTML = `
-                    <a href="#" onclick="toggleMenu(); navigateHome();" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Home Dashboard</a>
-                    <a href="#" onclick="toggleMenu(); switchView('accountView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">My Account & Plans</a>
-                    <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Past Documents & Scans</a>
-                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">About DoubleCheck</a>
-                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Send Feedback</a>
-                    <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Terms of Conditions</a>
-                `;
-
-                authSection.innerHTML = '<button onclick="toggleMenu(); handleLogout();" class="apple-button-secondary w-full py-3 text-xs">Logout</button>';
-                if(accUserEmail) accUserEmail.textContent = currentUser.email;
-
-                if(!currentUser.planSelected) {
-                    currentPlanName.textContent = "No Plan Selected";
-                    trialRenewalText.textContent = "Please select a plan to unlock document scanning.";
-                } else if(currentUser.canceled) {
-                    currentPlanName.textContent = "Subscription Canceled";
-                    trialRenewalText.textContent = "Your plan is currently canceled.";
-                } else {
-                    currentPlanName.textContent = currentUser.plan + " Plan (Active)";
-                    trialRenewalText.textContent = "Billing renews automatically monthly.";
-                }
-
-                if(pageScanCounter) {
-                    pageScanCounter.textContent = currentUser.scansRemaining + "/" + currentUser.maxScans;
-                }
-
-                if(currentUser.email.toLowerCase() === "theo-kay@gmail.com") {
-                    adminPanel.classList.remove('hidden');
-                    const db = getUsersDB();
-                    const totalUsersCount = Object.keys(db).length || 1;
-                    document.getElementById('adminTotalUsers').textContent = totalUsersCount;
-                    document.getElementById('adminActiveSubs').textContent = totalUsersCount;
-                } else {
-                    adminPanel.classList.add('hidden');
-                }
-            } else {
-                statusDisplay.textContent = "Not logged in";
-                drawerNavLinks.innerHTML = `
-                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">About DoubleCheck</a>
-                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Send Feedback</a>
-                    <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Terms of Conditions</a>
-                `;
-                authSection.innerHTML = '<button onclick="toggleMenu(); switchView(\'authView\');" class="apple-button w-full py-3 text-xs">Login / Register</button>';
-                if(adminPanel) adminPanel.classList.add('hidden');
+        function handleFileUpload(type, event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('documentInput').value = `[Uploaded ${type}: ${file.name}]\n\nSample extracted agreement content ready for AI analysis.`;
             }
         }
 
-        function toggleMenu() {
-            document.getElementById('menuDrawer').classList.toggle('hidden');
-        }
-
-        function navigateHome() {
-            if(!currentUser || currentUser.loggedIn !== true) {
-                switchView('authView');
+        // FIXED ENDPOINT CALL TO /api/summarise
+        async function summarise() {
+            const documentText = document.getElementById('documentInput').value.trim();
+            if (documentText.length < 20) {
+                document.getElementById('validationError').classList.remove('hidden');
                 return;
             }
-            if(!currentUser.planSelected) {
-                switchView('pricingView');
-                return;
+            hideValidationError();
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+
+            const detailLevel = document.getElementById('summaryDetailSlider').value;
+
+            try {
+                const response = await fetch('/api/summarise', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ documentText, detailLevel })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Server error occurred.');
+                }
+
+                document.getElementById('extractedDocName').innerText = data.docTitle || "LEGAL_AGREEMENT";
+                document.getElementById('paragraphSummaryText').innerText = data.executiveSummary || "";
+
+                const boxesContainer = document.getElementById('boxesContainer');
+                boxesContainer.innerHTML = '';
+                if (data.categories && Array.isArray(data.categories)) {
+                    data.categories.forEach(cat => {
+                        const card = document.createElement('div');
+                        card.className = "glass-card p-5 space-y-1.5";
+                        card.innerHTML = `
+                            <h4 class="text-xs font-semibold text-[#1d1d1f] uppercase">${cat.title}</h4>
+                            <p class="text-xs apple-body leading-relaxed">${cat.content}</p>
+                        `;
+                        boxesContainer.appendChild(card);
+                    });
+                }
+
+                currentUser.scansUsed++;
+                syncUserSession();
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                switchView('resultsView');
+            } catch (err) {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                alert("Error connecting to Gemini AI backend: " + err.message);
             }
-            switchView('homeView');
-        }
-
-        function switchView(viewId) {
-            const protectedViews = ['homeView', 'resultsView', 'accountView', 'pastDocumentsView'];
-            if(protectedViews.includes(viewId) && (!currentUser || currentUser.loggedIn !== true)) {
-                viewId = 'authView';
-            }
-
-            if(currentUser && currentUser.loggedIn === true && !currentUser.planSelected && viewId !== 'pricingView' && viewId !== 'accountView' && viewId !== 'authView') {
-                viewId = 'pricingView';
-            }
-
-            document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
-            const target = document.getElementById(viewId);
-            if(target) target.classList.remove('hidden');
-
-            const appFooter = document.getElementById('appFooter');
-            if(viewId === 'homeView' || viewId === 'resultsView') {
-                appFooter.classList.remove('hidden');
-            } else {
-                appFooter.classList.add('hidden');
-            }
-
-            window.scrollTo(0, 0);
         }
 
         function switchSummaryTab(tab) {
-            const btnExec = document.getElementById('tabExecSummary');
-            const btnBoxes = document.getElementById('tabCategoryBoxes');
+            const tabExec = document.getElementById('tabExecSummary');
+            const tabBoxes = document.getElementById('tabCategoryBoxes');
             const execContent = document.getElementById('execSummaryContent');
             const boxesContent = document.getElementById('categoryBoxesContent');
 
-            if(tab === 'exec') {
-                btnExec.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition bg-[#1d1d1f] text-white shadow-xs";
-                btnBoxes.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition text-[#86868b] hover:text-[#1d1d1f]";
+            if (tab === 'exec') {
+                tabExec.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition bg-[#1d1d1f] text-white shadow-xs";
+                tabBoxes.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition text-[#86868b] hover:text-[#1d1d1f]";
                 execContent.classList.remove('hidden');
                 boxesContent.classList.add('hidden');
             } else {
-                btnBoxes.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition bg-[#1d1d1f] text-white shadow-xs";
-                btnExec.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition text-[#86868b] hover:text-[#1d1d1f]";
+                tabBoxes.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition bg-[#1d1d1f] text-white shadow-xs";
+                tabExec.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition text-[#86868b] hover:text-[#1d1d1f]";
                 boxesContent.classList.remove('hidden');
                 execContent.classList.add('hidden');
             }
         }
 
-        function switchAuthTab(mode) {
-            currentAuthMode = mode;
-            const tabLogin = document.getElementById('tabLogin');
-            const tabSignup = document.getElementById('tabSignup');
-            const authTitle = document.getElementById('authTitle');
-            const authSubtitle = document.getElementById('authSubtitle');
-            const passwordReqText = document.getElementById('passwordReqText');
-            const termsContainer = document.getElementById('termsAgreementContainer');
-            const btn = document.getElementById('authActionBtn');
-
-            if(mode === 'login') {
-                tabLogin.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-white bg-[#1d1d1f]";
-                tabSignup.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-[#86868b] hover:text-[#1d1d1f]";
-                authTitle.textContent = "Welcome Back";
-                authSubtitle.textContent = "Sign in to access your summaries.";
-                passwordReqText.classList.add('hidden');
-                termsContainer.classList.add('hidden');
-                btn.textContent = "Log In";
-            } else {
-                tabSignup.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-white bg-[#1d1d1f]";
-                tabLogin.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-[#86868b] hover:text-[#1d1d1f]";
-                authTitle.textContent = "Create Account";
-                authSubtitle.textContent = "Sign up for a free trial account.";
-                passwordReqText.classList.remove('hidden');
-                termsContainer.classList.remove('hidden');
-                btn.textContent = "Continue to Verification";
-            }
-        }
-
-        function handleFileUpload(type, event) {
-            hideValidationError();
-            const file = event.target.files[0];
-            let fileName = type === 'PDF' ? "Uploaded_Document.pdf" : "Uploaded_Image_Scan.jpg";
-            if(file) fileName = file.name.toUpperCase();
-            
-            // For file uploads in prototype, use sample text or read file
-            runSummariser(fileName, sampleLegalAgreementText);
-        }
-
-        // REAL GEMINI API CALL FUNCTION
-        async function summarise() {
-            hideValidationError();
-
-            if(!currentUser || currentUser.loggedIn !== true) {
-                switchView('authView');
-                return;
-            }
-            if(!currentUser.planSelected) {
-                switchView('pricingView');
-                return;
-            }
-
-            const text = document.getElementById('documentInput').value.trim();
-            if(!isValidLegalDocument(text)) {
-                showValidationError();
-                return;
-            }
-
-            if(currentUser.scansRemaining <= 0) {
-                alert("Scan credits limit reached for your current plan. Please select a plan.");
-                switchView('pricingView');
-                return;
-            }
-
-            currentUser.scansRemaining--;
-            localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-            updateAuthStateUI();
-
-            showLoadingAnimation();
-
-            try {
-                const detailVal = document.getElementById('summaryDetailSlider').value;
-                const detailMap = { '1': 'Short', '2': 'Medium', '3': 'Detailed' };
-
-                const apiResponse = await fetch('/api/summarise', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        documentText: text, 
-                        detailLevel: detailMap[detailVal] || 'Medium' 
-                    })
-                });
-
-                if (!apiResponse.ok) {
-                    throw new Error('AI processing failed.');
-                }
-
-                const data = await apiResponse.json();
-                hideLoadingAnimation();
-                renderAiResults(data, text);
-
-            } catch (err) {
-                hideLoadingAnimation();
-                alert("Error connecting to Gemini AI backend. Please ensure your Vercel environment variable GEMINI_API_KEY is configured.");
-                console.error(err);
-            }
-        }
-
-        async function retriggerAISummary() {
-            if(!currentActiveDocText) return;
-            const detailVal = document.getElementById('summaryDetailSlider').value;
-            const detailMap = { '1': 'Short', '2': 'Medium', '3': 'Detailed' };
-            document.getElementById('sliderDetailLabel').textContent = detailMap[detailVal];
-
-            showLoadingAnimation();
-            try {
-                const apiResponse = await fetch('/api/summarise', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        documentText: currentActiveDocText, 
-                        detailLevel: detailMap[detailVal] 
-                    })
-                });
-                if(apiResponse.ok) {
-                    const data = await apiResponse.json();
-                    lastAiData = data;
-                    document.getElementById('paragraphSummaryText').textContent = data.executiveSummary;
-                }
-            } catch(e) {
-                console.error(e);
-            }
-            hideLoadingAnimation();
-        }
-
-        function runSummariser(docName, rawText) {
-            document.getElementById('documentInput').value = rawText;
+        function retriggerAISummary() {
+            const sliderVal = document.getElementById('summaryDetailSlider').value;
+            const labels = ["Short", "Medium", "Detailed"];
+            document.getElementById('sliderDetailLabel').innerText = labels[sliderVal - 1];
             summarise();
         }
 
-        function renderAiResults(data, rawText) {
-            lastAiData = data;
-            currentActiveDocText = rawText;
-
-            document.getElementById('extractedDocName').textContent = data.docTitle || "LEGAL_DOCUMENT_ANALYSIS";
-            document.getElementById('paragraphSummaryText').textContent = data.executiveSummary;
-            
-            const container = document.getElementById('boxesContainer');
-            container.innerHTML = '';
-
-            const isProOrTrial = currentUser.plan === 'Pro' || currentUser.plan === 'Trial';
-            const boxLimit = isProOrTrial ? 8 : 4;
-
-            document.getElementById('resultsSubtitle').textContent = isProOrTrial ? "Complete 8-Box Deep-Dive Breakdown" : "4-Box Core Summary";
-
-            if(data.categories && Array.isArray(data.categories)) {
-                for(let i = 0; i < Math.min(data.categories.length, boxLimit); i++) {
-                    const cat = data.categories[i];
-                    container.innerHTML += `
-                        <div class="glass-card p-5 flex flex-col justify-between hover:border-black/20">
-                            <div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-[11px] font-semibold text-[#1d1d1f] uppercase tracking-wider">${cat.title}</span>
-                                    <button onclick="copyBoxText(this, '${cat.content.replace(/'/g, "\\'")}')" class="apple-button-secondary text-xs px-2.5 py-1">Copy</button>
-                                </div>
-                                <p class="text-xs apple-body leading-relaxed mt-1">${cat.content}</p>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-
-            switchSummaryTab('exec');
-            switchView('resultsView');
-        }
-
-        function showLoadingAnimation() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        }
-
-        function hideLoadingAnimation() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }
-
         function copyText(elementId) {
-            const text = document.getElementById(elementId).textContent;
+            const text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text);
             alert("Summary copied to clipboard!");
         }
 
-        function copyBoxText(btn, text) {
-            navigator.clipboard.writeText(text);
-            const orig = btn.textContent;
-            btn.textContent = "Copied!";
-            setTimeout(() => btn.textContent = orig, 1200);
-        }
-
-        function selectPlan(planType) {
-            if(!currentUser || currentUser.loggedIn !== true) {
-                switchView('authView');
-                return;
-            }
-            currentUser.planSelected = true;
-            currentUser.plan = planType;
-            currentUser.canceled = false;
-
-            if(planType === 'Trial') {
-                currentUser.maxScans = 3;
-                currentUser.scansRemaining = 3;
-            } else if(planType === 'Base') {
-                currentUser.maxScans = 20;
-                currentUser.scansRemaining = 20;
-            } else if(planType === 'Pro') {
-                currentUser.maxScans = 50;
-                currentUser.scansRemaining = 50;
-            }
-
-            localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-            
-            const db = getUsersDB();
-            if(db[currentUser.email]) {
-                db[currentUser.email] = currentUser;
-                saveUsersDB(db);
-            }
-
-            updateAuthStateUI();
-            switchView('homeView');
+        function submitFeedback() {
+            alert("Thank you for your feedback!");
+            navigateHome();
         }
 
         function cancelSubscription() {
-            if(confirm("Are you sure you want to cancel your subscription or plan?")) {
-                currentUser.canceled = true;
-                currentUser.scansRemaining = 0;
-                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-                
-                const db = getUsersDB();
-                if(db[currentUser.email]) {
-                    db[currentUser.email].canceled = true;
-                    saveUsersDB(db);
-                }
-
-                updateAuthStateUI();
-                switchView('pricingView');
-            }
-        }
-
-        function submitFeedback() {
-            const msg = document.getElementById('feedbackMessage').value.trim();
-            if(!msg) {
-                alert("Please enter a message for your feedback.");
-                return;
-            }
-            alert("Thank you! Your feedback has been sent.");
-            document.getElementById('feedbackMessage').value = "";
-            navigateHome();
-        }
-
-        function handleAuthAction() {
-            const email = document.getElementById('authEmail').value.trim().toLowerCase();
-            const pass = document.getElementById('authPassword').value;
-
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailRegex.test(email)) {
-                alert("Please enter a valid email address.");
-                return;
-            }
-
-            const db = getUsersDB();
-
-            if(email === "theo-kay@gmail.com" && pass === "Theo9*89") {
-                const adminUser = {
-                    email: "theo-kay@gmail.com",
-                    password: "Theo9*89",
-                    loggedIn: true,
-                    planSelected: true,
-                    plan: "Pro",
-                    canceled: false,
-                    scansRemaining: 50,
-                    maxScans: 50
-                };
-                db[email] = adminUser;
-                saveUsersDB(db);
-                currentUser = adminUser;
-                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-                updateAuthStateUI();
+            if (confirm("Are you sure you want to cancel your subscription?")) {
+                currentUser.plan = "Trial";
+                syncUserSession();
+                alert("Subscription cancelled.");
                 navigateHome();
-                return;
             }
-
-            if (currentAuthMode === 'login') {
-                if (!pass) {
-                    alert("Please enter your password.");
-                    return;
-                }
-                if (!db[email] || db[email].password !== pass) {
-                    alert("Incorrect password or account does not exist.");
-                    return;
-                }
-                currentUser = db[email];
-                currentUser.loggedIn = true;
-                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-                updateAuthStateUI();
-                navigateHome();
-            } 
-            else {
-                const passwordPolicy = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-                if (!passwordPolicy.test(pass)) {
-                    alert("Password must be at least 8 characters long and include an uppercase letter, number, and special symbol.");
-                    return;
-                }
-                const agreed = document.getElementById('agreeTermsCheckbox').checked;
-                if (!agreed) {
-                    alert("You must agree to the Terms of Conditions.");
-                    return;
-                }
-
-                tempSignupEmail = email;
-                tempSignupPass = pass;
-                generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-                
-                document.getElementById('verifyingEmailText').textContent = email;
-                document.getElementById('simulatedCodeDisplay').textContent = generatedVerificationCode;
-                document.getElementById('verificationModal').classList.remove('hidden');
-            }
-        }
-
-        function verifyCodeAndProceed() {
-            const entered = document.getElementById('authCodeInput').value.trim();
-            if(entered !== generatedVerificationCode) {
-                alert("Invalid verification code. Please check the simulated code display.");
-                return;
-            }
-            document.getElementById('verificationModal').classList.add('hidden');
-            document.getElementById('authCodeInput').value = "";
-
-            const db = getUsersDB();
-            const newUser = {
-                email: tempSignupEmail,
-                password: tempSignupPass,
-                loggedIn: true,
-                planSelected: false,
-                plan: '',
-                canceled: false,
-                scansRemaining: 0,
-                maxScans: 0
-            };
-            db[tempSignupEmail] = newUser;
-            saveUsersDB(db);
-
-            currentUser = newUser;
-            localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-            updateAuthStateUI();
-            switchView('pricingView');
-        }
-
-        function resendVerificationCode() {
-            generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-            document.getElementById('simulatedCodeDisplay').textContent = generatedVerificationCode;
-            alert("New verification code generated!");
-        }
-
-        function handleLogout() {
-            currentUser = { email: "", loggedIn: false, planSelected: false, plan: '', canceled: false, scansRemaining: 0, maxScans: 0 };
-            localStorage.removeItem('doublecheck_remembered_session');
-            document.getElementById('authEmail').value = "";
-            document.getElementById('authPassword').value = "";
-            switchAuthTab('login');
-            updateAuthStateUI();
-            switchView('authView');
-        }
-
-        if(currentUser && currentUser.loggedIn === true) {
-            updateAuthStateUI();
-            navigateHome();
-        } else {
-            updateAuthStateUI();
-            switchView('authView');
         }
     </script>
 </body>
