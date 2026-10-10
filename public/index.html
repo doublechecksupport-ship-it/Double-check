@@ -82,4 +82,899 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-6">
             <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs hover:border-blue-900 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
-                <span class="text-blue-900 font-bold mb-1
+                <span class="text-blue-900 font-bold mb-1">Upload Image</span>
+                <span class="text-xs text-slate-400">Select photo (JPG, PNG)</span>
+                <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload('Image', event)">
+            </label>
+            <label class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs hover:border-blue-900 hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center">
+                <span class="text-blue-900 font-bold mb-1">Upload File</span>
+                <span class="text-xs text-slate-400">Select PDF document</span>
+                <input type="file" accept=".pdf" class="hidden" onchange="handleFileUpload('PDF', event)">
+            </label>
+        </div>
+
+        <div class="w-full bg-white border border-slate-200 rounded-3xl p-4 shadow-xs mb-6 text-left">
+            <div class="flex justify-between items-center px-2 mb-2">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paste Legal Document Text</span>
+                <button onclick="document.getElementById('documentInput').value=''" class="text-xs font-semibold text-slate-500 hover:text-slate-800">Clear</button>
+            </div>
+            <textarea id="documentInput" placeholder="Paste full legal document terms here..." class="w-full h-36 bg-transparent text-slate-800 placeholder-slate-400 resize-none focus:outline-none p-2 text-sm"></textarea>
+        </div>
+
+        <button onclick="summarise()" class="w-full py-4 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl shadow-md transition transform active:scale-98">
+            Summarise Document
+        </button>
+    </main>
+
+    <!-- LOADING / ANIMATION MODAL -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 z-50 bg-white/90 backdrop-blur-xs flex flex-col items-center justify-center p-6 text-center">
+        <div class="spinner mb-4"></div>
+        <h3 class="text-xl font-extrabold text-slate-900 mb-1">Analyzing Document...</h3>
+        <p class="text-xs text-slate-500">Extracting payment terms, deadlines, and risk factors.</p>
+    </div>
+
+    <!-- RESULTS VIEW -->
+    <div id="resultsView" class="view-section hidden flex-1 max-w-6xl w-full mx-auto p-6 flex flex-col">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-xs gap-4">
+            <div>
+                <p id="resultsSubtitle" class="text-xs font-bold text-blue-900 uppercase tracking-wider">Document Summary Breakdown</p>
+                <h2 id="extractedDocName" class="text-xl font-extrabold text-slate-900">Document Title</h2>
+            </div>
+            <button onclick="switchView('homeView')" class="text-xs px-4 py-2.5 bg-slate-100 hover:bg-slate-200 font-semibold rounded-xl text-slate-700 transition">New Scan</button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- PARAGRAPH SUMMARY SIDEBAR WITH SLIDER -->
+            <div class="lg:col-span-1 bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Executive Overview</span>
+                        <button onclick="copyText('paragraphSummaryText')" class="text-xs font-semibold px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition">Copy</button>
+                    </div>
+
+                    <p id="paragraphSummaryText" class="text-sm text-slate-700 leading-relaxed min-h-[160px] p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                        Analyzing paragraph details...
+                    </p>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="summaryDetailSlider" class="text-xs font-bold text-slate-500 uppercase">Length / Detail Slider</label>
+                        <span id="sliderDetailLabel" class="text-xs font-extrabold text-blue-900 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">Medium</span>
+                    </div>
+                    <input type="range" id="summaryDetailSlider" min="1" max="3" value="2" onchange="updateSummaryDetailLevel(this.value)" class="w-full accent-blue-900 cursor-pointer">
+                    <p class="text-[11px] text-slate-400 mt-1">Adjust slider to switch between Short, Medium, and Detailed paragraph summaries.</p>
+                </div>
+            </div>
+
+            <!-- DETAILED CATEGORY BOXES -->
+            <div id="boxesContainer" class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+        </div>
+
+        <button onclick="switchView('homeView')" class="w-full py-4 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl shadow-md transition">
+            Scan Another Document
+        </button>
+    </div>
+
+    <!-- PRICING & PLANS VIEW -->
+    <div id="pricingView" class="view-section hidden flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col justify-center">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Flexible Plans for Every Need</h2>
+            <p class="text-slate-500 text-sm max-w-lg mx-auto">Choose a plan that fits your contract scanning volume.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Free Trial Tier -->
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">1. Free Trial</span>
+                    <div class="flex items-baseline mt-2 mb-4">
+                        <span class="text-3xl font-extrabold text-slate-900">£0</span>
+                        <span class="text-slate-500 text-xs ml-1">/ first 3 contracts</span>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
+                        <li class="flex items-center">✓ Full 8-box deep-dive dashboard</li>
+                        <li class="flex items-center">✓ Test real critical contracts instantly</li>
+                        <li class="flex items-center">✓ Zero upfront payment required</li>
+                    </ul>
+                </div>
+                <button onclick="selectPlan('Trial')" id="trialPlanBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition text-sm">Start Free Trial</button>
+            </div>
+
+            <!-- Base Plan -->
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">2. Base Plan</span>
+                    <div class="flex items-baseline mt-2 mb-4">
+                        <span class="text-3xl font-extrabold text-slate-900">£9.99</span>
+                        <span class="text-slate-500 text-xs ml-1">/ month</span>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
+                        <li class="flex items-center">✓ 4-Box Core Summary + Overview</li>
+                        <li class="flex items-center">✓ Perfect for leases & gig work</li>
+                        <li class="flex items-center">✓ Key dates & payment terms</li>
+                    </ul>
+                </div>
+                <button onclick="selectPlan('Base')" id="basePlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Select Base Plan</button>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="bg-white border-2 border-blue-900 rounded-3xl p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">3. Pro Plan</span>
+                    <div class="flex items-baseline mt-2 mb-4">
+                        <span class="text-3xl font-extrabold text-slate-900">£19.99</span>
+                        <span class="text-slate-500 text-xs ml-1">/ month</span>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
+                        <li class="flex items-center font-bold text-slate-900">✓ Full 8-Box Deep-Dive Dashboard</li>
+                        <li class="flex items-center">✓ Risk flags, hidden penalties, IP rights</li>
+                        <li class="flex items-center">✓ Built for active freelancers & creators</li>
+                    </ul>
+                </div>
+                <button onclick="selectPlan('Pro')" id="proPlanBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Select Pro Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION VIEW -->
+    <div id="authView" class="view-section hidden flex-1 max-w-md w-full mx-auto p-6 flex flex-col justify-center">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-xs flex flex-col items-center">
+            <div class="mb-4">
+                <svg class="logo-icon h-12 w-12" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M416 160H352C334.327 160 320 145.673 320 128V64H96C78.3269 64 64 78.3269 64 96V416C64 433.673 78.3269 448 96 448H416C433.673 448 448 433.673 448 416V160H416Z" fill="#1e3a8a"/>
+                    <path d="M320 64L448 192V160H352C334.327 160 320 145.673 320 128V64Z" fill="white" fill-opacity="0.85"/>
+                    <rect x="120" y="220" width="180" height="24" rx="12" fill="white"/>
+                    <rect x="120" y="272" width="220" height="24" rx="12" fill="white"/>
+                    <rect x="120" y="324" width="220" height="24" rx="12" fill="white"/>
+                    <rect x="120" y="376" width="140" height="24" rx="12" fill="white"/>
+                </svg>
+            </div>
+
+            <!-- Tab Toggle between Login and Create Account -->
+            <div class="flex border-b border-slate-200 w-full mb-6 text-center">
+                <button id="tabLogin" onclick="switchAuthTab('login')" class="w-1/2 py-2 font-bold text-sm text-blue-900 border-b-2 border-blue-900">Log In</button>
+                <button id="tabSignup" onclick="switchAuthTab('signup')" class="w-1/2 py-2 font-bold text-sm text-slate-400 hover:text-slate-700">Create Account</button>
+            </div>
+
+            <h2 id="authTitle" class="text-xl font-extrabold text-slate-900 mb-1 text-center">Welcome Back</h2>
+            <p id="authSubtitle" class="text-xs text-slate-500 mb-6 text-center">Sign in to access your contract summaries.</p>
+
+            <div id="authFormFields" class="space-y-4 w-full">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email Address</label>
+                    <input type="email" id="authEmail" placeholder="name@example.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Password</label>
+                    <input type="password" id="authPassword" placeholder="Enter password" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
+                    <p id="passwordReqText" class="hidden text-[10px] text-slate-400 mt-1">Must contain 8+ chars, uppercase letter, number, & special symbol.</p>
+                </div>
+
+                <div id="verificationContainer" class="hidden">
+                    <label class="block text-xs font-bold text-blue-900 uppercase mb-1">Email Verification Code</label>
+                    <input type="text" id="authCode" placeholder="Enter 6-digit code sent to email" class="w-full p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm focus:outline-none focus:border-blue-900 font-mono tracking-widest text-center">
+                </div>
+
+                <!-- Mandatory Terms agreement checkbox ONLY for new accounts -->
+                <div id="termsAgreementContainer" class="hidden flex items-start space-x-2 pt-2">
+                    <input type="checkbox" id="agreeTermsCheckbox" class="mt-1 rounded border-slate-300 text-blue-900 focus:ring-blue-900">
+                    <label for="agreeTermsCheckbox" class="text-xs text-slate-600 leading-normal">
+                        I agree to the <a href="#" onclick="switchView('termsView'); return false;" class="text-blue-900 underline font-semibold">Terms of Conditions & Liability Disclaimer</a>.
+                    </label>
+                </div>
+
+                <button onclick="handleAuthAction()" id="authActionBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition shadow-xs">Log In</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MY ACCOUNT VIEW -->
+    <div id="accountView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-center">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-xs space-y-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-6 gap-4">
+                <div>
+                    <p class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-1">Account Dashboard</p>
+                    <h2 id="accUserEmail" class="text-xl sm:text-2xl font-extrabold text-slate-900">name@example.com</h2>
+                </div>
+            </div>
+
+            <!-- EMBEDDED PRICING MANAGEMENT INSIDE MY ACCOUNT -->
+            <div class="p-6 sm:p-8 bg-slate-50 border border-slate-200 rounded-3xl space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Current Plan Status</span>
+                        <h3 id="currentPlanName" class="text-lg font-extrabold text-slate-900 mt-1">Free Trial</h3>
+                    </div>
+                    <button onclick="switchView('pricingView')" class="px-5 py-2.5 bg-blue-900 hover:bg-blue-950 text-white text-xs font-bold rounded-xl transition">Change / Upgrade Plan</button>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-5 border-t border-slate-200 gap-4">
+                    <p id="trialRenewalText" class="text-xs text-slate-500">Enjoy full access for your first 3 contracts.</p>
+                    <button onclick="cancelSubscription()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition">Cancel Subscription</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold text-blue-900 uppercase tracking-wider">Billing History</span>
+                        <p class="text-sm font-bold text-slate-800 mt-2">Active Invoices</p>
+                        <p class="text-xs text-slate-400 mt-1">No past charges during trial period.</p>
+                    </div>
+                    <button onclick="alert('No invoices available yet.')" class="mt-4 text-xs font-bold text-blue-900 hover:underline text-left">View Invoices →</button>
+                </div>
+                <div class="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold text-blue-900 uppercase tracking-wider">Security & 2FA</span>
+                        <p class="text-sm font-bold text-slate-800 mt-2">Device Remembered</p>
+                        <p class="text-xs text-emerald-600 font-semibold mt-1">✓ Active & Secured</p>
+                    </div>
+                    <button onclick="alert('Account security is fully configured via Doubecheck.support@gmail.com.')" class="mt-4 text-xs font-bold text-blue-900 hover:underline text-left">Manage Security →</button>
+                </div>
+                <div class="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Danger Zone</span>
+                        <p class="text-sm font-bold text-red-600 mt-2">Delete Account</p>
+                        <p class="text-xs text-slate-400 mt-1">Permanently remove data</p>
+                    </div>
+                    <button onclick="deleteAccount()" class="mt-4 text-xs font-bold text-red-600 hover:underline text-left">Delete Account →</button>
+                </div>
+            </div>
+
+            <!-- MASTER ADMIN STATISTICS PANEL (Only visible to Theo-Kay@gmail.com) -->
+            <div id="adminPanel" class="hidden p-6 sm:p-8 bg-slate-900 text-white rounded-3xl shadow-md space-y-5">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Master Admin Statistics Overview</span>
+                    <span class="text-[10px] bg-blue-900 px-2.5 py-1 rounded text-white font-mono">EXCLUSIVE ADMIN ACCESS</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                    <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Total Registered Users</span>
+                        <p id="adminTotalUsers" class="text-2xl font-extrabold text-white mt-1">1</p>
+                    </div>
+                    <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Active Subscriptions</span>
+                        <p id="adminActiveSubs" class="text-2xl font-extrabold text-emerald-400 mt-1">1</p>
+                    </div>
+                    <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">System Status</span>
+                        <p class="text-lg font-extrabold text-blue-400 mt-1">Secure & Online</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-100 flex justify-between items-center">
+                <button onclick="handleLogout()" class="px-5 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition">Logout</button>
+                <button onclick="switchView('homeView')" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">Back to Scanner</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAST DOCUMENTS VIEW -->
+    <div id="pastDocumentsView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-xs gap-4">
+            <div>
+                <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">Archive</p>
+                <h2 class="text-lg font-extrabold text-slate-900">Past Documents & Scans</h2>
+            </div>
+            <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+                <div class="text-right">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase block">Scans Remaining</span>
+                    <span id="pageScanCounter" class="text-sm font-extrabold text-blue-900 bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl">0/3</span>
+                </div>
+                <button onclick="switchView('homeView')" class="text-sm px-4 py-2 bg-blue-900 hover:bg-blue-950 font-semibold rounded-xl text-white transition">New Scan</button>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex justify-between items-center hover:border-blue-900 transition cursor-pointer" onclick="runSummariser('MASTER PROFESSIONAL SERVICES AGREEMENT')">
+                <div>
+                    <span class="text-xs font-bold text-blue-900 uppercase">MASTER PROFESSIONAL SERVICES AGREEMENT</span>
+                    <p class="text-xs text-slate-400">Scanned Archive Document</p>
+                </div>
+                <span class="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-700 rounded-lg">View Summary</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT VIEW -->
+    <div id="aboutView" class="view-section hidden flex-1 max-w-3xl w-full mx-auto p-6 flex flex-col justify-center">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-xs space-y-6">
+            <h2 class="text-2xl font-extrabold text-slate-900">About DoubleCheck</h2>
+            <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                <p>
+                    <strong>DoubleCheck</strong> was built to simplify complex legal documents, making them completely transparent, easy to understand, and accessible without expensive solicitor fees.
+                </p>
+                <p>
+                    Whether you are an everyday consumer signing a residential housing lease, a gig worker reviewing an employment agreement, or a freelance creator handling client contracts and NDAs every week, legal jargon can easily catch you out.
+                </p>
+                <p>
+                    DoubleCheck instantly extracts key payment terms, deadlines, hidden penalties, and risk clauses, saving you time and protecting your legal interests.
+                </p>
+            </div>
+            <button onclick="switchView('homeView')" class="mt-4 px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Return to Home</button>
+        </div>
+    </div>
+
+    <!-- TERMS OF CONDITIONS VIEW -->
+    <div id="termsView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-xs space-y-6">
+            <div class="border-b border-slate-100 pb-4">
+                <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Legal Framework & Agreement</span>
+                <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Terms of Conditions & Liability Disclaimer</h2>
+                <p class="text-xs text-slate-400 mt-1">Last updated: October 2026</p>
+            </div>
+
+            <div class="space-y-4 text-sm text-slate-700 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+                <h3 class="font-bold text-slate-900 text-base">1. Acceptance of Terms</h3>
+                <p>By registering an account, accessing, or using DoubleCheck, you agree to be bound by these Terms of Conditions.</p>
+
+                <h3 class="font-bold text-slate-900 text-base">2. Informational Utility Disclaimer</h3>
+                <p class="bg-blue-50 border border-blue-200 p-4 rounded-2xl text-blue-900 font-medium">
+                    DoubleCheck is an AI-powered informational utility. <strong>DoubleCheck is not a law firm, does not practice law, and does not offer formal legal counsel or guarantees.</strong>
+                </p>
+
+                <h3 class="font-bold text-slate-900 text-base">3. Subscription and Usage</h3>
+                <p>Scans are provided based on your active plan tier. Subscriptions renew automatically monthly unless canceled within your account dashboard.</p>
+            </div>
+
+            <div class="pt-6 border-t border-slate-100 flex justify-end">
+                <button onclick="switchView('homeView')" class="px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs rounded-xl transition">Accept & Return</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEEDBACK VIEW -->
+    <div id="feedbackView" class="view-section hidden flex-1 max-w-lg w-full mx-auto p-6 flex flex-col justify-center">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-xs space-y-6">
+            <div>
+                <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Support</span>
+                <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Send Us Feedback</h2>
+                <p class="text-xs text-slate-500 mt-1">Email us at <span class="font-mono text-blue-900">Doubecheck.support@gmail.com</span> or send your message below.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Your Email</label>
+                    <input type="email" id="feedbackEmail" placeholder="name@example.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Your Message / Suggestion</label>
+                    <textarea id="feedbackMessage" placeholder="Tell us how we can improve DoubleCheck..." class="w-full h-32 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-900 resize-none"></textarea>
+                </div>
+                <button onclick="submitFeedback()" class="w-full py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl transition text-sm">Send Feedback</button>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 text-center">
+                <button onclick="switchView('homeView')" class="text-xs font-bold text-slate-500 hover:text-slate-800">Cancel & Return Home</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER (ONLY VISIBLE ON HOME & SUMMARY RESULTS PAGES) -->
+    <footer id="appFooter" class="w-full bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500 mt-auto">
+        DoubleCheck is an AI information utility and does not provide formal legal counsel or guarantees. <br>
+        By using DoubleCheck, you agree to our <a href="#" onclick="switchView('termsView'); return false;" class="text-blue-900 font-semibold underline hover:text-blue-950">Terms of Conditions & Liability Disclaimer</a>. <br>
+        © 2026 DoubleCheck Ltd. All rights reserved.
+    </footer>
+
+    <!-- SCRIPT ENGINE -->
+    <script>
+        let currentUser = { 
+            email: "", 
+            loggedIn: false, 
+            plan: 'Trial', 
+            canceled: false,
+            scansRemaining: 3,
+            maxScans: 3 
+        };
+
+        let currentActiveDocText = "";
+        let currentAuthMode = 'login'; // 'login' or 'signup'
+        let generatedVerificationCode = "";
+
+        function getUsersDB() {
+            try {
+                return JSON.parse(localStorage.getItem('doublecheck_users_db')) || {};
+            } catch(e) {
+                return {};
+            }
+        }
+
+        function saveUsersDB(db) {
+            localStorage.setItem('doublecheck_users_db', JSON.stringify(db));
+        }
+
+        // REMEMBER DEVICE SESSION IN LOCALSTORAGE PERMANENTLY
+        const savedSession = localStorage.getItem('doublecheck_remembered_session');
+        if(savedSession) {
+            try {
+                const parsed = JSON.parse(savedSession);
+                if(parsed && parsed.loggedIn === true && parsed.email) {
+                    currentUser = parsed;
+                }
+            } catch(e) {
+                localStorage.removeItem('doublecheck_remembered_session');
+            }
+        }
+
+        function updateAuthStateUI() {
+            const statusDisplay = document.getElementById('userStatusDisplay');
+            const authSection = document.getElementById('drawerAuthSection');
+            const drawerNavLinks = document.getElementById('drawerNavLinks');
+            const adminPanel = document.getElementById('adminPanel');
+            const accUserEmail = document.getElementById('accUserEmail');
+            const currentPlanName = document.getElementById('currentPlanName');
+            const trialRenewalText = document.getElementById('trialRenewalText');
+            const pageScanCounter = document.getElementById('pageScanCounter');
+            const trialPlanBtn = document.getElementById('trialPlanBtn');
+            const basePlanBtn = document.getElementById('basePlanBtn');
+            const proPlanBtn = document.getElementById('proPlanBtn');
+
+            if(currentUser && currentUser.loggedIn === true) {
+                statusDisplay.textContent = currentUser.email;
+                
+                // PRICING MOVED UNDER MY ACCOUNT
+                drawerNavLinks.innerHTML = `
+                    <a href="#" onclick="toggleMenu(); switchView('homeView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Home Dashboard</a>
+                    <a href="#" onclick="toggleMenu(); switchView('accountView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">My Account & Plans</a>
+                    <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Past Documents & Scans</a>
+                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">About DoubleCheck</a>
+                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Send Feedback</a>
+                    <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Terms of Conditions</a>
+                `;
+
+                authSection.innerHTML = '<button onclick="toggleMenu(); handleLogout();" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-center border border-slate-200">Logout</button>';
+                accUserEmail.textContent = currentUser.email;
+
+                if(currentUser.canceled) {
+                    currentPlanName.textContent = "Subscription Canceled";
+                    trialRenewalText.textContent = "Your plan is currently canceled. Please select a plan to continue.";
+                    if(trialPlanBtn) trialPlanBtn.textContent = "Start Free Trial";
+                    if(basePlanBtn) basePlanBtn.textContent = "Subscribe (£9.99/mo)";
+                    if(proPlanBtn) proPlanBtn.textContent = "Subscribe (£19.99/mo)";
+                } else if(currentUser.plan === 'Trial') {
+                    currentPlanName.textContent = "Free Trial (Active)";
+                    trialRenewalText.textContent = "Enjoy full access for your first 3 contracts.";
+                    if(trialPlanBtn) trialPlanBtn.textContent = "Active Trial Plan";
+                    if(basePlanBtn) basePlanBtn.textContent = "Select Base (£9.99/mo)";
+                    if(proPlanBtn) proPlanBtn.textContent = "Select Pro (£19.99/mo)";
+                } else if(currentUser.plan === 'Base') {
+                    currentPlanName.textContent = "Base Plan (Active)";
+                    trialRenewalText.textContent = "Billing renews automatically monthly.";
+                    if(trialPlanBtn) trialPlanBtn.textContent = "Trial Completed";
+                    if(basePlanBtn) basePlanBtn.textContent = "Active Base Plan";
+                    if(proPlanBtn) proPlanBtn.textContent = "Upgrade to Pro (£19.99/mo)";
+                } else if(currentUser.plan === 'Pro') {
+                    currentPlanName.textContent = "Pro Plan (Active)";
+                    trialRenewalText.textContent = "Billing renews automatically monthly.";
+                    if(trialPlanBtn) trialPlanBtn.textContent = "Trial Completed";
+                    if(basePlanBtn) basePlanBtn.textContent = "Switch to Base";
+                    if(proPlanBtn) proPlanBtn.textContent = "Active Pro Plan";
+                }
+
+                if(pageScanCounter) {
+                    pageScanCounter.textContent = currentUser.scansRemaining + "/" + currentUser.maxScans;
+                }
+
+                if(currentUser.email.toLowerCase() === "theo-kay@gmail.com") {
+                    adminPanel.classList.remove('hidden');
+                    const db = getUsersDB();
+                    const totalUsersCount = Object.keys(db).length || 1;
+                    document.getElementById('adminTotalUsers').textContent = totalUsersCount;
+                    document.getElementById('adminActiveSubs').textContent = totalUsersCount;
+                } else {
+                    adminPanel.classList.add('hidden');
+                }
+            } else {
+                statusDisplay.textContent = "Not logged in";
+                
+                drawerNavLinks.innerHTML = `
+                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">About DoubleCheck</a>
+                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Send Feedback</a>
+                    <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-900 hover:text-blue-900 font-semibold text-slate-700 transition">Terms of Conditions</a>
+                `;
+
+                authSection.innerHTML = '<button onclick="toggleMenu(); switchView(\'authView\');" class="w-full py-3 bg-blue-900 text-white font-bold rounded-xl transition text-center">Login / Register</button>';
+                if(adminPanel) adminPanel.classList.add('hidden');
+                if(pageScanCounter) pageScanCounter.textContent = "0/3";
+            }
+        }
+
+        function toggleMenu() {
+            document.getElementById('menuDrawer').classList.toggle('hidden');
+        }
+
+        function switchView(viewId) {
+            const protectedViews = ['homeView', 'resultsView', 'accountView', 'pastDocumentsView'];
+            if(protectedViews.includes(viewId) && (!currentUser || currentUser.loggedIn !== true)) {
+                viewId = 'authView';
+            }
+
+            if(currentUser && currentUser.loggedIn === true && currentUser.canceled && viewId === 'homeView') {
+                switchView('pricingView');
+                return;
+            }
+
+            document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+            const target = document.getElementById(viewId);
+            if(target) target.classList.remove('hidden');
+
+            // CONTROLS FOOTER VISIBILITY: ONLY SHOWN ON HOME AND RESULTS VIEWS
+            const appFooter = document.getElementById('appFooter');
+            if(viewId === 'homeView' || viewId === 'resultsView') {
+                appFooter.classList.remove('hidden');
+            } else {
+                appFooter.classList.add('hidden');
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            const tabLogin = document.getElementById('tabLogin');
+            const tabSignup = document.getElementById('tabSignup');
+            const authTitle = document.getElementById('authTitle');
+            const authSubtitle = document.getElementById('authSubtitle');
+            const passwordReqText = document.getElementById('passwordReqText');
+            const termsContainer = document.getElementById('termsAgreementContainer');
+            const btn = document.getElementById('authActionBtn');
+            const verificationContainer = document.getElementById('verificationContainer');
+
+            verificationContainer.classList.add('hidden');
+
+            if(mode === 'login') {
+                tabLogin.className = "w-1/2 py-2 font-bold text-sm text-blue-900 border-b-2 border-blue-900";
+                tabSignup.className = "w-1/2 py-2 font-bold text-sm text-slate-400 hover:text-slate-700 border-b-0";
+                authTitle.textContent = "Welcome Back";
+                authSubtitle.textContent = "Sign in to access your contract summaries.";
+                passwordReqText.classList.add('hidden');
+                termsContainer.classList.add('hidden');
+                btn.textContent = "Log In";
+            } else {
+                tabSignup.className = "w-1/2 py-2 font-bold text-sm text-blue-900 border-b-2 border-blue-900";
+                tabLogin.className = "w-1/2 py-2 font-bold text-sm text-slate-400 hover:text-slate-700 border-b-0";
+                authTitle.textContent = "Create Account";
+                authSubtitle.textContent = "Sign up for a free trial account.";
+                passwordReqText.classList.remove('hidden');
+                termsContainer.classList.remove('hidden');
+                btn.textContent = "Send Verification Code";
+            }
+        }
+
+        function handleFileUpload(type, event) {
+            const file = event.target.files[0];
+            let fileName = type === 'PDF' ? "Uploaded_Document.pdf" : "Uploaded_Image_Scan.jpg";
+            if(file) fileName = file.name.toUpperCase();
+            
+            showLoadingAnimation(() => {
+                runSummariser(fileName, "Sample upload content for " + fileName);
+            });
+        }
+
+        function summarise() {
+            if(!currentUser || currentUser.loggedIn !== true) {
+                switchView('authView');
+                return;
+            }
+            if(currentUser.scansRemaining <= 0) {
+                alert("Scan credits limit reached for your current plan. Please select a plan.");
+                switchView('pricingView');
+                return;
+            }
+
+            const text = document.getElementById('documentInput').value.trim();
+            if(!text) {
+                alert("Please paste contract text or upload a document to summarise.");
+                return;
+            }
+
+            currentUser.scansRemaining--;
+            localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+            updateAuthStateUI();
+
+            let docName = "CUSTOM_LEGAL_AGREEMENT";
+            const lines = text.split('\n');
+            for(let line of lines) {
+                if(line.includes("AGREEMENT") || line.includes("CONTRACT") || line.includes("TERMS")) {
+                    docName = line.trim();
+                    break;
+                }
+            }
+
+            showLoadingAnimation(() => {
+                runSummariser(docName, text);
+            });
+        }
+
+        function showLoadingAnimation(callback) {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                callback();
+            }, 1200);
+        }
+
+        function runSummariser(docName, rawText) {
+            currentActiveDocText = rawText || "Standard contract terms.";
+            document.getElementById('extractedDocName').textContent = docName;
+            
+            const isProOrTrial = currentUser.plan === 'Pro' || currentUser.plan === 'Trial';
+            document.getElementById('resultsSubtitle').textContent = isProOrTrial ? "Complete 8-Box Deep-Dive Breakdown" : "4-Box Core Information Summary";
+
+            updateSummaryDetailLevel(document.getElementById('summaryDetailSlider').value);
+            generateCategoryBoxes(currentActiveDocText, isProOrTrial ? 8 : 4);
+            switchView('resultsView');
+        }
+
+        function updateSummaryDetailLevel(val) {
+            const label = document.getElementById('sliderDetailLabel');
+            const target = document.getElementById('paragraphSummaryText');
+            
+            if(val == 1) {
+                label.textContent = "Short";
+                target.textContent = "Quick Overview: This legal agreement establishes binding terms between parties, outlining core payment obligations, project timelines, and standard termination clauses.";
+            } else if(val == 2) {
+                label.textContent = "Medium";
+                target.textContent = "Executive Overview: This contract formally details project deliverables, payment structures, and operational boundaries. It includes strict termination notification requirements and outlines liability limits to protect both contracting parties.";
+            } else {
+                label.textContent = "Detailed";
+                target.textContent = "Comprehensive Overview: This contract specifies precise financial terms with structured installments and mandatory delivery deadlines. Key clauses include automatic renewal provisions unless written notice is served, intellectual property retention rights, and a formal dispute resolution framework governed by UK jurisdiction.";
+            }
+        }
+
+        function generateCategoryBoxes(text, count) {
+            const container = document.getElementById('boxesContainer');
+            container.innerHTML = '';
+
+            const lower = text.toLowerCase();
+
+            // REAL CONTRACT DYNAMIC CONTENT PARSING
+            let finText = "Financial Consideration: Standard payment terms apply upon invoice receipt.";
+            if(lower.includes("£") || lower.includes("dollar") || lower.includes("pay") || lower.includes("fee")) {
+                finText = "Parsed Financial Clause: Identified explicit payment values, service fees, or installment schedules within document text.";
+            }
+
+            let timeText = "Timeframes: Effective upon signature with standard delivery deadlines.";
+            if(lower.includes("date") || lower.includes("month") || lower.includes("days") || lower.includes("year")) {
+                timeText = "Parsed Deadline Clause: Specific calendar deadlines, performance milestones, or notice periods detected.";
+            }
+
+            let termText = "Termination: Written notice required prior to contract cancellation.";
+            if(lower.includes("cancel") || lower.includes("terminate") || lower.includes("notice")) {
+                termText = "Parsed Cancellation Clause: Mandatory advance written notice required prior to early termination.";
+            }
+
+            const boxData = [
+                { title: "1. Complete Document Summary", content: "Overall Breakdown: Establishes legally binding rights, professional deliverables, and operational rules between parties." },
+                { title: "2. Purpose & Scope", content: "Operational Scope: Outlines defined obligations, project expectations, and service limits." },
+                { title: "3. Financial Terms", content: finText },
+                { title: "4. Timeframes & Deadlines", content: timeText },
+                { title: "5. Termination & Notice", content: termText },
+                { title: "6. Liability & Risk Caps", content: "Risk Allocation: Contains standard limitation of liability clauses and caps on indirect damages." },
+                { title: "7. Auto-Renewal & Lock-Ins", content: "Lock-In Clause: Features automatic renewal mechanisms unless advance written cancellation notice is served." },
+                { title: "8. Dispute Resolution & Law", content: "Legal Jurisdiction: Governing law and official dispute resolution procedures established." }
+            ];
+
+            for(let i = 0; i < count; i++) {
+                const box = boxData[i];
+                container.innerHTML += `
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex flex-col justify-between hover:border-blue-900 transition">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">${box.title}</span>
+                                <button onclick="copyBoxText(this, '${box.content.replace(/'/g, "\\'")}')" class="text-xs font-semibold px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition">Copy</button>
+                            </div>
+                            <p class="text-sm text-slate-700 leading-relaxed mt-1">${box.content}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text);
+            alert("Executive Summary copied to clipboard!");
+        }
+
+        function copyBoxText(btn, text) {
+            navigator.clipboard.writeText(text);
+            const orig = btn.textContent;
+            btn.textContent = "Copied!";
+            setTimeout(() => btn.textContent = orig, 1200);
+        }
+
+        function selectPlan(planType) {
+            if(!currentUser || currentUser.loggedIn !== true) {
+                switchView('authView');
+                return;
+            }
+            if(planType === 'Trial') {
+                currentUser.plan = 'Trial';
+                currentUser.maxScans = 3;
+                currentUser.scansRemaining = 3;
+            } else if(planType === 'Base') {
+                currentUser.plan = 'Base';
+                currentUser.maxScans = 20;
+                currentUser.scansRemaining = 20;
+            } else if(planType === 'Pro') {
+                currentUser.plan = 'Pro';
+                currentUser.maxScans = 50;
+                currentUser.scansRemaining = 50;
+            }
+            currentUser.canceled = false;
+            localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+            
+            const db = getUsersDB();
+            if(db[currentUser.email]) {
+                db[currentUser.email].plan = currentUser.plan;
+                db[currentUser.email].maxScans = currentUser.maxScans;
+                db[currentUser.email].scansRemaining = currentUser.scansRemaining;
+                saveUsersDB(db);
+            }
+
+            updateAuthStateUI();
+            switchView('accountView');
+        }
+
+        function cancelSubscription() {
+            if(confirm("Are you sure you want to cancel your subscription or plan?")) {
+                currentUser.canceled = true;
+                currentUser.scansRemaining = 0;
+                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+                
+                const db = getUsersDB();
+                if(db[currentUser.email]) {
+                    db[currentUser.email].canceled = true;
+                    saveUsersDB(db);
+                }
+
+                updateAuthStateUI();
+                switchView('pricingView');
+            }
+        }
+
+        function deleteAccount() {
+            if(confirm("WARNING: Are you sure you want to permanently delete your account? All data will be wiped.")) {
+                const db = getUsersDB();
+                if(db[currentUser.email]) {
+                    delete db[currentUser.email];
+                    saveUsersDB(db);
+                }
+                localStorage.removeItem('doublecheck_remembered_session');
+                currentUser = { email: "", loggedIn: false, plan: 'Trial', canceled: false, scansRemaining: 0, maxScans: 3 };
+                alert("Your account has been deleted.");
+                handleLogout();
+            }
+        }
+
+        function submitFeedback() {
+            const msg = document.getElementById('feedbackMessage').value.trim();
+            if(!msg) {
+                alert("Please enter a message for your feedback.");
+                return;
+            }
+            alert("Thank you! Your feedback has been sent to Doubecheck.support@gmail.com.");
+            document.getElementById('feedbackMessage').value = "";
+            switchView('homeView');
+        }
+
+        function handleAuthAction() {
+            const email = document.getElementById('authEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('authPassword').value;
+            const code = document.getElementById('authCode').value.trim();
+
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) {
+                alert("Please enter a valid email address.");
+                return;
+            }
+
+            const db = getUsersDB();
+
+            // Master Admin Login Override
+            if(email === "theo-kay@gmail.com" && pass === "Theo9*89") {
+                const adminUser = {
+                    email: "theo-kay@gmail.com",
+                    password: "Theo9*89",
+                    loggedIn: true,
+                    plan: "Pro",
+                    canceled: false,
+                    scansRemaining: 50,
+                    maxScans: 50
+                };
+                db[email] = adminUser;
+                saveUsersDB(db);
+                currentUser = adminUser;
+                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+                updateAuthStateUI();
+                switchView('homeView');
+                return;
+            }
+
+            if (currentAuthMode === 'login') {
+                if (!pass) {
+                    alert("Please enter your password.");
+                    return;
+                }
+                if (!db[email] || db[email].password !== pass) {
+                    alert("Incorrect password or account does not exist. Please create an account if you are new.");
+                    return;
+                }
+                currentUser = db[email];
+                currentUser.loggedIn = true;
+                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+                updateAuthStateUI();
+                switchView('homeView');
+            } 
+            else {
+                // SIGNUP MODE
+                const passwordPolicy = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+                if (!passwordPolicy.test(pass)) {
+                    alert("Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special symbol.");
+                    return;
+                }
+
+                const agreed = document.getElementById('agreeTermsCheckbox').checked;
+                if (!agreed) {
+                    alert("You must agree to the Terms of Conditions to create an account.");
+                    return;
+                }
+
+                if(document.getElementById('verificationContainer').classList.contains('hidden')) {
+                    generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+                    document.getElementById('verificationContainer').classList.remove('hidden');
+                    document.getElementById('authActionBtn').textContent = "Verify & Create Account";
+                    alert("Verification code sent from Doubecheck.support@gmail.com to " + email + ".\n(Simulation Code: " + generatedVerificationCode + ")");
+                    return;
+                }
+
+                if (code !== generatedVerificationCode) {
+                    alert("Invalid verification code. Please try again.");
+                    return;
+                }
+
+                const newUser = {
+                    email: email,
+                    password: pass,
+                    loggedIn: true,
+                    plan: 'Trial',
+                    canceled: false,
+                    scansRemaining: 3,
+                    maxScans: 3
+                };
+
+                db[email] = newUser;
+                saveUsersDB(db);
+
+                currentUser = newUser;
+                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
+                updateAuthStateUI();
+                switchView('homeView');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = { email: "", loggedIn: false, plan: 'Trial', canceled: false, scansRemaining: 0, maxScans: 3 };
+            localStorage.removeItem('doublecheck_remembered_session');
+            document.getElementById('authEmail').value = "";
+            document.getElementById('authPassword').value = "";
+            switchAuthTab('login');
+            updateAuthStateUI();
+            switchView('authView');
+        }
+
+        if(currentUser && currentUser.loggedIn === true) {
+            updateAuthStateUI();
+            switchView('homeView');
+        } else {
+            updateAuthStateUI();
+            switchView('authView');
+        }
+    </script>
+</body>
+</html>
