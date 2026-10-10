@@ -747,7 +747,7 @@
                 switchView('resultsView');
             } catch (err) {
                 document.getElementById('loadingOverlay').classList.add('hidden');
-                alert("Error connecting to Gemini AI backend: " + err.message);
+                alert("Error: " + err.message);
             }
         }
 
