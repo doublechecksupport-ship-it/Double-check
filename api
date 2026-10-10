@@ -1,8 +1,6 @@
-// api/summarise.js
-const { GoogleGenAI } = require("@google/genai");
+import { GoogleGenAI } from "@google/genai";
 
-module.exports = async function handler(req, res) {
-    // 1. Only allow POST requests
+export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -10,18 +8,15 @@ module.exports = async function handler(req, res) {
     try {
         const { documentText, detailLevel } = req.body || {};
 
-        // 2. Validate input document text
         if (!documentText || documentText.trim().length < 20) {
             return res.status(400).json({ error: 'Document text is too short or missing.' });
         }
 
-        // 3. Ensure Gemini API key is configured
         const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) {
-            return res.status(500).json({ error: 'GEMINI_API_KEY is missing in Vercel environment variables.' });
+            return res.status(500).json({ error: 'GEMINI_API_KEY is missing on server environment.' });
         }
 
-        // 4. Initialize the Gemini client
         const ai = new GoogleGenAI({ apiKey });
 
         const prompt = `You are an expert legal AI assistant. Analyze the following legal agreement/contract text and provide a structured JSON response.
@@ -44,7 +39,6 @@ Return a valid JSON object with the following exact keys:
 Contract Text:
 ${documentText}`;
 
-        // 5. Query Gemini 2.5 Flash model
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: prompt,
@@ -64,4 +58,4 @@ ${documentText}`;
             error: 'Failed to process document with AI: ' + (error.message || 'Unknown server error') 
         });
     }
-};
+}
