@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoubleCheck - AI Legal Document Summariser</title>
+    <title>DoubleCheck – AI Legal Document Summariser</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -12,1078 +12,440 @@
             color: #1d1d1f;
             letter-spacing: -0.01em;
         }
-
-        .apple-heading {
-            letter-spacing: -0.02em;
-        }
-
-        .apple-body {
-            color: #86868b;
-        }
-
+        .apple-heading { letter-spacing: -0.02em; }
+        .apple-body { color: #86868b; }
         .glass-nav {
             background: rgba(255, 255, 255, 0.82);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-        }
-
-        .glass-card {
-            background: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            border-radius: 20px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .apple-button {
-            background-color: #1d1d1f;
-            color: #ffffff;
-            border-radius: 980px;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .apple-button:hover {
-            background-color: #000000;
-            transform: scale(1.01);
-        }
-
-        .apple-button-secondary {
-            background-color: #f5f5f7;
-            color: #1d1d1f;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 980px;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .apple-button-secondary:hover {
-            background-color: #e8e8ed;
-        }
-
-        .logo-icon {
-            height: 28px;
-            width: 28px;
-            min-width: 28px;
-            display: inline-block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        @keyframes spinSmooth {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .spinner {
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            border-top: 2px solid #1d1d1f;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            animation: spinSmooth 0.8s linear infinite;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-gray-200">
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
-    <!-- HEADER -->
-    <header class="w-full glass-nav px-8 py-4 flex items-center justify-between sticky top-0 z-30">
-        <div class="flex items-center space-x-3 cursor-pointer group" onclick="navigateHome()">
-            <svg class="logo-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                <rect x="80" y="48" width="352" height="416" rx="36" fill="#2c2c2e"/>
-                <path d="M336 48L432 144H368C350.327 144 336 129.673 336 112V48Z" fill="#1c1c1e"/>
-                <rect x="140" y="160" width="160" height="18" rx="9" fill="#f5f5f7" opacity="0.9"/>
-                <rect x="140" y="216" width="232" height="18" rx="9" fill="#f5f5f7" opacity="0.9"/>
-                <rect x="140" y="272" width="232" height="18" rx="9" fill="#f5f5f7" opacity="0.9"/>
-                <rect x="140" y="328" width="180" height="18" rx="9" fill="#f5f5f7" opacity="0.9"/>
-            </svg>
-            <div class="flex flex-col">
-                <span class="text-lg font-semibold tracking-tight text-[#1d1d1f]">DoubleCheck</span>
+    <!-- HEADER / NAVIGATION -->
+    <header class="glass-nav fixed top-0 left-0 right-0 z-50 border-b border-black/5">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('appView')">
+                <div class="w-8 h-8 rounded-xl bg-black flex items-center justify-center text-white font-semibold text-sm shadow-sm">✓</div>
+                <span class="font-semibold text-lg tracking-tight text-black apple-heading">DoubleCheck</span>
             </div>
-        </div>
-
-        <div class="flex items-center space-x-4">
-            <span id="userStatusDisplay" onclick="switchView('accountView')" class="text-xs font-medium text-[#86868b] hover:text-[#1d1d1f] cursor-pointer hidden sm:inline transition">Not logged in</span>
-            <button onclick="toggleMenu()" class="p-2 rounded-full hover:bg-black/5 transition text-[#1d1d1f]">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
+            <div class="flex items-center space-x-4">
+                <span id="userProfileDisplay" class="text-sm font-medium text-gray-700 hidden"></span>
+                <button onclick="handleLogout()" id="logoutBtn" class="text-sm font-medium text-gray-500 hover:text-black transition hidden">Log out</button>
+            </div>
         </div>
     </header>
 
-    <!-- SLIDE-OUT DRAWER MENU -->
-    <div id="menuDrawer" class="hidden fixed inset-0 z-50 bg-black/20 backdrop-blur-md flex justify-end transition-opacity">
-        <div class="w-80 bg-white/95 backdrop-blur-xl h-full shadow-2xl p-8 flex flex-col justify-between border-l border-black/5">
-            <div>
-                <div class="flex justify-between items-center mb-8 pb-4 border-b border-black/5">
-                    <span class="text-sm font-semibold text-[#1d1d1f]">Menu</span>
-                    <button onclick="toggleMenu()" class="p-1 rounded-full hover:bg-black/5 text-[#86868b] hover:text-[#1d1d1f] transition">✕</button>
-                </div>
-                <nav id="drawerNavLinks" class="space-y-2"></nav>
-            </div>
-            <div id="drawerAuthSection" class="pt-6 border-t border-black/5"></div>
-        </div>
-    </div>
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 pt-24 pb-16 px-6 max-w-7xl mx-auto w-full flex flex-col">
 
-    <!-- MAIN HOMEPAGE VIEW -->
-    <main id="homeView" class="view-section hidden flex-1 max-w-2xl w-full mx-auto px-6 py-16 flex flex-col justify-center items-center text-center animate-fade-in">
-        
-        <h1 class="text-3xl sm:text-5xl font-semibold apple-heading text-[#1d1d1f] mb-4">
-            Summarise Any Legal Document.
-        </h1>
-        <p class="apple-body text-sm sm:text-base mb-10 max-w-md leading-relaxed">
-            Upload an image, PDF file, or paste your legal text below for a clean, secure executive breakdown powered by Gemini AI.
-        </p>
-
-        <!-- VALIDATION WARNING NOTICE -->
-        <div id="validationError" class="hidden w-full mb-6 p-4 bg-gray-100 border border-black/10 rounded-2xl text-[#1d1d1f] text-xs text-left shadow-2xs animate-fade-in">
-            <div class="flex items-start space-x-2.5">
-                <span>⚠️</span>
-                <div>
-                    <strong class="block font-semibold mb-0.5">Invalid Legal Document Format</strong>
-                    DoubleCheck only processes valid legal agreements, contracts, leases, NDAs, or terms of service. Random text cannot be processed.
-                </div>
-            </div>
-        </div>
-
-        <!-- UPLOAD DROP ZONE CARDS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mb-6">
-            <label class="glass-card p-6 cursor-pointer flex flex-col items-center justify-center hover:border-black/20 group">
-                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-[#1d1d1f] group-hover:scale-105 transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                </div>
-                <span class="text-xs font-semibold text-[#1d1d1f] mb-0.5">Upload Image</span>
-                <span class="text-[11px] apple-body">JPG or PNG scan</span>
-                <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload('Image', event)">
-            </label>
-
-            <label class="glass-card p-6 cursor-pointer flex flex-col items-center justify-center hover:border-black/20 group">
-                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-[#1d1d1f] group-hover:scale-105 transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-                <span class="text-xs font-semibold text-[#1d1d1f] mb-0.5">Upload PDF File</span>
-                <span class="text-[11px] apple-body">Official contract PDF</span>
-                <input type="file" accept=".pdf" class="hidden" onchange="handleFileUpload('PDF', event)">
-            </label>
-        </div>
-
-        <!-- TEXT INPUT AREA -->
-        <div class="glass-card w-full p-4 mb-6 text-left focus-within:border-black/30">
-            <div class="flex justify-between items-center px-1 mb-2">
-                <span class="text-[11px] font-semibold text-[#86868b] uppercase tracking-wider">Paste Legal Text</span>
-                <button onclick="document.getElementById('documentInput').value=''; hideValidationError();" class="text-[11px] font-medium text-[#86868b] hover:text-[#1d1d1f] transition">Clear</button>
-            </div>
-            <textarea id="documentInput" placeholder="Paste full agreement or contract terms here..." class="w-full h-36 bg-transparent text-[#1d1d1f] placeholder-[#86868b] resize-none focus:outline-none p-1 text-xs sm:text-sm leading-relaxed"></textarea>
-        </div>
-
-        <button onclick="summarise()" class="apple-button w-full py-4 text-sm shadow-sm">
-            Summarise Document with AI
-        </button>
-    </main>
-
-    <!-- LOADING OVERLAY -->
-    <div id="loadingOverlay" class="hidden fixed inset-0 z-50 bg-white/80 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center animate-fade-in">
-        <div class="glass-card p-8 max-w-xs w-full flex flex-col items-center">
-            <div class="spinner mb-4"></div>
-            <h3 class="text-xs font-semibold text-[#1d1d1f] mb-1">Gemini is Analyzing</h3>
-            <p class="text-[11px] apple-body">Parsing clauses and risk factors...</p>
-        </div>
-    </div>
-
-    <!-- RESULTS VIEW -->
-    <div id="resultsView" class="view-section hidden flex-1 max-w-3xl w-full mx-auto px-6 py-12 flex flex-col animate-fade-in">
-        
-        <!-- HEADER TOP BAR WITH TAB SWITCHING -->
-        <div class="glass-card p-5 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <p id="resultsSubtitle" class="text-[10px] font-semibold text-[#86868b] uppercase tracking-wider">AI Document Analysis</p>
-                <h2 id="extractedDocName" class="text-base font-semibold text-[#1d1d1f] mt-0.5">CUSTOM_LEGAL_AGREEMENT</h2>
-            </div>
-
-            <!-- VIEW SELECTOR TABS -->
-            <div class="flex bg-gray-100 p-1 rounded-full border border-black/5 w-full sm:w-auto">
-                <button id="tabExecSummary" onclick="switchSummaryTab('exec')" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition bg-[#1d1d1f] text-white shadow-xs">
-                    Executive Summary
-                </button>
-                <button id="tabCategoryBoxes" onclick="switchSummaryTab('boxes')" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition text-[#86868b] hover:text-[#1d1d1f]">
-                    Category Breakdown
-                </button>
-            </div>
-        </div>
-
-        <!-- PAGE 1: EXECUTIVE PARAGRAPH SUMMARY -->
-        <div id="execSummaryContent" class="glass-card p-8 flex flex-col justify-between mb-6">
-            <div>
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-[11px] font-semibold text-[#86868b] uppercase tracking-wider">Executive Overview</span>
-                    <button onclick="copyText('paragraphSummaryText')" class="apple-button-secondary text-xs px-3 py-1.5 flex items-center space-x-1">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        <span>Copy Summary</span>
-                    </button>
+        <!-- AUTH VIEW (LOGIN / REGISTER) -->
+        <div id="authView" class="max-w-md mx-auto w-full my-auto py-12">
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-black/5">
+                <div class="flex rounded-full bg-gray-100 p-1 mb-8">
+                    <button onclick="setAuthMode('login')" id="loginTab" class="flex-1 py-2 text-sm font-medium rounded-full transition bg-white shadow-sm text-black">Log In</button>
+                    <button onclick="setAuthMode('register')" id="registerTab" class="flex-1 py-2 text-sm font-medium rounded-full transition text-gray-500 hover:text-black">Create Account</button>
                 </div>
 
-                <p id="paragraphSummaryText" class="text-xs sm:text-sm text-[#1d1d1f] leading-relaxed min-h-[140px] p-5 bg-[#f5f5f7] rounded-2xl border border-black/5 font-normal">
-                    Reading document content...
-                </p>
-            </div>
-
-            <div class="mt-8 pt-6 border-t border-black/5">
-                <div class="flex justify-between items-center mb-2">
-                    <label for="summaryDetailSlider" class="text-[11px] font-semibold text-[#86868b] uppercase tracking-wider">Detail Level</label>
-                    <span id="sliderDetailLabel" class="text-xs font-semibold text-[#1d1d1f] bg-gray-100 px-2.5 py-0.5 rounded-full border border-black/5">Medium</span>
+                <div class="text-center mb-8">
+                    <h1 id="authTitle" class="text-2xl font-bold tracking-tight text-black apple-heading">Welcome Back</h1>
+                    <p id="authSubtitle" class="text-sm apple-body mt-1">Sign in to access your summaries.</p>
                 </div>
-                <input type="range" id="summaryDetailSlider" min="1" max="3" value="2" onchange="retriggerAISummary()" class="w-full accent-[#1d1d1f] cursor-pointer">
-                <p class="text-[10px] apple-body mt-2">Adjust slider to regenerate summary length via Gemini AI.</p>
-            </div>
-        </div>
 
-        <!-- PAGE 2: CATEGORY BOXES BREAKDOWN -->
-        <div id="categoryBoxesContent" class="hidden mb-6">
-            <div id="boxesContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-        </div>
-
-        <button onclick="navigateHome()" class="apple-button w-full py-4 text-xs sm:text-sm">
-            Scan Another Document
-        </button>
-    </div>
-
-    <!-- PRICING & PLANS VIEW -->
-    <div id="pricingView" class="view-section hidden flex-1 max-w-4xl w-full mx-auto px-6 py-12 flex flex-col justify-center animate-fade-in">
-        <div class="text-center mb-10">
-            <h2 class="text-2xl sm:text-3xl font-semibold apple-heading text-[#1d1d1f] mb-2">Select Your Plan to Continue.</h2>
-            <p class="apple-body text-xs sm:text-sm max-w-xs mx-auto">Choose a plan to unlock document scanning and AI analysis.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="glass-card p-6 flex flex-col justify-between">
-                <div>
-                    <span class="text-[11px] font-semibold text-[#86868b] uppercase tracking-wider">1. Free Trial</span>
-                    <div class="flex items-baseline mt-2 mb-4">
-                        <span class="text-3xl font-semibold apple-heading text-[#1d1d1f]">£0</span>
-                        <span class="apple-body text-xs ml-1">/ first 3 contracts</span>
+                <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Email Address</label>
+                        <input type="email" id="authEmail" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black text-sm transition" placeholder="name@example.com">
                     </div>
-                    <ul class="space-y-3 text-xs apple-body mb-8">
-                        <li class="flex items-center"><span class="text-[#1d1d1f] mr-2">✓</span> Full deep-dive analysis</li>
-                        <li class="flex items-center"><span class="text-[#1d1d1f] mr-2">✓</span> Test contracts instantly</li>
-                        <li class="flex items-center"><span class="text-[#1d1d1f] mr-2">✓</span> Zero upfront payment</li>
-                    </ul>
-                </div>
-                <button onclick="selectPlan('Trial')" class="apple-button w-full py-3 text-xs">Start Free Trial</button>
-            </div>
-
-            <div class="glass-card p-6 flex flex-col justify-between">
-                <div>
-                    <span class="text-[11px] font-semibold text-[#86868b] uppercase tracking-wider">2. Base Plan</span>
-                    <div class="flex items-baseline mt-2 mb-4">
-                        <span class="text-3xl font-semibold apple-heading text-[#1d1d1f]">£9.99</span>
-                        <span class="apple-body text-xs ml-1">/ month</span>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Password</label>
+                        <input type="password" id="authPassword" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black text-sm transition" placeholder="••••••••">
                     </div>
-                    <ul class="space-y-3 text-xs apple-body mb-8">
-                        <li class="flex items-center"><span class="text-[#1d1d1f] mr-2">✓</span> 4-Box Core Summary</li>
-                        <li class="flex items-center"><span class="text-[#1d1d1f] mr-2">✓</span> Perfect for leases & gig work</li>
-                        <li class="flex items-center"><span class="text-[#1d1d1f] mr-2">✓</span> Key dates & terms</li>
-                    </ul>
-                </div>
-                <button onclick="selectPlan('Base')" class="apple-button w-full py-3 text-xs">Select Base Plan</button>
-            </div>
-
-            <div class="glass-card p-6 flex flex-col justify-between border-black/20 shadow-md">
-                <div>
-                    <span class="text-[11px] font-semibold text-[#1d1d1f] uppercase tracking-wider">3. Pro Plan</span>
-                    <div class="flex items-baseline mt-2 mb-4">
-                        <span class="text-3xl font-semibold apple-heading text-[#1d1d1f]">£19.99</span>
-                        <span class="apple-body text-xs ml-1">/ month</span>
+                    <div id="termsContainer" class="hidden flex items-start space-x-2 pt-1">
+                        <input type="checkbox" id="termsCheck" class="mt-1 rounded border-gray-300 text-black focus:ring-black">
+                        <label for="termsCheck" class="text-xs text-gray-500 leading-relaxed">I agree to the <span class="underline cursor-pointer font-medium text-black">Terms of Conditions</span>.</label>
                     </div>
-                    <ul class="space-y-3 text-xs text-[#1d1d1f] mb-8 font-medium">
-                        <li class="flex items-center"><span class="mr-2">✓</span> Full 8-Box Breakdown</li>
-                        <li class="flex items-center"><span class="mr-2">✓</span> Risk flags & IP rights</li>
-                        <li class="flex items-center"><span class="mr-2">✓</span> Built for active freelancers</li>
-                    </ul>
-                </div>
-                <button onclick="selectPlan('Pro')" class="apple-button w-full py-3 text-xs">Select Pro Plan</button>
+                    <button type="submit" id="authSubmitBtn" class="w-full py-3.5 bg-black text-white font-medium rounded-xl hover:bg-gray-800 transition text-sm shadow-sm mt-2">Log In</button>
+                </form>
             </div>
         </div>
-    </div>
 
-    <!-- AUTHENTICATION VIEW -->
-    <div id="authView" class="view-section hidden flex-1 max-w-sm w-full mx-auto px-6 py-12 flex flex-col justify-center animate-fade-in">
-        <div class="glass-card p-8 flex flex-col items-center">
-            <div class="mb-4">
-                <svg class="logo-icon h-10 w-10" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="80" y="48" width="352" height="416" rx="36" fill="#2c2c2e"/>
-                    <path d="M336 48L432 144H368C350.327 144 336 129.673 336 112V48Z" fill="#1c1c1e"/>
-                    <rect x="140" y="160" width="160" height="18" rx="9" fill="#f5f5f7" opacity="0.9"/>
-                    <rect x="140" y="216" width="232" height="18" rx="9" fill="#f5f5f7" opacity="0.9"/>
-                    <rect x="140" y="272" width="232" height="18" rx="9" fill="#f5f5f7" opacity="0.9"/>
-                    <rect x="140" y="328" width="180" height="18" rx="9" fill="#f5f5f7" opacity="0.9"/>
-                </svg>
+        <!-- EMAIL VERIFICATION VIEW -->
+        <div id="verifyView" class="hidden max-w-md mx-auto w-full my-auto py-12">
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-black/5 text-center">
+                <h2 class="text-2xl font-bold tracking-tight text-black apple-heading mb-2">Verify Your Email</h2>
+                <p class="text-sm apple-body mb-6">We sent an 6-digit notification code to <br><span id="verifyEmailTarget" class="font-semibold text-black"></span></p>
+                <div class="bg-gray-50 p-4 rounded-2xl mb-6 border border-gray-100">
+                    <span class="text-xs uppercase tracking-wider text-gray-400 block mb-1">Simulated Code (from database)</span>
+                    <span id="simulatedCodeDisplay" class="text-3xl font-mono font-bold tracking-widest text-black">------</span>
+                </div>
+                <form onsubmit="handleVerifySubmit(event)" class="space-y-4">
+                    <input type="text" id="verifyInputCode" required maxlength="6" placeholder="Enter 6-digit code" class="w-full text-center tracking-widest font-mono text-lg px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black">
+                    <button type="submit" class="w-full py-3.5 bg-black text-white font-medium rounded-xl hover:bg-gray-800 transition text-sm shadow-sm">Verify & Continue to Plans</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- PRICING / PLAN SELECTION VIEW -->
+        <div id="planView" class="hidden max-w-5xl mx-auto w-full my-auto py-12">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-black apple-heading">Select Your Plan to Continue.</h2>
+                <p class="text-base apple-body mt-2">Choose a plan to unlock document scanning and AI analysis.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Free Trial Plan -->
+                <div class="bg-white rounded-3xl p-8 border border-black/5 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Free Trial</span>
+                        <div class="mt-4 flex items-baseline">
+                            <span class="text-4xl font-bold tracking-tight text-black">£0</span>
+                            <span class="ml-1 text-sm text-gray-500">/ 3 contracts</span>
+                        </div>
+                        <ul class="mt-6 space-y-3 text-sm text-gray-600">
+                            <li class="flex items-center">✓ Full doc deep-analysis</li>
+                            <li class="flex items-center">✓ Test contracts instantly</li>
+                            <li class="flex items-center">✓ Zero upfront payment</li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPlan('free')" class="mt-8 w-full py-3 bg-black text-white font-medium rounded-xl hover:bg-gray-800 transition text-sm">Start Free Trial</button>
+                </div>
+                <!-- Base Plan -->
+                <div class="bg-white rounded-3xl p-8 border-2 border-black shadow-sm flex flex-col justify-between relative">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-3 py-1 rounded-full font-medium">Popular</div>
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Base Plan</span>
+                        <div class="mt-4 flex items-baseline">
+                            <span class="text-4xl font-bold tracking-tight text-black">£9.99</span>
+                            <span class="ml-1 text-sm text-gray-500">/ month</span>
+                        </div>
+                        <ul class="mt-6 space-y-3 text-sm text-gray-600">
+                            <li class="flex items-center">✓ 8-box Core Summary</li>
+                            <li class="flex items-center">✓ Perfect for leases & gig work</li>
+                            <li class="flex items-center">✓ Key date alarms</li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPlan('base')" class="mt-8 w-full py-3 bg-black text-white font-medium rounded-xl hover:bg-gray-800 transition text-sm">Select Base Plan</button>
+                </div>
+                <!-- Pro Plan -->
+                <div class="bg-white rounded-3xl p-8 border border-black/5 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Pro Plan</span>
+                        <div class="mt-4 flex items-baseline">
+                            <span class="text-4xl font-bold tracking-tight text-black">£19.99</span>
+                            <span class="ml-1 text-sm text-gray-500">/ month</span>
+                        </div>
+                        <ul class="mt-6 space-y-3 text-sm text-gray-600">
+                            <li class="flex items-center">✓ Full 8-box breakdown</li>
+                            <li class="flex items-center">✓ Risk flags & red flags</li>
+                            <li class="flex items-center">✓ Built for active freelancers</li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPlan('pro')" class="mt-8 w-full py-3 bg-black text-white font-medium rounded-xl hover:bg-gray-800 transition text-sm">Select Pro Plan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN APP / DASHBOARD VIEW -->
+        <div id="appView" class="hidden flex-col space-y-8 max-w-4xl mx-auto w-full">
+            <div class="text-center space-y-2">
+                <h1 class="text-4xl font-bold tracking-tight text-black apple-heading">Summarise Any Legal Document.</h1>
+                <p class="text-base apple-body">Upload an image, PDF file, or paste legal text below for a clean, secure executive breakdown powered by Gemini AI.</p>
             </div>
 
-            <div class="flex bg-gray-100 p-1 rounded-full border border-black/5 w-full mb-6 text-center">
-                <button id="tabLogin" onclick="switchAuthTab('login')" class="w-1/2 py-1.5 rounded-full font-medium text-xs text-white bg-[#1d1d1f]">Log In</button>
-                <button id="tabSignup" onclick="switchAuthTab('signup')" class="w-1/2 py-1.5 rounded-full font-medium text-xs text-[#86868b] hover:text-[#1d1d1f]">Create Account</button>
-            </div>
-
-            <h2 id="authTitle" class="text-base font-semibold text-[#1d1d1f] mb-1 text-center">Welcome Back</h2>
-            <p id="authSubtitle" class="text-[11px] apple-body mb-6 text-center">Sign in to access your summaries.</p>
-
-            <div id="authFormFields" class="space-y-4 w-full">
-                <div>
-                    <label class="block text-[10px] font-semibold text-[#86868b] uppercase tracking-wider mb-1">Email Address</label>
-                    <input type="email" id="authEmail" placeholder="name@example.com" class="w-full p-3 bg-[#f5f5f7] border border-black/5 rounded-xl text-xs focus:outline-none focus:border-black/20">
-                </div>
-                
-                <div>
-                    <label class="block text-[10px] font-semibold text-[#86868b] uppercase tracking-wider mb-1">Password</label>
-                    <input type="password" id="authPassword" placeholder="Enter password" class="w-full p-3 bg-[#f5f5f7] border border-black/5 rounded-xl text-xs focus:outline-none focus:border-black/20">
-                    <p id="passwordReqText" class="hidden text-[10px] apple-body mt-1">Must contain 8+ chars, uppercase letter, number, & special symbol.</p>
-                </div>
-
-                <div id="termsAgreementContainer" class="hidden flex items-start space-x-2 pt-1">
-                    <input type="checkbox" id="agreeTermsCheckbox" class="mt-0.5 rounded border-black/20 text-[#1d1d1f] focus:ring-0">
-                    <label for="agreeTermsCheckbox" class="text-[11px] apple-body leading-normal">
-                        I agree to the <a href="#" onclick="switchView('termsView'); return false;" class="text-[#1d1d1f] underline font-medium">Terms of Conditions</a>.
+            <!-- UPLOAD / INPUT BOX -->
+            <div class="bg-white rounded-3xl p-8 border border-black/5 shadow-sm space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <label class="border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-black transition group">
+                        <span class="text-2xl mb-2">📄</span>
+                        <span class="text-sm font-semibold text-gray-700 group-hover:text-black">Upload Image</span>
+                        <span class="text-xs text-gray-400 mt-1">JPG or PNG scan</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload(event, 'image')">
+                    </label>
+                    <label class="border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-black transition group">
+                        <span class="text-2xl mb-2">📑</span>
+                        <span class="text-sm font-semibold text-gray-700 group-hover:text-black">Upload PDF File</span>
+                        <span class="text-xs text-gray-400 mt-1">Official contract PDF</span>
+                        <input type="file" accept=".pdf" class="hidden" onchange="handleFileUpload(event, 'pdf')">
                     </label>
                 </div>
 
-                <button onclick="handleAuthAction()" id="authActionBtn" class="apple-button w-full py-3 text-xs shadow-xs">Log In</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- EMAIL VERIFICATION MODAL -->
-    <div id="verificationModal" class="hidden fixed inset-0 z-50 bg-white/90 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center animate-fade-in">
-        <div class="glass-card p-8 max-w-sm w-full flex flex-col items-center space-y-4">
-            <h3 class="text-base font-semibold text-[#1d1d1f]">Verify Your Email</h3>
-            <p class="text-xs apple-body leading-relaxed">We sent a 6-digit verification code to <span id="verifyingEmailText" class="font-semibold text-[#1d1d1f]"></span>.<br><span class="text-[10px] text-blue-600 font-mono">(Simulation Code displayed below)</span></p>
-            
-            <div class="p-3 bg-gray-100 rounded-xl border border-black/5 w-full">
-                <span id="simulatedCodeDisplay" class="text-lg font-mono font-bold tracking-widest text-[#1d1d1f]">------</span>
-            </div>
-
-            <input type="text" id="authCodeInput" placeholder="Enter 6-digit code" maxlength="6" class="w-full p-3 bg-[#f5f5f7] border border-black/10 rounded-xl text-sm font-mono tracking-widest text-center focus:outline-none">
-
-            <button onclick="verifyCodeAndProceed()" class="apple-button w-full py-3 text-xs">Verify & Continue to Plans</button>
-            <button onclick="resendVerificationCode()" class="text-xs font-medium text-[#86868b] hover:text-[#1d1d1f] transition">Resend Code</button>
-        </div>
-    </div>
-
-    <!-- MY ACCOUNT VIEW -->
-    <div id="accountView" class="view-section hidden flex-1 max-w-xl w-full mx-auto px-6 py-12 flex flex-col justify-center animate-fade-in">
-        <div class="glass-card p-8 space-y-6">
-            <div class="border-b border-black/5 pb-4">
-                <p class="text-[10px] font-semibold text-[#86868b] uppercase tracking-wider mb-0.5">Account Dashboard</p>
-                <h2 id="accUserEmail" class="text-lg font-semibold text-[#1d1d1f]">name@example.com</h2>
-            </div>
-
-            <div class="p-6 bg-[#f5f5f7] rounded-2xl border border-black/5 space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                        <span class="text-[10px] font-semibold text-[#86868b] uppercase tracking-wider">Current Plan Status</span>
-                        <h3 id="currentPlanName" class="text-base font-semibold text-[#1d1d1f] mt-0.5">Free Trial</h3>
+                <div class="relative space-y-2">
+                    <div class="flex justify-between items-center px-1">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-gray-500">Paste Legal Text</label>
+                        <button onclick="clearText()" class="text-xs text-gray-400 hover:text-black transition">Clear</button>
                     </div>
-                    <button onclick="switchView('pricingView')" class="apple-button px-4 py-2 text-xs">Change Plan</button>
+                    <textarea id="documentInput" rows="8" placeholder="Paste full agreement or contract terms here..." class="w-full p-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black text-sm font-mono leading-relaxed transition"></textarea>
                 </div>
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4 border-t border-black/5 gap-3">
-                    <p id="trialRenewalText" class="text-xs apple-body">Enjoy full access for your first 3 contracts.</p>
-                    <button onclick="cancelSubscription()" class="text-xs font-medium text-red-600 hover:text-red-800 transition">Cancel Subscription</button>
-                </div>
-            </div>
 
-            <!-- MASTER ADMIN STATISTICS PANEL -->
-            <div id="adminPanel" class="hidden p-6 bg-[#1d1d1f] text-white rounded-2xl space-y-4 shadow-sm">
-                <div class="flex items-center justify-between border-b border-white/10 pb-3">
-                    <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Master Admin Overview</span>
-                    <span class="text-[9px] bg-white/10 px-2 py-0.5 rounded text-gray-300 font-mono">EXCLUSIVE</span>
-                </div>
-                <div class="grid grid-cols-3 gap-3">
-                    <div class="p-3 bg-white/5 rounded-xl border border-white/10">
-                        <span class="text-[9px] uppercase tracking-wider text-gray-400 font-semibold block">Total Users</span>
-                        <p id="adminTotalUsers" class="text-base font-semibold text-white mt-0.5">1</p>
-                    </div>
-                    <div class="p-3 bg-white/5 rounded-xl border border-white/10">
-                        <span class="text-[9px] uppercase tracking-wider text-gray-400 font-semibold block">Active Subs</span>
-                        <p id="adminActiveSubs" class="text-base font-semibold text-white mt-0.5">1</p>
-                    </div>
-                    <div class="p-3 bg-white/5 rounded-xl border border-white/10">
-                        <span class="text-[9px] uppercase tracking-wider text-gray-400 font-semibold block">Status</span>
-                        <p class="text-xs font-semibold text-gray-300 mt-1">Online</p>
+                <!-- DETAIL LEVEL SELECTOR -->
+                <div class="flex items-center justify-between pt-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Detail Level</span>
+                    <div class="flex rounded-full bg-gray-100 p-1">
+                        <button onclick="setDetailLevel(1)" id="detail1" class="px-4 py-1.5 text-xs font-medium rounded-full transition text-gray-600">Short</button>
+                        <button onclick="setDetailLevel(2)" id="detail2" class="px-4 py-1.5 text-xs font-medium rounded-full transition bg-white shadow-sm text-black font-semibold">Medium</button>
+                        <button onclick="setDetailLevel(3)" id="detail3" class="px-4 py-1.5 text-xs font-medium rounded-full transition text-gray-600">Detailed</button>
                     </div>
                 </div>
+
+                <button onclick="processDocumentWithAI()" id="summariseBtn" class="w-full py-4 bg-black text-white font-medium rounded-2xl hover:bg-gray-800 transition text-sm shadow-sm flex items-center justify-center space-x-2">
+                    <span>Summarise Document with AI</span>
+                </button>
             </div>
 
-            <div class="pt-4 border-t border-black/5 flex justify-between items-center">
-                <button onclick="handleLogout()" class="text-xs font-medium text-red-600 hover:text-red-800 transition">Logout</button>
-                <button onclick="navigateHome()" class="apple-button-secondary px-5 py-2 text-xs">Back to Scanner</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PAST DOCUMENTS VIEW -->
-    <div id="pastDocumentsView" class="view-section hidden flex-1 max-w-2xl w-full mx-auto px-6 py-12 flex flex-col animate-fade-in">
-        <div class="glass-card p-5 mb-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <div>
-                <p class="text-[10px] font-semibold text-[#86868b] uppercase tracking-wider">Archive</p>
-                <h2 class="text-base font-semibold text-[#1d1d1f]">Past Documents & Scans</h2>
-            </div>
-            <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
-                <div class="text-right">
-                    <span class="text-[10px] font-semibold text-[#86868b] uppercase block">Scans Remaining</span>
-                    <span id="pageScanCounter" class="text-xs font-semibold text-[#1d1d1f] bg-gray-100 px-2.5 py-0.5 rounded-md border border-black/5">0/3</span>
+            <!-- RESULTS SECTION -->
+            <div id="resultsSection" class="hidden space-y-6">
+                <div class="bg-white rounded-3xl p-8 border border-black/5 shadow-sm space-y-4">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Executive Summary</span>
+                    <h2 id="resultTitle" class="text-2xl font-bold tracking-tight text-black"></h2>
+                    <p id="resultSummary" class="text-base text-gray-600 leading-relaxed"></p>
                 </div>
-                <button onclick="navigateHome()" class="apple-button px-4 py-2 text-xs">New Scan</button>
+
+                <!-- 8 CATEGORY BREAKDOWN CARDS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="categoriesGrid"></div>
             </div>
         </div>
 
-        <div class="space-y-3">
-            <div class="glass-card p-4 flex justify-between items-center hover:border-black/20 transition cursor-pointer" onclick="runSummariser('MASTER PROFESSIONAL SERVICES AGREEMENT', sampleLegalAgreementText)">
-                <div>
-                    <span class="text-xs font-semibold text-[#1d1d1f] uppercase">MASTER PROFESSIONAL SERVICES AGREEMENT</span>
-                    <p class="text-[11px] apple-body mt-0.5">Scanned Archive Document</p>
-                </div>
-                <span class="apple-button-secondary text-xs px-3 py-1.5">View Summary</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ABOUT VIEW -->
-    <div id="aboutView" class="view-section hidden flex-1 max-w-xl w-full mx-auto px-6 py-12 flex flex-col justify-center animate-fade-in">
-        <div class="glass-card p-8 space-y-5">
-            <h2 class="text-xl font-semibold apple-heading text-[#1d1d1f]">About DoubleCheck</h2>
-            <div class="space-y-4 text-xs sm:text-sm apple-body leading-relaxed">
-                <p>
-                    <strong>DoubleCheck</strong> is powered by Google Gemini AI to simplify complex legal documents instantly.
-                </p>
-            </div>
-            <button onclick="navigateHome()" class="apple-button mt-4 px-5 py-2.5 text-xs">Return to Home</button>
-        </div>
-    </div>
-
-    <!-- TERMS VIEW -->
-    <div id="termsView" class="view-section hidden flex-1 max-w-2xl w-full mx-auto px-6 py-12 flex flex-col animate-fade-in">
-        <div class="glass-card p-8 space-y-5">
-            <div class="border-b border-black/5 pb-3">
-                <span class="text-[10px] font-semibold text-[#86868b] uppercase tracking-wider">Legal Framework</span>
-                <h2 class="text-xl font-semibold apple-heading text-[#1d1d1f] mt-0.5">Terms of Conditions & Liability Disclaimer</h2>
-            </div>
-            <div class="space-y-4 text-xs sm:text-sm apple-body leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
-                <p>DoubleCheck is an AI-powered informational utility and does not provide formal legal counsel.</p>
-            </div>
-            <div class="pt-4 border-t border-black/5 flex justify-end">
-                <button onclick="navigateHome()" class="apple-button px-5 py-2.5 text-xs">Accept & Return</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- FEEDBACK VIEW -->
-    <div id="feedbackView" class="view-section hidden flex-1 max-w-md w-full mx-auto px-6 py-12 flex flex-col justify-center animate-fade-in">
-        <div class="glass-card p-8 space-y-5">
-            <div>
-                <span class="text-[10px] font-semibold text-[#86868b] uppercase tracking-wider">Support</span>
-                <h2 class="text-xl font-semibold apple-heading text-[#1d1d1f] mt-0.5">Send Us Feedback</h2>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-[10px] font-semibold text-[#86868b] uppercase tracking-wider mb-1">Your Email</label>
-                    <input type="email" id="feedbackEmail" placeholder="name@example.com" class="w-full p-3 bg-[#f5f5f7] border border-black/5 rounded-xl text-xs focus:outline-none focus:border-black/20">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-semibold text-[#86868b] uppercase tracking-wider mb-1">Your Message</label>
-                    <textarea id="feedbackMessage" placeholder="Tell us how we can improve..." class="w-full h-28 bg-[#f5f5f7] border border-black/5 rounded-xl p-3 text-xs focus:outline-none focus:border-black/20 resize-none"></textarea>
-                </div>
-                <button onclick="submitFeedback()" class="apple-button w-full py-3 text-xs">Send Feedback</button>
-            </div>
-            <div class="pt-3 border-t border-black/5 text-center">
-                <button onclick="navigateHome()" class="text-xs font-medium text-[#86868b] hover:text-[#1d1d1f] transition">Cancel & Return Home</button>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <!-- FOOTER -->
-    <footer id="appFooter" class="w-full glass-nav py-4 px-8 text-center text-[11px] apple-body mt-auto">
-        DoubleCheck is an AI information utility and does not provide formal legal counsel or guarantees. <br>
-        © 2026 DoubleCheck Ltd. All rights reserved.
+    <footer class="py-8 text-center text-xs text-gray-400 border-t border-black/5">
+        DoubleCheck is an AI information utility, not law firm or formal legal counsel or guarantees.
     </footer>
 
-    <!-- SCRIPT ENGINE WITH GEMINI API CONNECTION -->
+    <!-- LOADING MODAL / SPINNER -->
+    <div id="loadingModal" class="hidden fixed inset-0 z-50 glass-nav flex items-center justify-center">
+        <div class="bg-white rounded-3xl p-8 shadow-xl border border-black/5 flex flex-col items-center space-y-4 max-w-sm text-center">
+            <div class="w-8 h-8 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+            <p id="loadingStatusText" class="font-medium text-sm text-black">Analyzing legal document with Gemini AI...</p>
+        </div>
+    </div>
+
+    <!-- ERROR MODAL -->
+    <div id="errorModal" class="hidden fixed inset-0 z-50 bg-black/20 backdrop-blur-sm flex items-center justify-center p-6">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border border-black/5 max-w-md w-full space-y-4 text-center">
+            <p id="errorModalText" class="text-sm text-gray-800"></p>
+            <button onclick="closeErrorModal()" class="w-full py-2.5 bg-black text-white rounded-xl text-sm font-medium">Close</button>
+        </div>
+    </div>
+
     <script>
-        let currentUser = { 
-            email: "", 
-            loggedIn: false, 
-            planSelected: false,
-            plan: '', 
-            canceled: false,
-            scansRemaining: 0,
-            maxScans: 0 
-        };
+        let authMode = 'login';
+        let detailLevel = 2;
+        let currentUser = null;
+        let generatedVerificationCode = '';
 
-        let currentActiveDocText = "";
-        let currentAuthMode = 'login';
-        let generatedVerificationCode = "";
-        let tempSignupEmail = "";
-        let tempSignupPass = "";
-        let lastAiData = null;
-
-        const sampleLegalAgreementText = `MASTER PROFESSIONAL SERVICES AGREEMENT.
-        This Agreement is made between Client and Service Provider.
-        1. FINANCIAL CONSIDERATION & FEES: Client shall pay total fee of £1,500 due in net 30 days upon invoice receipt.
-        2. TIMEFRAMES & DEADLINES: Services shall commence on effective date and remain active for 12 months.
-        3. TERMINATION & NOTICE: Either party may terminate with 30 days written notice.
-        4. LIABILITY CAPS: Total aggregate liability is limited to total fees paid under this agreement.
-        5. GOVERNING LAW: Governed under jurisdiction of UK law.`;
-
-        function getUsersDB() {
-            try {
-                return JSON.parse(localStorage.getItem('doublecheck_users_db')) || {};
-            } catch(e) {
-                return {};
-            }
-        }
-
-        function saveUsersDB(db) {
-            localStorage.setItem('doublecheck_users_db', JSON.stringify(db));
-        }
-
-        const savedSession = localStorage.getItem('doublecheck_remembered_session');
-        if(savedSession) {
-            try {
-                const parsed = JSON.parse(savedSession);
-                if(parsed && parsed.loggedIn === true && parsed.email) {
-                    currentUser = parsed;
-                }
-            } catch(e) {
-                localStorage.removeItem('doublecheck_remembered_session');
-            }
-        }
-
-        function isValidLegalDocument(text) {
-            if(!text || text.trim().length < 35) return false;
-            const clean = text.toLowerCase();
-            const uniqueChars = new Set(clean.replace(/\s+/g, '')).size;
-            if(uniqueChars < 6) return false;
-
-            const legalKeywords = [
-                'agreement', 'contract', 'terms', 'clause', 'liability', 'payment', 
-                'fee', 'shall', 'party', 'parties', 'termination', 'notice', 'governed', 
-                'confidential', 'lease', 'tenant', 'landlord', 'services', 'employer', 
-                'employee', 'nda', 'dispute', 'jurisdiction', 'rights', 'intellectual property'
-            ];
-
-            let matches = 0;
-            for(let word of legalKeywords) {
-                if(clean.includes(word)) matches++;
-            }
-            return matches >= 2;
-        }
-
-        function hideValidationError() {
-            document.getElementById('validationError').classList.add('hidden');
-        }
-
-        function showValidationError() {
-            document.getElementById('validationError').classList.remove('hidden');
-        }
-
-        function updateAuthStateUI() {
-            const statusDisplay = document.getElementById('userStatusDisplay');
-            const authSection = document.getElementById('drawerAuthSection');
-            const drawerNavLinks = document.getElementById('drawerNavLinks');
-            const adminPanel = document.getElementById('adminPanel');
-            const accUserEmail = document.getElementById('accUserEmail');
-            const currentPlanName = document.getElementById('currentPlanName');
-            const trialRenewalText = document.getElementById('trialRenewalText');
-            const pageScanCounter = document.getElementById('pageScanCounter');
-
-            if(currentUser && currentUser.loggedIn === true) {
-                statusDisplay.textContent = currentUser.email;
-                
-                drawerNavLinks.innerHTML = `
-                    <a href="#" onclick="toggleMenu(); navigateHome();" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Home Dashboard</a>
-                    <a href="#" onclick="toggleMenu(); switchView('accountView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">My Account & Plans</a>
-                    <a href="#" onclick="toggleMenu(); switchView('pastDocumentsView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Past Documents & Scans</a>
-                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">About DoubleCheck</a>
-                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Send Feedback</a>
-                    <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Terms of Conditions</a>
-                `;
-
-                authSection.innerHTML = '<button onclick="toggleMenu(); handleLogout();" class="apple-button-secondary w-full py-3 text-xs">Logout</button>';
-                if(accUserEmail) accUserEmail.textContent = currentUser.email;
-
-                if(!currentUser.planSelected) {
-                    currentPlanName.textContent = "No Plan Selected";
-                    trialRenewalText.textContent = "Please select a plan to unlock document scanning.";
-                } else if(currentUser.canceled) {
-                    currentPlanName.textContent = "Subscription Canceled";
-                    trialRenewalText.textContent = "Your plan is currently canceled.";
+        function initApp() {
+            const savedUser = localStorage.getItem('doublecheck_logged_in_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('userProfileDisplay').innerText = currentUser.email;
+                document.getElementById('userProfileDisplay').classList.remove('hidden');
+                document.getElementById('logoutBtn').classList.remove('hidden');
+                if (!currentUser.plan) {
+                    switchView('planView');
                 } else {
-                    currentPlanName.textContent = currentUser.plan + " Plan (Active)";
-                    trialRenewalText.textContent = "Billing renews automatically monthly.";
-                }
-
-                if(pageScanCounter) {
-                    pageScanCounter.textContent = currentUser.scansRemaining + "/" + currentUser.maxScans;
-                }
-
-                if(currentUser.email.toLowerCase() === "theo-kay@gmail.com") {
-                    adminPanel.classList.remove('hidden');
-                    const db = getUsersDB();
-                    const totalUsersCount = Object.keys(db).length || 1;
-                    document.getElementById('adminTotalUsers').textContent = totalUsersCount;
-                    document.getElementById('adminActiveSubs').textContent = totalUsersCount;
-                } else {
-                    adminPanel.classList.add('hidden');
+                    switchView('appView');
                 }
             } else {
-                statusDisplay.textContent = "Not logged in";
-                drawerNavLinks.innerHTML = `
-                    <a href="#" onclick="toggleMenu(); switchView('aboutView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">About DoubleCheck</a>
-                    <a href="#" onclick="toggleMenu(); switchView('feedbackView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Send Feedback</a>
-                    <a href="#" onclick="toggleMenu(); switchView('termsView');" class="block px-4 py-2.5 rounded-xl hover:bg-black/5 text-xs font-medium text-[#1d1d1f] transition">Terms of Conditions</a>
-                `;
-                authSection.innerHTML = '<button onclick="toggleMenu(); switchView(\'authView\');" class="apple-button w-full py-3 text-xs">Login / Register</button>';
-                if(adminPanel) adminPanel.classList.add('hidden');
-            }
-        }
-
-        function toggleMenu() {
-            document.getElementById('menuDrawer').classList.toggle('hidden');
-        }
-
-        function navigateHome() {
-            if(!currentUser || currentUser.loggedIn !== true) {
                 switchView('authView');
-                return;
             }
-            if(!currentUser.planSelected) {
-                switchView('pricingView');
-                return;
-            }
-            switchView('homeView');
         }
 
         function switchView(viewId) {
-            const protectedViews = ['homeView', 'resultsView', 'accountView', 'pastDocumentsView'];
-            if(protectedViews.includes(viewId) && (!currentUser || currentUser.loggedIn !== true)) {
-                viewId = 'authView';
-            }
-
-            if(currentUser && currentUser.loggedIn === true && !currentUser.planSelected && viewId !== 'pricingView' && viewId !== 'accountView' && viewId !== 'authView') {
-                viewId = 'pricingView';
-            }
-
-            document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+            ['authView', 'verifyView', 'planView', 'appView'].forEach(v => {
+                document.getElementById(v).classList.add('hidden');
+                document.getElementById(v).classList.remove('flex');
+            });
             const target = document.getElementById(viewId);
-            if(target) target.classList.remove('hidden');
-
-            const appFooter = document.getElementById('appFooter');
-            if(viewId === 'homeView' || viewId === 'resultsView') {
-                appFooter.classList.remove('hidden');
-            } else {
-                appFooter.classList.add('hidden');
-            }
-
-            window.scrollTo(0, 0);
+            target.classList.remove('hidden');
+            target.classList.add('flex');
         }
 
-        function switchSummaryTab(tab) {
-            const btnExec = document.getElementById('tabExecSummary');
-            const btnBoxes = document.getElementById('tabCategoryBoxes');
-            const execContent = document.getElementById('execSummaryContent');
-            const boxesContent = document.getElementById('categoryBoxesContent');
-
-            if(tab === 'exec') {
-                btnExec.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition bg-[#1d1d1f] text-white shadow-xs";
-                btnBoxes.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition text-[#86868b] hover:text-[#1d1d1f]";
-                execContent.classList.remove('hidden');
-                boxesContent.classList.add('hidden');
-            } else {
-                btnBoxes.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition bg-[#1d1d1f] text-white shadow-xs";
-                btnExec.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-xs font-medium transition text-[#86868b] hover:text-[#1d1d1f]";
-                boxesContent.classList.remove('hidden');
-                execContent.classList.add('hidden');
-            }
-        }
-
-        function switchAuthTab(mode) {
-            currentAuthMode = mode;
-            const tabLogin = document.getElementById('tabLogin');
-            const tabSignup = document.getElementById('tabSignup');
+        function setAuthMode(mode) {
+            authMode = mode;
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
             const authTitle = document.getElementById('authTitle');
             const authSubtitle = document.getElementById('authSubtitle');
-            const passwordReqText = document.getElementById('passwordReqText');
-            const termsContainer = document.getElementById('termsAgreementContainer');
-            const btn = document.getElementById('authActionBtn');
+            const authSubmitBtn = document.getElementById('authSubmitBtn');
+            const termsContainer = document.getElementById('termsContainer');
 
-            if(mode === 'login') {
-                tabLogin.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-white bg-[#1d1d1f]";
-                tabSignup.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-[#86868b] hover:text-[#1d1d1f]";
-                authTitle.textContent = "Welcome Back";
-                authSubtitle.textContent = "Sign in to access your summaries.";
-                passwordReqText.classList.add('hidden');
+            if (mode === 'login') {
+                loginTab.className = "flex-1 py-2 text-sm font-medium rounded-full transition bg-white shadow-sm text-black";
+                registerTab.className = "flex-1 py-2 text-sm font-medium rounded-full transition text-gray-500 hover:text-black";
+                authTitle.innerText = "Welcome Back";
+                authSubtitle.innerText = "Sign in to access your summaries.";
+                authSubmitBtn.innerText = "Log In";
                 termsContainer.classList.add('hidden');
-                btn.textContent = "Log In";
             } else {
-                tabSignup.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-white bg-[#1d1d1f]";
-                tabLogin.className = "w-1/2 py-1.5 rounded-full font-medium text-xs text-[#86868b] hover:text-[#1d1d1f]";
-                authTitle.textContent = "Create Account";
-                authSubtitle.textContent = "Sign up for a free trial account.";
-                passwordReqText.classList.remove('hidden');
+                registerTab.className = "flex-1 py-2 text-sm font-medium rounded-full transition bg-white shadow-sm text-black";
+                loginTab.className = "flex-1 py-2 text-sm font-medium rounded-full transition text-gray-500 hover:text-black";
+                authTitle.innerText = "Create Account";
+                authSubtitle.innerText = "Start scanning contracts with AI.";
+                authSubmitBtn.innerText = "Continue to Verification";
                 termsContainer.classList.remove('hidden');
-                btn.textContent = "Continue to Verification";
             }
         }
 
-        function handleFileUpload(type, event) {
-            hideValidationError();
-            const file = event.target.files[0];
-            let fileName = type === 'PDF' ? "Uploaded_Document.pdf" : "Uploaded_Image_Scan.jpg";
-            if(file) fileName = file.name.toUpperCase();
-            
-            // For file uploads in prototype, use sample text or read file
-            runSummariser(fileName, sampleLegalAgreementText);
-        }
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
 
-        // REAL GEMINI API CALL FUNCTION
-        async function summarise() {
-            hideValidationError();
+            let users = JSON.parse(localStorage.getItem('doublecheck_users') || '[]');
 
-            if(!currentUser || currentUser.loggedIn !== true) {
-                switchView('authView');
-                return;
-            }
-            if(!currentUser.planSelected) {
-                switchView('pricingView');
-                return;
-            }
-
-            const text = document.getElementById('documentInput').value.trim();
-            if(!isValidLegalDocument(text)) {
-                showValidationError();
-                return;
-            }
-
-            if(currentUser.scansRemaining <= 0) {
-                alert("Scan credits limit reached for your current plan. Please select a plan.");
-                switchView('pricingView');
-                return;
-            }
-
-            currentUser.scansRemaining--;
-            localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-            updateAuthStateUI();
-
-            showLoadingAnimation();
-
-            try {
-                const detailVal = document.getElementById('summaryDetailSlider').value;
-                const detailMap = { '1': 'Short', '2': 'Medium', '3': 'Detailed' };
-
-                const apiResponse = await fetch('/api/summarise', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        documentText: text, 
-                        detailLevel: detailMap[detailVal] || 'Medium' 
-                    })
-                });
-
-                if (!apiResponse.ok) {
-                    throw new Error('AI processing failed.');
-                }
-
-                const data = await apiResponse.json();
-                hideLoadingAnimation();
-                renderAiResults(data, text);
-
-            } catch (err) {
-                hideLoadingAnimation();
-                alert("Error connecting to Gemini AI backend. Please ensure your Vercel environment variable GEMINI_API_KEY is configured.");
-                console.error(err);
-            }
-        }
-
-        async function retriggerAISummary() {
-            if(!currentActiveDocText) return;
-            const detailVal = document.getElementById('summaryDetailSlider').value;
-            const detailMap = { '1': 'Short', '2': 'Medium', '3': 'Detailed' };
-            document.getElementById('sliderDetailLabel').textContent = detailMap[detailVal];
-
-            showLoadingAnimation();
-            try {
-                const apiResponse = await fetch('/api/summarise', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        documentText: currentActiveDocText, 
-                        detailLevel: detailMap[detailVal] 
-                    })
-                });
-                if(apiResponse.ok) {
-                    const data = await apiResponse.json();
-                    lastAiData = data;
-                    document.getElementById('paragraphSummaryText').textContent = data.executiveSummary;
-                }
-            } catch(e) {
-                console.error(e);
-            }
-            hideLoadingAnimation();
-        }
-
-        function runSummariser(docName, rawText) {
-            document.getElementById('documentInput').value = rawText;
-            summarise();
-        }
-
-        function renderAiResults(data, rawText) {
-            lastAiData = data;
-            currentActiveDocText = rawText;
-
-            document.getElementById('extractedDocName').textContent = data.docTitle || "LEGAL_DOCUMENT_ANALYSIS";
-            document.getElementById('paragraphSummaryText').textContent = data.executiveSummary;
-            
-            const container = document.getElementById('boxesContainer');
-            container.innerHTML = '';
-
-            const isProOrTrial = currentUser.plan === 'Pro' || currentUser.plan === 'Trial';
-            const boxLimit = isProOrTrial ? 8 : 4;
-
-            document.getElementById('resultsSubtitle').textContent = isProOrTrial ? "Complete 8-Box Deep-Dive Breakdown" : "4-Box Core Summary";
-
-            if(data.categories && Array.isArray(data.categories)) {
-                for(let i = 0; i < Math.min(data.categories.length, boxLimit); i++) {
-                    const cat = data.categories[i];
-                    container.innerHTML += `
-                        <div class="glass-card p-5 flex flex-col justify-between hover:border-black/20">
-                            <div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-[11px] font-semibold text-[#1d1d1f] uppercase tracking-wider">${cat.title}</span>
-                                    <button onclick="copyBoxText(this, '${cat.content.replace(/'/g, "\\'")}')" class="apple-button-secondary text-xs px-2.5 py-1">Copy</button>
-                                </div>
-                                <p class="text-xs apple-body leading-relaxed mt-1">${cat.content}</p>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-
-            switchSummaryTab('exec');
-            switchView('resultsView');
-        }
-
-        function showLoadingAnimation() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        }
-
-        function hideLoadingAnimation() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }
-
-        function copyText(elementId) {
-            const text = document.getElementById(elementId).textContent;
-            navigator.clipboard.writeText(text);
-            alert("Summary copied to clipboard!");
-        }
-
-        function copyBoxText(btn, text) {
-            navigator.clipboard.writeText(text);
-            const orig = btn.textContent;
-            btn.textContent = "Copied!";
-            setTimeout(() => btn.textContent = orig, 1200);
-        }
-
-        function selectPlan(planType) {
-            if(!currentUser || currentUser.loggedIn !== true) {
-                switchView('authView');
-                return;
-            }
-            currentUser.planSelected = true;
-            currentUser.plan = planType;
-            currentUser.canceled = false;
-
-            if(planType === 'Trial') {
-                currentUser.maxScans = 3;
-                currentUser.scansRemaining = 3;
-            } else if(planType === 'Base') {
-                currentUser.maxScans = 20;
-                currentUser.scansRemaining = 20;
-            } else if(planType === 'Pro') {
-                currentUser.maxScans = 50;
-                currentUser.scansRemaining = 50;
-            }
-
-            localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-            
-            const db = getUsersDB();
-            if(db[currentUser.email]) {
-                db[currentUser.email] = currentUser;
-                saveUsersDB(db);
-            }
-
-            updateAuthStateUI();
-            switchView('homeView');
-        }
-
-        function cancelSubscription() {
-            if(confirm("Are you sure you want to cancel your subscription or plan?")) {
-                currentUser.canceled = true;
-                currentUser.scansRemaining = 0;
-                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-                
-                const db = getUsersDB();
-                if(db[currentUser.email]) {
-                    db[currentUser.email].canceled = true;
-                    saveUsersDB(db);
-                }
-
-                updateAuthStateUI();
-                switchView('pricingView');
-            }
-        }
-
-        function submitFeedback() {
-            const msg = document.getElementById('feedbackMessage').value.trim();
-            if(!msg) {
-                alert("Please enter a message for your feedback.");
-                return;
-            }
-            alert("Thank you! Your feedback has been sent.");
-            document.getElementById('feedbackMessage').value = "";
-            navigateHome();
-        }
-
-        function handleAuthAction() {
-            const email = document.getElementById('authEmail').value.trim().toLowerCase();
-            const pass = document.getElementById('authPassword').value;
-
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailRegex.test(email)) {
-                alert("Please enter a valid email address.");
-                return;
-            }
-
-            const db = getUsersDB();
-
-            if(email === "theo-kay@gmail.com" && pass === "Theo9*89") {
-                const adminUser = {
-                    email: "theo-kay@gmail.com",
-                    password: "Theo9*89",
-                    loggedIn: true,
-                    planSelected: true,
-                    plan: "Pro",
-                    canceled: false,
-                    scansRemaining: 50,
-                    maxScans: 50
-                };
-                db[email] = adminUser;
-                saveUsersDB(db);
-                currentUser = adminUser;
-                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-                updateAuthStateUI();
-                navigateHome();
-                return;
-            }
-
-            if (currentAuthMode === 'login') {
-                if (!pass) {
-                    alert("Please enter your password.");
+            if (authMode === 'register') {
+                if (!document.getElementById('termsCheck').checked) {
+                    showError("Please agree to the Terms of Conditions.");
                     return;
                 }
-                if (!db[email] || db[email].password !== pass) {
-                    alert("Incorrect password or account does not exist.");
+                const existing = users.find(u => u.email === email);
+                if (existing) {
+                    showError("An account with this email already exists. Please log in.");
                     return;
                 }
-                currentUser = db[email];
-                currentUser.loggedIn = true;
-                localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-                updateAuthStateUI();
-                navigateHome();
-            } 
-            else {
-                const passwordPolicy = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-                if (!passwordPolicy.test(pass)) {
-                    alert("Password must be at least 8 characters long and include an uppercase letter, number, and special symbol.");
-                    return;
-                }
-                const agreed = document.getElementById('agreeTermsCheckbox').checked;
-                if (!agreed) {
-                    alert("You must agree to the Terms of Conditions.");
-                    return;
-                }
-
-                tempSignupEmail = email;
-                tempSignupPass = pass;
                 generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-                
-                document.getElementById('verifyingEmailText').textContent = email;
-                document.getElementById('simulatedCodeDisplay').textContent = generatedVerificationCode;
-                document.getElementById('verificationModal').classList.remove('hidden');
+                currentUser = { email, password, plan: null };
+                document.getElementById('verifyEmailTarget').innerText = email;
+                document.getElementById('simulatedCodeDisplay').innerText = generatedVerificationCode;
+                switchView('verifyView');
+            } else {
+                const user = users.find(u => u.email === email && u.password === password);
+                if (!user) {
+                    showError("Incorrect password or account does not exist.");
+                    return;
+                }
+                currentUser = user;
+                localStorage.setItem('doublecheck_logged_in_user', JSON.stringify(currentUser));
+                document.getElementById('userProfileDisplay').innerText = currentUser.email;
+                document.getElementById('userProfileDisplay').classList.remove('hidden');
+                document.getElementById('logoutBtn').classList.remove('hidden');
+                if (!currentUser.plan) {
+                    switchView('planView');
+                } else {
+                    switchView('appView');
+                }
             }
         }
 
-        function verifyCodeAndProceed() {
-            const entered = document.getElementById('authCodeInput').value.trim();
-            if(entered !== generatedVerificationCode) {
-                alert("Invalid verification code. Please check the simulated code display.");
+        function handleVerifySubmit(event) {
+            event.preventDefault();
+            const entered = document.getElementById('verifyInputCode').value.trim();
+            if (entered !== generatedVerificationCode) {
+                showError("Invalid verification code.");
                 return;
             }
-            document.getElementById('verificationModal').classList.add('hidden');
-            document.getElementById('authCodeInput').value = "";
-
-            const db = getUsersDB();
-            const newUser = {
-                email: tempSignupEmail,
-                password: tempSignupPass,
-                loggedIn: true,
-                planSelected: false,
-                plan: '',
-                canceled: false,
-                scansRemaining: 0,
-                maxScans: 0
-            };
-            db[tempSignupEmail] = newUser;
-            saveUsersDB(db);
-
-            currentUser = newUser;
-            localStorage.setItem('doublecheck_remembered_session', JSON.stringify(currentUser));
-            updateAuthStateUI();
-            switchView('pricingView');
+            let users = JSON.parse(localStorage.getItem('doublecheck_users') || '[]');
+            users.push(currentUser);
+            localStorage.setItem('doublecheck_users', JSON.stringify(users));
+            localStorage.setItem('doublecheck_logged_in_user', JSON.stringify(currentUser));
+            document.getElementById('userProfileDisplay').innerText = currentUser.email;
+            document.getElementById('userProfileDisplay').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            switchView('planView');
         }
 
-        function resendVerificationCode() {
-            generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-            document.getElementById('simulatedCodeDisplay').textContent = generatedVerificationCode;
-            alert("New verification code generated!");
+        function selectPlan(planName) {
+            currentUser.plan = planName;
+            localStorage.setItem('doublecheck_logged_in_user', JSON.stringify(currentUser));
+            let users = JSON.parse(localStorage.getItem('doublecheck_users') || '[]');
+            users = users.map(u => u.email === currentUser.email ? currentUser : u);
+            localStorage.setItem('doublecheck_users', JSON.stringify(users));
+            switchView('appView');
         }
 
         function handleLogout() {
-            currentUser = { email: "", loggedIn: false, planSelected: false, plan: '', canceled: false, scansRemaining: 0, maxScans: 0 };
-            localStorage.removeItem('doublecheck_remembered_session');
-            document.getElementById('authEmail').value = "";
-            document.getElementById('authPassword').value = "";
-            switchAuthTab('login');
-            updateAuthStateUI();
+            localStorage.removeItem('doublecheck_logged_in_user');
+            currentUser = null;
+            document.getElementById('userProfileDisplay').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
             switchView('authView');
         }
 
-        if(currentUser && currentUser.loggedIn === true) {
-            updateAuthStateUI();
-            navigateHome();
-        } else {
-            updateAuthStateUI();
-            switchView('authView');
+        function setDetailLevel(level) {
+            detailLevel = level;
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById('detail' + i);
+                if (i === level) {
+                    btn.className = "px-4 py-1.5 text-xs font-medium rounded-full transition bg-white shadow-sm text-black font-semibold";
+                } else {
+                    btn.className = "px-4 py-1.5 text-xs font-medium rounded-full transition text-gray-600";
+                }
+            }
         }
+
+        function clearText() {
+            document.getElementById('documentInput').value = '';
+            document.getElementById('resultsSection').classList.add('hidden');
+        }
+
+        function handleFileUpload(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('documentInput').value = `[Uploaded File: ${file.name}]\n\nSample extracted agreement content ready for AI analysis.`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function processDocumentWithAI() {
+            const documentText = document.getElementById('documentInput').value.trim();
+            if (documentText.length < 20) {
+                showError("Please paste or upload a valid agreement text (at least 20 characters).");
+                return;
+            }
+
+            document.getElementById('loadingModal').classList.remove('hidden');
+            document.getElementById('loadingModal').classList.add('flex');
+
+            try {
+                // FIXED ENDPOINT URL POINTING TO /api/summarise
+                const response = await fetch('/api/summarise', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ documentText, detailLevel })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Server processing error.');
+                }
+
+                document.getElementById('resultTitle').innerText = data.docTitle || "Legal Agreement Summary";
+                document.getElementById('resultSummary').innerText = data.executiveSummary || "";
+
+                const grid = document.getElementById('categoriesGrid');
+                grid.innerHTML = '';
+                if (data.categories && Array.isArray(data.categories)) {
+                    data.categories.forEach(cat => {
+                        const card = document.createElement('div');
+                        card.className = "bg-white rounded-3xl p-6 border border-black/5 shadow-sm space-y-2";
+                        card.innerHTML = `<h3 class="font-bold text-black text-base">${cat.title}</h3><p class="text-sm text-gray-600 leading-relaxed">${cat.content}</p>`;
+                        grid.appendChild(card);
+                    });
+                }
+
+                document.getElementById('resultsSection').classList.remove('hidden');
+            } catch (err) {
+                showError("Error connecting to Gemini AI backend: " + err.message);
+            } finally {
+                document.getElementById('loadingModal').classList.remove('flex');
+                document.getElementById('loadingModal').classList.add('hidden');
+            }
+        }
+
+        function showError(msg) {
+            document.getElementById('errorModalText').innerText = msg;
+            document.getElementById('errorModal').classList.remove('hidden');
+        }
+
+        function closeErrorModal() {
+            document.getElementById('errorModal').classList.add('hidden');
+        }
+
+        window.onload = initApp;
     </script>
 </body>
 </html>
