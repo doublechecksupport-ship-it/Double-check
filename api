@@ -1,6 +1,4 @@
-const { GoogleGenAI } = require('@google/genai');
-
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -14,48 +12,55 @@ module.exports = async function handler(req, res) {
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY environment variable is missing.' });
+      return res.status(500).json({ error: 'GEMINI_API_KEY is missing from environment variables.' });
     }
 
-    const ai = new GoogleGenAI({ apiKey });
+    const prompt = `You are an expert legal AI assistant. Analyze the following contract text and return valid JSON only (no markdown code blocks, no backticks, just raw JSON).
 
-    const prompt = `You are an expert legal AI assistant. Analyze the following legal agreement/contract text and provide a structured JSON response.
+Detail level: ${detailLevel} (1=Short, 2=Medium, 3=Detailed).
 
-Detail level requested: ${detailLevel} (1 = Short, 2 = Medium, 3 = Detailed).
-
-Return a valid JSON object with the following exact keys:
-- "docTitle": The detected title of the agreement.
-- "executiveSummary": A concise paragraph appropriate for the requested detail level.
-- "categories": An array of 8 objects representing key legal breakdowns. Each object must have "title" and "content". The 8 categories should be:
-  1. Purpose & Scope
-  2. Financial Terms & Compensation
-  3. Term & Termination
-  4. Confidentiality & IP Rights
-  5. Liability & Risk Caps
-  6. Governing Law & Jurisdiction
-  7. Dispute Resolution & Jurisdiction
-  8. Auto-Renewal & Lock-Ins
+Return strictly valid JSON with these exact keys:
+{
+"docTitle": "Title of the contract",
+"executiveSummary": "A concise overview paragraph",
+"categories": [
+{"title": "Purpose & Scope", "content": "Summary..."},
+{"title": "Financial Terms", "content": "Summary..."},
+{"title": "Term & Termination", "content": "Summary..."},
+{"title": "Confidentiality & IP", "content": "Summary..."},
+{"title": "Liability & Risk Caps", "content": "Summary..."},
+{"title": "Governing Law", "content": "Summary..."},
+{"title": "Dispute Resolution", "content": "Summary..."},
+{"title": "Auto-Renewal & Lock-Ins", "content": "Summary..."}
+]
+}
 
 Contract Text:
 ${documentText}`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json'
-      }
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: 'application/json' }
+      })
     });
 
-    // Safely extract text from response and clean markdown code blocks
-    let rawText = response.text || (response.candidates?.[0]?.content?.parts?.[0]?.text) || '';
-    rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+    const result = await response.json();
 
-    const data = JSON.parse(rawText);
-    return res.status(200).json(data);
+    if (!response.ok) {
+      return res.status(response.status).json({ error: result.error?.message || 'Gemini API failed.' });
+    }
+
+    const rawText = result.candidates[0].content.parts[0].text;
+    const parsed = JSON.parse(rawText);
+
+    return res.status(200).json(parsed);
 
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: 'Failed to process document with AI: ' + (err.message || 'Unknown server error') });
+    return res.status(500).json({ error: 'Server error: ' + err.message });
   }
-};
+}
