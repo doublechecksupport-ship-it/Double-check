@@ -4,63 +4,38 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { documentText, detailLevel } = req.body || {};
-
-    if (!documentText || documentText.length < 20) {
-      return res.status(400).json({ error: 'Document text is too short or missing.' });
-    }
-
+    const { documentText } = req.body || {};
     const apiKey = process.env.GEMINI_API_KEY;
+
     if (!apiKey) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY is missing from environment variables.' });
+      return res.status(500).json({ error: 'GEMINI_API_KEY missing.' });
     }
-
-    const prompt = `You are an expert legal AI assistant. Analyze the following contract text and return valid JSON only (no markdown code blocks, no backticks, just raw JSON).
-
-Detail level: ${detailLevel} (1=Short, 2=Medium, 3=Detailed).
-
-Return strictly valid JSON with these exact keys:
-{
-"docTitle": "Title of the contract",
-"executiveSummary": "A concise overview paragraph",
-"categories": [
-{"title": "Purpose & Scope", "content": "Summary..."},
-{"title": "Financial Terms", "content": "Summary..."},
-{"title": "Term & Termination", "content": "Summary..."},
-{"title": "Confidentiality & IP", "content": "Summary..."},
-{"title": "Liability & Risk Caps", "content": "Summary..."},
-{"title": "Governing Law", "content": "Summary..."},
-{"title": "Dispute Resolution", "content": "Summary..."},
-{"title": "Auto-Renewal & Lock-Ins", "content": "Summary..."}
-]
-}
-
-Contract Text:
-${documentText}`;
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: 'application/json' }
+        contents: [{ parts: [{ text: "Summarize this contract briefly: " + documentText }] }]
       })
     });
 
-    const result = await response.json();
-
+    const data = await response.json();
     if (!response.ok) {
-      return res.status(response.status).json({ error: result.error?.message || 'Gemini API failed.' });
+      return res.status(500).json({ error: data.error?.message || 'API failed' });
     }
 
-    const rawText = result.candidates[0].content.parts[0].text;
-    const parsed = JSON.parse(rawText);
-
-    return res.status(200).json(parsed);
-
+    const textOutput = data.candidates[0].content.parts[0].text;
+    
+    // Temporary fallback JSON structure to match frontend expectations
+    return res.status(200).json({
+      docTitle: "CONTRACT_SUMMARY",
+      executiveSummary: textOutput,
+      categories: [
+        { title: "Overview", content: textOutput }
+      ]
+    });
   } catch (err) {
-    return res.status(500).json({ error: 'Server error: ' + err.message });
+    return res.status(500).json({ error: err.message });
   }
 }
