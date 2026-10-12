@@ -15,7 +15,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // System prompt tailored based on user tier (Base vs Pro/Trial)
     const systemInstruction = `You are Double Check, a legal document assistant. 
 FIRST, verify if the input text is a valid legal document, agreement, terms, or contract.
 IF IT IS NOT LEGAL TEXT OR IS CODE/NONSENSE:
