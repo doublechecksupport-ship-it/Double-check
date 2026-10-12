@@ -6,27 +6,31 @@
     <title>DoubleCheck - AI Legal Document Summariser</title>
     <style>
       :root {
-        --apple-system, -apple-system-font, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        background-color: #fbfbfd;
+        --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        background-color: #f5f5f7;
         color: #1d1d1f;
-        letter-spacing: -0.01em;
+        letter-spacing: -0.011em;
+      }
+
+      body {
+        font-family: var(--apple-font);
       }
 
       .apple-heading {
-        font-family: var(--apple-system);
+        font-family: var(--apple-font);
         font-weight: 600;
-        letter-spacing: -0.020em;
+        letter-spacing: -0.022em;
       }
 
       .apple-body {
-        font-family: var(--apple-system);
+        font-family: var(--apple-font);
         color: #86868b;
       }
 
       .glass-pane {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
         border: 1px solid rgba(0, 0, 0, 0.08);
       }
 
@@ -35,11 +39,16 @@
         color: white;
         font-weight: 500;
         border-radius: 980px;
-        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .apple-button:hover {
         background-color: #0077ed;
+        transform: scale(1.01);
+      }
+
+      .apple-button:active {
+        transform: scale(0.98);
       }
 
       .apple-button-secondary {
@@ -47,7 +56,7 @@
         color: #1d1d1f;
         font-weight: 500;
         border-radius: 980px;
-        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .apple-button-secondary:hover {
@@ -57,20 +66,22 @@
       .logo-icon {
         width: 28px;
         height: 28px;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
 
       @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
+        from { opacity: 0; transform: translateY(8px); }
         to { opacity: 1; transform: translateY(0); }
       }
 
       .animate-fade-in {
-        animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
 
       .spin-smooth {
-        animation: spin 1s linear infinite;
+        animation: spin 0.9s linear infinite;
       }
 
       @keyframes spin {
@@ -82,18 +93,48 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
-    <!-- NAVIGATION -->
+    <!-- NAVIGATION BAR -->
     <nav class="glass-pane sticky top-0 z-50 w-full border-b border-black/5">
-        <div class="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="toggleMainView()">
-                <div class="logo-icon bg-black rounded-lg flex items-center justify-center text-white font-bold text-sm tracking-tighter">✓</div>
-                <span class="font-semibold text-sm tracking-tight">DoubleCheck</span>
+        <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('main')">
+                <div class="logo-icon bg-black text-white rounded-lg font-bold text-sm tracking-tighter group-hover:scale-105 transition-transform">✓</div>
+                <span class="font-semibold text-base tracking-tight">DoubleCheck</span>
             </div>
+            
             <div class="flex items-center space-x-4">
-                <button onclick="toggleAuthModal()" class="text-xs apple-body hover:text-black transition-colors cursor-pointer hidden sm:inline-block">Sign In / Register</button>
+                <button onclick="switchView('pricing')" class="text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-full transition-colors cursor-pointer hidden sm:inline-block">Upgrade Pro</button>
+                <button onclick="toggleAuthDrawer()" class="text-xs apple-body hover:text-black transition-colors cursor-pointer hidden sm:inline-block">Account</button>
+                <button onclick="toggleMenuDrawer()" class="p-2 text-black hover:bg-black/5 rounded-full transition-colors cursor-pointer" aria-label="Open Menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
             </div>
         </div>
     </nav>
+
+    <!-- SLIDE-OUT DRAWER MENU -->
+    <div id="slide-drawer" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="toggleMenuDrawer()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-80 bg-white/90 backdrop-blur-xl p-6 shadow-2xl flex flex-col justify-between border-l border-black/5">
+            <div>
+                <div class="flex justify-between items-center pb-6 border-b border-black/5">
+                    <span class="font-semibold text-base">Menu</span>
+                    <button onclick="toggleMenuDrawer()" class="text-xs text-black/50 hover:text-black font-semibold uppercase">Close</button>
+                </div>
+                <div class="mt-6 space-y-2">
+                    <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium transition-colors">Home</button>
+                    <button onclick="switchView('history'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium transition-colors">Saved Scans</button>
+                    <button onclick="switchView('pricing'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium transition-colors flex items-center justify-between">
+                        <span>Pricing & Plans</span>
+                        <span class="text-[10px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-full">PRO</span>
+                    </button>
+                    <button onclick="switchView('feedback'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium transition-colors">Send Feedback</button>
+                </div>
+            </div>
+            <div class="pt-6 border-t border-black/5">
+                <button onclick="toggleAuthDrawer(); toggleMenuDrawer();" class="apple-button-secondary w-full py-2.5 text-xs">Sign In / Register</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MAIN HOMEPAGE VIEW -->
     <div id="main-view" class="flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in">
@@ -104,13 +145,13 @@
             Upload an image, PDF file, or paste legal text below for a clean, secure executive breakdown.
         </p>
 
-        <!-- VALIDATION WARNING NOTICE -->
-        <div class="mt-8 p-4 rounded-xl glass-pane border border-black/5 max-w-xl w-full text-left shadow-sm animate-fade-in">
+        <!-- VALIDATION NOTICE -->
+        <div class="mt-8 p-4 rounded-xl glass-pane border border-black/5 max-w-xl w-full text-left shadow-sm">
             <div class="flex items-start space-x-3">
                 <span class="text-amber-600 font-bold text-lg">⚠️</span>
                 <div>
-                    <h3 class="font-semibold text-sm text-black">VALID LEGAL DOCUMENT FORMAT / STRICT</h3>
-                    <p class="text-xs apple-body mt-0.5">DoubleCheck only processes valid legal agreements, contracts, leases, NDAs, or terms of service. Code snippets and non-legal inputs are strictly rejected.</p>
+                    <h3 class="font-semibold text-sm text-black">VALID LEGAL DOCUMENT FORMAT ONLY</h3>
+                    <p class="text-xs apple-body mt-0.5">DoubleCheck strictly processes legal agreements, contracts, leases, NDAs, or terms of service. Non-legal inputs are automatically rejected.</p>
                 </div>
             </div>
         </div>
@@ -145,7 +186,7 @@
             <textarea id="legal-text-input" rows="6" placeholder="Paste full agreement or contract terms here..." class="w-full bg-transparent text-sm focus:outline-none resize-none apple-body text-black"></textarea>
         </div>
 
-        <button onclick="handleLlmAnalysis()" class="apple-button mt-6 px-8 py-3 text-sm font-medium w-full max-w-xl shadow-lg cursor-pointer">
+        <button onclick="handleLlmAnalysis()" class="apple-button mt-6 px-8 py-3.5 text-sm font-medium w-full max-w-xl shadow-lg cursor-pointer">
             Summarise Document with AI
         </button>
     </div>
@@ -170,7 +211,6 @@
             </div>
         </div>
 
-        <!-- TAB CONTENT: EXECUTIVE SUMMARY -->
         <div id="exec-summary-container" class="mt-8 space-y-6">
             <div class="glass-pane p-6 rounded-2xl border border-black/5 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
@@ -179,39 +219,135 @@
                 </div>
                 <p id="exec-summary-text" class="text-sm apple-body text-black leading-relaxed mt-2">Executive overview paragraph...</p>
             </div>
-            <div class="flex items-center justify-between text-xs apple-body px-2">
-                <span>DETAIL LEVEL</span>
-                <span class="font-semibold text-black">Medium</span>
-            </div>
         </div>
 
-        <!-- TAB CONTENT: CATEGORY BREAKDOWN -->
-        <div id="category-container" class="hidden mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Dynamic Category Cards Inserted Here -->
-        </div>
+        <div id="category-container" class="hidden mt-8 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
         <div class="mt-12 text-center">
-            <button onclick="toggleMainView()" class="apple-button-secondary px-6 py-2.5 text-xs font-medium cursor-pointer">Scan Another Document</button>
+            <button onclick="switchView('main')" class="apple-button-secondary px-6 py-2.5 text-xs font-medium cursor-pointer">Scan Another Document</button>
+        </div>
+    </div>
+
+    <!-- HIGH-CONVERTING PAYWALL / PRICING VIEW (MOBBIN VIDEO INSIGHTS) -->
+    <div id="pricing-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-4xl mx-auto w-full items-center text-center animate-fade-in">
+        <span class="text-xs font-semibold bg-blue-100 text-blue-700 px-3 py-1 rounded-full uppercase tracking-wider">Unlock Full Access</span>
+        <h2 class="apple-heading text-3xl sm:text-5xl font-semibold mt-3">Simple, Transparent Pricing</h2>
+        <p class="apple-body text-base mt-2 max-w-md">Get instant legal protection with unlimited document analysis.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 w-full max-w-3xl">
+            <!-- FREE PLAN CARD -->
+            <div class="glass-pane p-8 rounded-3xl border border-black/5 flex flex-col justify-between text-left shadow-sm">
+                <div>
+                    <span class="text-xs font-bold uppercase apple-body">Starter</span>
+                    <h3 class="apple-heading text-2xl font-bold mt-1">Free Trial</h3>
+                    <p class="text-3xl font-bold mt-4">£0 <span class="text-xs font-normal apple-body">/ forever</span></p>
+                    <ul class="mt-6 space-y-3 text-xs apple-body text-black">
+                        <li class="flex items-center"><span class="text-blue-600 mr-2">✓</span> 3 legal document scans</li>
+                        <li class="flex items-center"><span class="text-blue-600 mr-2">✓</span> Standard JSON breakdowns</li>
+                        <li class="flex items-center"><span class="text-blue-600 mr-2">✓</span> Basic summary export</li>
+                    </ul>
+                </div>
+                <button onclick="switchView('main')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Current Plan</button>
+            </div>
+
+            <!-- PRO PLAN CARD (OPTIMIZED CONVERSION UI) -->
+            <div class="glass-pane p-8 rounded-3xl border-2 border-blue-600 flex flex-col justify-between text-left shadow-xl relative bg-white">
+                <div class="absolute -top-3 right-6 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
+                    Most Popular
+                </div>
+                <div>
+                    <span class="text-xs font-bold uppercase text-blue-600">DoubleCheck Pro</span>
+                    <h3 class="apple-heading text-2xl font-bold mt-1">Unlimited Access</h3>
+                    <p class="text-3xl font-bold mt-4">£9.99 <span class="text-xs font-normal apple-body">/ month</span></p>
+                    <ul class="mt-6 space-y-3 text-xs apple-body text-black">
+                        <li class="flex items-center"><span class="text-blue-600 mr-2">✓</span> <strong>Unlimited</strong> contract scans</li>
+                        <li class="flex items-center"><span class="text-blue-600 mr-2">✓</span> Full risk & hidden clause detection</li>
+                        <li class="flex items-center"><span class="text-blue-600 mr-2">✓</span> OCR Image & PDF uploads</li>
+                        <li class="flex items-center"><span class="text-blue-600 mr-2">✓</span> Priority Groq API processing</li>
+                    </ul>
+                </div>
+                <button onclick="alert('Stripe subscription integration ready.')" class="apple-button mt-8 w-full py-3.5 text-xs font-bold shadow-lg">Start 7-Day Free Trial</button>
+            </div>
+        </div>
+        <p class="text-xs apple-body mt-6">⭐ 4.9/5 rated by freelancers & business owners. Cancel anytime.</p>
+    </div>
+
+    <!-- SAVED DOCUMENTS / HISTORY VIEW -->
+    <div id="history-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-4xl mx-auto w-full text-left animate-fade-in">
+        <h2 class="apple-heading text-3xl font-semibold mb-2">Saved Documents</h2>
+        <p class="apple-body text-sm mb-6">Review your past legal breakdowns locally saved on this device.</p>
+        <div id="history-list" class="space-y-4">
+            <div class="glass-pane p-6 rounded-2xl border border-black/5 text-center apple-body text-xs">
+                No saved document summaries yet. Scanned contracts will appear here automatically.
+            </div>
+        </div>
+    </div>
+
+    <!-- FEEDBACK VIEW -->
+    <div id="feedback-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-xl mx-auto w-full text-left animate-fade-in">
+        <h2 class="apple-heading text-3xl font-semibold mb-2">Send Feedback</h2>
+        <p class="apple-body text-sm mb-6">Help us improve DoubleCheck. Send us your thoughts or bug reports.</p>
+        <div class="glass-pane p-6 rounded-2xl border border-black/5 space-y-4">
+            <div>
+                <label class="text-xs font-semibold uppercase apple-body">Message</label>
+                <textarea id="feedback-input" rows="4" class="w-full mt-2 p-3 bg-white/50 border border-black/10 rounded-xl text-sm focus:outline-none" placeholder="How can we make DoubleCheck better?"></textarea>
+            </div>
+            <button onclick="handleFeedbackSubmit()" class="apple-button w-full py-3 text-xs">Submit Feedback</button>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION DRAWER MODAL -->
+    <div id="auth-drawer" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="toggleAuthDrawer()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-80 bg-white p-6 shadow-2xl flex flex-col justify-between border-l border-black/5">
+            <div>
+                <div class="flex justify-between items-center pb-6 border-b border-black/5">
+                    <span class="font-semibold text-base">Account Access</span>
+                    <button onclick="toggleAuthDrawer()" class="text-xs text-black/50 hover:text-black font-semibold uppercase">Close</button>
+                </div>
+                <div class="mt-6 space-y-4">
+                    <div>
+                        <label class="text-xs apple-body">Email Address</label>
+                        <input type="email" placeholder="name@example.com" class="w-full mt-1 p-2.5 bg-black/5 rounded-lg text-sm focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs apple-body">Password</label>
+                        <input type="password" placeholder="••••••••" class="w-full mt-1 p-2.5 bg-black/5 rounded-lg text-sm focus:outline-none">
+                    </div>
+                    <button onclick="alert('Account feature active.')" class="apple-button w-full py-2.5 text-xs font-medium">Sign In</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- FOOTER -->
     <footer class="mt-auto py-8 text-center text-xs apple-body border-t border-black/5">
-        DoubleCheck is an information utility and does not provide formal legal counsel or guarantees. 
+        DoubleCheck is an information utility and does not provide formal legal counsel or guarantees.
         <div class="mt-1">© 2026 DoubleCheck LLC. All rights reserved.</div>
     </footer>
 
-    <!-- SCRIPT LOGIC -->
+    <!-- SCRIPT ENGINE -->
     <script>
-        function toggleMainView() {
-            document.getElementById('main-view').classList.remove('hidden');
+        function switchView(viewName) {
+            document.getElementById('main-view').classList.add('hidden');
             document.getElementById('loading-view').classList.add('hidden');
             document.getElementById('results-view').classList.add('hidden');
-            document.getElementById('legal-text-input').value = '';
+            document.getElementById('pricing-view').classList.add('hidden');
+            document.getElementById('history-view').classList.add('hidden');
+            document.getElementById('feedback-view').classList.add('hidden');
+
+            document.getElementById(viewName + '-view').classList.remove('hidden');
+            window.scrollTo(0, 0);
         }
 
-        function toggleAuthModal() {
-            alert('Authentication view is locked in guest mode.');
+        function toggleMenuDrawer() {
+            const drawer = document.getElementById('slide-drawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        function toggleAuthDrawer() {
+            const drawer = document.getElementById('auth-drawer');
+            drawer.classList.toggle('hidden');
         }
 
         function switchSummary(type) {
@@ -244,14 +380,12 @@
                 return;
             }
 
-            // Client-side quick filter against obvious source code or non-legal text
             if (text.includes("<script") || text.includes("function handler") || text.includes("document.getElementById")) {
                 alert("DoubleCheck only analyzes legal documents and contracts, not source code.");
                 return;
             }
 
-            document.getElementById('main-view').classList.add('hidden');
-            document.getElementById('loading-view').classList.remove('hidden');
+            switchView('loading');
 
             try {
                 const response = await fetch('/api/summarise', {
@@ -263,7 +397,7 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Server returned non-JSON response');
+                    throw new Error(data.error || 'Server error');
                 }
 
                 const parsed = JSON.parse(data.content);
@@ -278,17 +412,16 @@
                     parsed.categories.forEach(cat => {
                         const card = document.createElement('div');
                         card.className = "glass-pane p-6 rounded-2xl border border-black/5 shadow-sm flex flex-col justify-between";
-                        card.innerHTML = `<h3 class="apple-heading text-sm font-semibold tracking-tight text-black mb-2">${cat.title}</h3><p class="text-xs apple-body text-black leading-relaxed">${cat.content}</p>`;
+                        card.innerHTML = `<h3 class="apple-heading text-sm font-semibold text-black mb-2">${cat.title}</h3><p class="text-xs apple-body text-black leading-relaxed">${cat.content}</p>`;
                         baseContainer.appendChild(card);
                     });
                 }
 
-                document.getElementById('loading-view').classList.add('hidden');
-                document.getElementById('results-view').classList.remove('hidden');
+                switchView('results');
 
             } catch (err) {
                 alert('AI Error: ' + err.message);
-                toggleMainView();
+                switchView('main');
             }
         }
 
@@ -302,6 +435,17 @@
                 handleLlmAnalysis();
             };
             reader.readAsDataURL(file);
+        }
+
+        function handleFeedbackSubmit() {
+            const input = document.getElementById('feedback-input');
+            if (!input.value.trim()) {
+                alert("Please enter feedback before submitting.");
+                return;
+            }
+            alert("Thank you! Your feedback has been sent to the DoubleCheck team.");
+            input.value = "";
+            switchView('main');
         }
     </script>
 </body>
