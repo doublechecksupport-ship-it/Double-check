@@ -417,7 +417,7 @@
             alert('Summary copied to clipboard!');
         }
 
-        // Updated Backend Routing to Vercel Endpoint (Groq-backed)
+        // Updated Backend Routing Function to match clean JSON responses
         async function summarise() {
             const text = document.getElementById('documentInput').value.trim();
 
@@ -435,14 +435,19 @@
                     body: JSON.stringify({ text })
                 });
 
-                const data = await response.json();
+                const rawText = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(rawText);
+                } catch (e) {
+                    throw new Error("Server returned non-JSON response: " + rawText.substring(0, 100));
+                }
 
                 if (!response.ok) {
                     throw new Error(data.error || 'Failed to process document.');
                 }
 
-                // Parse Groq response structure via OpenAI-compatible chat completion format
-                const parsed = JSON.parse(data.choices[0].message.content);
+                const parsed = JSON.parse(data.content);
 
                 document.getElementById('extractedDocName').innerText = parsed.docTitle || "LEGAL DOCUMENT ANALYSIS";
                 document.getElementById('paragraphSummaryText').innerText = parsed.executiveSummary || "Summary unavailable.";
