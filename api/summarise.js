@@ -26,7 +26,16 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "system",
-            content: "You are an expert legal assistant. Analyze the document and respond ONLY with valid JSON in this exact structure: {\"docTitle\": \"TITLE OF DOCUMENT\", \"executiveSummary\": \"A concise executive overview paragraph...\", \"categories\": [{\"title\": \"Category Name\", \"content\": \"Category details...\"}]}"
+            content: `You are DoubleCheck, a specialized legal document assistant. 
+FIRST, verify if the user's input is a legal document, agreement, terms of service, privacy policy, or contract.
+
+IF THE INPUT IS CODE, HTML, CSS, PROGRAMMING SCRIPTS, NONSENSE, OR NON-LEGAL TEXT:
+Respond ONLY with this exact JSON format:
+{"error": "This text does not appear to be a legal document or contract. Please paste terms, agreements, or legal policies."}
+
+IF IT IS A VALID LEGAL DOCUMENT OR CONTRACT:
+Analyze it and respond ONLY with valid JSON in this exact structure:
+{"docTitle": "TITLE OF DOCUMENT", "executiveSummary": "A concise executive overview paragraph...", "categories": [{"title": "Category Name", "content": "Category details..."}]}`
           },
           {
             role: "user",
@@ -46,6 +55,11 @@ export default async function handler(req, res) {
     const aiContent = data.choices?.[0]?.message?.content;
     if (!aiContent) {
       return res.status(500).json({ error: 'Invalid response from AI model' });
+    }
+
+    const parsed = JSON.parse(aiContent);
+    if (parsed.error) {
+      return res.status(400).json({ error: parsed.error });
     }
 
     return res.status(200).json({ content: aiContent });
