@@ -358,6 +358,9 @@
 
     <!-- CLIENT-SIDE SCRIPT ENGINE -->
     <script>
+        // PASTE YOUR GEMINI API KEY RIGHT HERE:
+        const GEMINI_API_KEY = "PASTE_YOUR_GOOGLE_AI_STUDIO_KEY_HERE";
+
         function toggleMenu() {
             document.getElementById('menuDrawer').classList.toggle('hidden');
         }
@@ -417,7 +420,7 @@
             alert('Summary copied to clipboard!');
         }
 
-        // Live Serverless AI Summarise Engine (Connected to /api/summarise)
+        // Direct Client-Side Gemini API Engine (Zero Vercel Routing Errors)
         async function summarise() {
             const text = document.getElementById('documentInput').value.trim();
 
@@ -426,31 +429,54 @@
                 return;
             }
 
+            if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("PASTE_YOUR")) {
+                alert('Please paste your Gemini API key into line 395 of index.html.');
+                return;
+            }
+
             document.getElementById('loadingOverlay').classList.remove('hidden');
 
             try {
-                const response = await fetch('/api/summarise', {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ documentText: text })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Analyze the following legal text and return a valid JSON object ONLY (no markdown blocks) with this exact structure:
+                                {
+                                  "docTitle": "TITLE OF DOCUMENT",
+                                  "executiveSummary": "A concise executive overview paragraph...",
+                                  "categories": [
+                                    { "title": "Category Name", "content": "Category details..." }
+                                  ]
+                                }
+                                Legal Text:
+                                ${text}`
+                            }]
+                        }]
+                    })
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Failed to generate summary.');
+                    throw new Error(data.error?.message || 'Failed to connect to Gemini API.');
                 }
 
-                document.getElementById('extractedDocName').innerText = data.docTitle || "LEGAL DOCUMENT ANALYSIS";
-                document.getElementById('paragraphSummaryText').innerText = data.executiveSummary || "Summary unavailable.";
+                let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                const parsed = JSON.parse(rawText);
+
+                document.getElementById('extractedDocName').innerText = parsed.docTitle || "LEGAL DOCUMENT ANALYSIS";
+                document.getElementById('paragraphSummaryText').innerText = parsed.executiveSummary || "Summary unavailable.";
 
                 const boxesContainer = document.getElementById('boxesContainer');
                 boxesContainer.innerHTML = '';
 
-                if (data.categories && Array.isArray(data.categories)) {
-                    data.categories.forEach(cat => {
+                if (parsed.categories && Array.isArray(parsed.categories)) {
+                    parsed.categories.forEach(cat => {
                         const card = document.createElement('div');
                         card.className = 'glass-card p-5 flex flex-col space-y-1.5';
                         card.innerHTML = `<h4 class="text-xs font-semibold text-[#1d1d1f] uppercase">${cat.title}</h4><p class="text-xs apple-body leading-relaxed">${cat.content}</p>`;
@@ -461,7 +487,7 @@
                 switchView('resultsView');
 
             } catch (err) {
-                alert('Error: ' + err.message);
+                alert('AI Error: ' + err.message);
             } finally {
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }
