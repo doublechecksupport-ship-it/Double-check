@@ -1,5 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/api/summarise", "destination": "/api/summarise.js" }
-  ]
-}
