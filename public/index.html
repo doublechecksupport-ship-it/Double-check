@@ -358,8 +358,8 @@
 
     <!-- CLIENT-SIDE SCRIPT ENGINE -->
     <script>
-        // PASTE YOUR GEMINI API KEY RIGHT HERE:
-        const GEMINI_API_KEY = "PASTE_YOUR_GOOGLE_AI_STUDIO_KEY_HERE";
+        // Configured Gemini API Key
+        const GEMINI_API_KEY = "AQ.Ab8RN6JlJDDZ4oPiSDl5q_sJqbD5QKlN1Ku0GqYp21aLCfGuEg";
 
         function toggleMenu() {
             document.getElementById('menuDrawer').classList.toggle('hidden');
@@ -426,11 +426,6 @@
 
             if (!text || text.length < 20) {
                 alert('Document text is too short or missing.');
-                return;
-            }
-
-            if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("PASTE_YOUR")) {
-                alert('Please paste your Gemini API key into line 395 of index.html.');
                 return;
             }
 
