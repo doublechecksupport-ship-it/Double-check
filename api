@@ -1,16 +1,13 @@
 export default async function handler(req, res) {
-  // Only allow POST requests from your frontend
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { text } = req.body;
-  
-  // Uses Vercel environment variable if set, otherwise falls back directly to your Groq key
   const apiKey = process.env.GROQ_API_KEY || "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";
 
-  if (!text || !text.trim()) {
-    return res.status(400).json({ error: 'No text provided for analysis.' });
+  if (!text) {
+    return res.status(400).json({ error: 'No text provided' });
   }
 
   try {
@@ -25,14 +22,7 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "system",
-            content: `You are an expert legal assistant. Analyze the document and respond ONLY with valid JSON in this exact structure:
-            {
-              "docTitle": "TITLE OF DOCUMENT",
-              "executiveSummary": "A concise executive overview paragraph...",
-              "categories": [
-                { "title": "Category Name", "content": "Category details..." }
-              ]
-            }`
+            content: "You are an expert legal assistant. Analyze the document and respond ONLY with valid JSON in this exact structure: {\"docTitle\": \"TITLE OF DOCUMENT\", \"executiveSummary\": \"A concise executive overview paragraph...\", \"categories\": [{\"title\": \"Category Name\", \"content\": \"Category details...\"}]}"
           },
           {
             role: "user",
@@ -46,12 +36,11 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error?.message || 'Failed to fetch from Groq API');
+      throw new Error(data.error?.message || 'Groq API error');
     }
 
     return res.status(200).json(data);
   } catch (err) {
-    console.error("Groq API Server Error:", err);
     return res.status(500).json({ error: err.message });
   }
 }
