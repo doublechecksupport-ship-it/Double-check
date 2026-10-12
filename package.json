@@ -1,0 +1,13 @@
+{
+  "name": "double-check",
+  "version": "1.0.0",
+  "description": "AI Legal Document Summariser",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'No build step required for static HTML'",
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  }
+}
