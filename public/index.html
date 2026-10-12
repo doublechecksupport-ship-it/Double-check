@@ -417,7 +417,7 @@
             alert('Summary copied to clipboard!');
         }
 
-        // 100% Client-Side Summarise Engine (No Server Function Required)
+        // Live Serverless AI Summarise Engine (Connected to /api/summarise)
         async function summarise() {
             const text = document.getElementById('documentInput').value.trim();
 
@@ -428,40 +428,43 @@
 
             document.getElementById('loadingOverlay').classList.remove('hidden');
 
-            // Simulate lightning-fast AI analysis locally without API errors
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').classList.add('hidden');
+            try {
+                const response = await fetch('/api/summarise', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ documentText: text })
+                });
 
-                const mockData = {
-                    docTitle: "EXECUTIVE CONTRACT ANALYSIS",
-                    executiveSummary: "This agreement establishes the binding terms, operational scope, and financial obligations between the participating parties. Key provisions include standard liability limitations, confidentiality covenants, and clear termination guidelines.",
-                    categories: [
-                        { title: "Purpose & Scope", content: "Defines the core services, deliverables, and operational boundaries of the engagement." },
-                        { title: "Financial Terms", content: "Details fee schedules, invoicing milestones, and payment processing rules." },
-                        { title: "Term & Termination", content: "Outlines contract duration and conditions for early termination with proper notice." },
-                        { title: "Confidentiality & IP", content: "Safeguards proprietary information and assigns ownership of intellectual property." },
-                        { title: "Liability & Risk Caps", content: "Restricts maximum financial damages and liability exposure for both parties." },
-                        { title: "Governing Law", content: "Determines the regional jurisdiction and legal framework applicable to the agreement." },
-                        { title: "Dispute Resolution", content: "Specifies mediation, arbitration, or legal escalation paths for conflicts." },
-                        { title: "Auto-Renewal Clauses", content: "Outlines conditions under which the agreement automatically extends if not terminated." }
-                    ]
-                };
+                const data = await response.json();
 
-                document.getElementById('extractedDocName').innerText = mockData.docTitle;
-                document.getElementById('paragraphSummaryText').innerText = mockData.executiveSummary;
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to generate summary.');
+                }
+
+                document.getElementById('extractedDocName').innerText = data.docTitle || "LEGAL DOCUMENT ANALYSIS";
+                document.getElementById('paragraphSummaryText').innerText = data.executiveSummary || "Summary unavailable.";
 
                 const boxesContainer = document.getElementById('boxesContainer');
                 boxesContainer.innerHTML = '';
 
-                mockData.categories.forEach(cat => {
-                    const card = document.createElement('div');
-                    card.className = 'glass-card p-5 flex flex-col space-y-1.5';
-                    card.innerHTML = `<h4 class="text-xs font-semibold text-[#1d1d1f] uppercase">${cat.title}</h4><p class="text-xs apple-body leading-relaxed">${cat.content}</p>`;
-                    boxesContainer.appendChild(card);
-                });
+                if (data.categories && Array.isArray(data.categories)) {
+                    data.categories.forEach(cat => {
+                        const card = document.createElement('div');
+                        card.className = 'glass-card p-5 flex flex-col space-y-1.5';
+                        card.innerHTML = `<h4 class="text-xs font-semibold text-[#1d1d1f] uppercase">${cat.title}</h4><p class="text-xs apple-body leading-relaxed">${cat.content}</p>`;
+                        boxesContainer.appendChild(card);
+                    });
+                }
 
                 switchView('resultsView');
-            }, 800);
+
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
         }
     </script>
 </body>
