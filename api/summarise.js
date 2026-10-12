@@ -4,7 +4,11 @@ export default async function handler(req, res) {
   }
 
   const { text } = req.body;
-  const apiKey = process.env.GROQ_API_KEY || "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";
+  const apiKey = process.env.GROQ_API_KEY;
+
+  if (!apiKey) {
+    return res.status(500).json({ error: 'GROQ_API_KEY is not configured in Vercel environment variables.' });
+  }
 
   if (!text) {
     return res.status(400).json({ error: 'No text provided' });
@@ -18,7 +22,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "llama-3.1-8b-instant",
+        model: "llama-3.3-70b-versatile",
         messages: [
           {
             role: "system",
