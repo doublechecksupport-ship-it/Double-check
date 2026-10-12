@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { text, userEmail, userTier } = req.body;
+  const { text, userEmail, userPlan } = req.body;
   const apiKey = process.env.GROQ_API_KEY;
 
   if (!apiKey) {
@@ -15,6 +15,11 @@ export default async function handler(req, res) {
   }
 
   try {
+    const isBasePlan = userPlan === 'base';
+    const boxInstructions = isBasePlan 
+      ? `Provide the executive summary paragraph and return 4 Core Boxes: Executive Summary, Financial Breakdown & Money, Important Dates & Timelines, and Obligations Checklist.`
+      : `Provide the executive summary paragraph and return all 8 Breakdown Boxes: Executive Summary, Financial Breakdown & Money, Important Dates & Timelines, Obligations Checklist, Red Flags & Liabilities, Termination & Exit Rules, IP & Ownership Rights, and Plain-English Legal Glossary.`;
+
     const systemInstruction = `You are Double Check, a legal document assistant. 
 FIRST, verify if the input text is a valid legal document, agreement, terms, or contract.
 IF IT IS NOT LEGAL TEXT OR IS CODE/NONSENSE:
@@ -24,18 +29,19 @@ IF IT IS VALID LEGAL TEXT:
 Analyze the document and return ONLY valid JSON in this exact structure:
 {
   "docTitle": "TITLE OF DOCUMENT",
-  "executiveSummary": "Clear plain-language overview paragraph...",
+  "executiveSummary": "Clear plain-language paragraph summary...",
   "categories": [
     {"title": "Executive Summary", "content": "Overview content..."},
     {"title": "Financial Breakdown & Money", "content": "Costs, payment schedules, fees..."},
     {"title": "Important Dates & Timelines", "content": "Deadlines, renewal dates..."},
     {"title": "Obligations Checklist", "content": "Required duties for each party..."},
-    {"title": "Red Flags & Risk Radar", "content": "Unusual penalties, harsh terms, liabilities..."},
+    {"title": "Red Flags & Liabilities", "content": "Unusual penalties, harsh terms, liabilities..."},
     {"title": "Termination & Exit Rules", "content": "Cancellation rules and notice periods..."},
     {"title": "IP & Ownership Rights", "content": "Intellectual property ownership..."},
     {"title": "Plain-English Legal Glossary", "content": "Key terms defined simply..."}
   ]
-}`;
+}
+Note: ${boxInstructions}`;
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
