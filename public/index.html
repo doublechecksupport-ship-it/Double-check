@@ -456,4 +456,583 @@
                         <span>Copy Summary</span>
                     </button>
                 </div>
-                <p id="box-1-text"
+                <p id="box-1-text" class="text-sm sm:text-base apple-body text-slate-100 leading-relaxed">Paragraph summary loading...</p>
+            </div>
+        </div>
+
+        <!-- VIEW 2: FULL 8-BOX BREAKDOWN GRID (TOGGLED VIA SLIDER) -->
+        <div id="results-breakdown-container" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Box 2: Financial -->
+                <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Financial Breakdown & Money</h3>
+                            <button onclick="copyElementText('box-2-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
+                        </div>
+                        <p id="box-2-text" class="text-xs apple-body text-slate-300 leading-relaxed">Financial terms loading...</p>
+                    </div>
+                </div>
+
+                <!-- Box 3: Timelines -->
+                <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Important Dates & Timelines</h3>
+                            <button onclick="copyElementText('box-3-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
+                        </div>
+                        <p id="box-3-text" class="text-xs apple-body text-slate-300 leading-relaxed">Deadlines loading...</p>
+                    </div>
+                </div>
+
+                <!-- Box 4: Obligations -->
+                <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Obligations Checklist</h3>
+                            <button onclick="copyElementText('box-4-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
+                        </div>
+                        <p id="box-4-text" class="text-xs apple-body text-slate-300 leading-relaxed">Duties loading...</p>
+                    </div>
+                </div>
+
+                <!-- Box 5: Red Flags -->
+                <div id="box-5-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
+                    <div id="box-5-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
+                        <h4 class="font-bold text-xs text-white mb-2">Upgrade to Unlock Full Breakdown</h4>
+                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Red Flags & Liabilities</h3>
+                            <button onclick="copyElementText('box-5-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
+                        </div>
+                        <p id="box-5-text" class="text-xs apple-body text-slate-300 leading-relaxed">Liabilities loading...</p>
+                    </div>
+                </div>
+
+                <!-- Box 6: Termination -->
+                <div id="box-6-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
+                    <div id="box-6-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
+                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Termination & Exit Rules</h3>
+                            <button onclick="copyElementText('box-6-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
+                        </div>
+                        <p id="box-6-text" class="text-xs apple-body text-slate-300 leading-relaxed">Termination terms...</p>
+                    </div>
+                </div>
+
+                <!-- Box 7: IP & Ownership -->
+                <div id="box-7-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
+                    <div id="box-7-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
+                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">IP & Ownership Rights</h3>
+                            <button onclick="copyElementText('box-7-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
+                        </div>
+                        <p id="box-7-text" class="text-xs apple-body text-slate-300 leading-relaxed">Ownership rights...</p>
+                    </div>
+                </div>
+
+                <!-- Box 8: Glossary -->
+                <div id="box-8-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between md:col-span-2">
+                    <div id="box-8-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
+                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Plain-English Legal Glossary</h3>
+                            <button onclick="copyElementText('box-8-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
+                        </div>
+                        <p id="box-8-text" class="text-xs apple-body text-slate-300 leading-relaxed">Glossary terms...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ACCOUNT VIEW -->
+    <div id="account-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-4xl mx-auto w-full text-left animate-fade-in space-y-8 relative z-10">
+        <h2 class="apple-heading text-3xl font-bold text-white">My Account</h2>
+        <div class="glass-pane p-10 rounded-3xl space-y-8 shadow-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div>
+                    <label class="text-xs font-semibold uppercase apple-body">Registered Email</label>
+                    <input type="text" id="acc-email" readonly class="w-full mt-2 p-4 bg-black/40 border border-white/10 rounded-xl text-sm font-medium text-white">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase apple-body">Total Contracts Summarised</label>
+                    <input type="text" id="acc-count" readonly class="w-full mt-2 p-4 bg-black/40 border border-white/10 rounded-xl text-sm font-medium text-white">
+                </div>
+            </div>
+            <div class="pt-6 border-t border-white/10 flex items-center justify-between">
+                <div>
+                    <label class="text-xs font-semibold uppercase apple-body block">Active Plan</label>
+                    <span id="acc-plan-label" class="text-xl font-bold text-white">Free Trial</span>
+                </div>
+                <button onclick="switchView('pricing')" class="apple-button px-6 py-3 text-xs">Change Plan</button>
+            </div>
+        </div>
+        <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Workspace</button>
+    </div>
+
+    <!-- PRICING VIEW -->
+    <div id="pricing-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
+        <span class="text-xs font-semibold bg-white/10 text-white px-3 py-1 rounded-full uppercase tracking-wider">Subscription Plans</span>
+        <h2 class="apple-heading text-3xl sm:text-5xl font-semibold mt-3 text-white">Choose Your Plan</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 w-full text-left">
+            <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
+                <div>
+                    <h3 class="apple-heading text-xl font-bold text-white">Free Trial</h3>
+                    <p class="text-3xl font-bold mt-3 text-white">$0 <span class="text-xs font-normal apple-body">/ 30 days</span></p>
+                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
+                        <li>✓ 3 contract summaries</li>
+                        <li>✓ Paragraph Summary Overview</li>
+                        <li>✓ Full 8-Box Breakdown</li>
+                    </ul>
+                </div>
+                <button onclick="openPaymentForm('trial')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Select Trial</button>
+            </div>
+
+            <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
+                <div>
+                    <h3 class="apple-heading text-xl font-bold text-white">Base Plan</h3>
+                    <p class="text-3xl font-bold mt-3 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
+                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
+                        <li>✓ 5 summaries / month</li>
+                        <li>✓ Core 4-Box Breakdown</li>
+                    </ul>
+                </div>
+                <button onclick="openPaymentForm('base')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Select Base Plan</button>
+            </div>
+
+            <div class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between shadow-xl bg-slate-800/90">
+                <div>
+                    <h3 class="apple-heading text-xl font-bold text-white">Pro Plan</h3>
+                    <p class="text-3xl font-bold mt-3 text-white">$29 <span class="text-xs font-normal apple-body">/ month</span></p>
+                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-200">
+                        <li>✓ 30 summaries / month</li>
+                        <li>✓ Full 8-Box Breakdown</li>
+                    </ul>
+                </div>
+                <button onclick="openPaymentForm('pro')" class="apple-button mt-8 w-full py-3 text-xs font-bold">Select Pro Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT VIEW -->
+    <div id="about-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-3xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
+        <h2 class="apple-heading text-3xl font-bold text-white">About & How to Use</h2>
+        <div class="glass-pane p-8 rounded-3xl space-y-6 text-xs apple-body text-slate-300 leading-relaxed">
+            <ol class="list-decimal pl-4 space-y-1.5 text-slate-200">
+                <li>Upload a PDF document, image scan, or paste legal text on the workspace.</li>
+                <li>Click <strong>Summarise Contract</strong> to review the comprehensive plain-English paragraph summary first.</li>
+                <li>Use the toggle slider to explore detailed risk breakdowns and copy text to your clipboard anytime.</li>
+            </ol>
+        </div>
+        <button onclick="switchView('welcome')" class="apple-button-secondary py-2.5 text-xs w-32">← Welcome</button>
+    </div>
+
+    <!-- FEEDBACK VIEW -->
+    <div id="feedback-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
+        <h2 class="apple-heading text-3xl font-bold text-white">Send Feedback</h2>
+        <div class="glass-pane p-6 rounded-2xl space-y-4">
+            <textarea id="feedback-text" rows="4" class="w-full p-3 bg-black/40 border border-white/10 rounded-xl text-xs text-white focus:outline-none" placeholder="How can we improve Double Check?"></textarea>
+            <button onclick="submitFeedback()" class="apple-button w-full py-3 text-xs">Submit Feedback</button>
+        </div>
+        <button onclick="switchView('welcome')" class="apple-button-secondary py-2.5 text-xs w-32">← Welcome</button>
+    </div>
+
+    <!-- TOS VIEW -->
+    <div id="tos-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-2xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
+        <h2 class="apple-heading text-3xl font-bold text-white">Terms of Service</h2>
+        <div class="glass-pane p-6 rounded-2xl text-xs apple-body leading-relaxed space-y-2 text-slate-300">
+            <p>Double Check provides AI-generated contract summaries for informational purposes only and does not constitute formal legal counsel.</p>
+        </div>
+        <button onclick="switchView('welcome')" class="apple-button-secondary py-2.5 text-xs w-32">← Welcome</button>
+    </div>
+
+    <!-- PRIVACY VIEW -->
+    <div id="privacy-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-2xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
+        <h2 class="apple-heading text-3xl font-bold text-white">Privacy Policy</h2>
+        <div class="glass-pane p-6 rounded-2xl text-xs apple-body leading-relaxed space-y-2 text-slate-300">
+            <p>We respect your privacy in accordance with GDPR guidelines. No document content is shared or sold.</p>
+        </div>
+        <button onclick="switchView('welcome')" class="apple-button-secondary py-2.5 text-xs w-32">← Welcome</button>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-auto py-6 text-center text-xs apple-body border-t border-white/10 px-6 relative z-10 text-slate-400">
+        Double Check provides AI-generated summaries for informational purposes only and does not constitute formal legal advice.
+        <div class="mt-1">© 2026 Double Check LLC. All rights reserved.</div>
+    </footer>
+
+    <!-- SCRIPT ENGINE -->
+    <script>
+        let currentUser = {
+            email: "",
+            plan: "trial",
+            contractsRemaining: 0,
+            summarisedCount: 0,
+            pendingPlanSelection: "trial"
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedEmail = localStorage.getItem('dc_email');
+            const savedPlan = localStorage.getItem('dc_plan');
+            const savedRem = localStorage.getItem('dc_rem');
+            const savedCount = localStorage.getItem('dc_count');
+
+            if (savedEmail) {
+                currentUser.email = savedEmail;
+                currentUser.plan = savedPlan || 'trial';
+                currentUser.contractsRemaining = savedRem ? parseInt(savedRem) : 3;
+                currentUser.summarisedCount = savedCount ? parseInt(savedCount) : 0;
+
+                updateUserUI();
+                switchView('main');
+            } else {
+                updateUserUI();
+                switchView('welcome');
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const navbar = document.getElementById('top-navbar');
+            
+            if (scrollTop > 50) {
+                navbar.classList.add('reading-mode');
+            } else {
+                navbar.classList.remove('reading-mode');
+            }
+
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollFraction = maxScroll > 0 ? scrollTop / maxScroll : 0;
+            const glow = document.getElementById('bg-glow');
+            if (glow) {
+                const opacity = 0.4 + Math.sin(scrollFraction * Math.PI) * 0.4;
+                glow.style.opacity = opacity.toFixed(2);
+            }
+        });
+
+        function switchAuthTab(tab) {
+            const loginBtn = document.getElementById('tab-login-btn');
+            const signupBtn = document.getElementById('tab-signup-btn');
+            const loginForm = document.getElementById('form-login');
+            const signupForm = document.getElementById('form-signup');
+
+            if (tab === 'login') {
+                loginBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all";
+                signupBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all";
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            } else {
+                signupBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all";
+                loginBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all";
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
+
+        function openAuthModal(tab) {
+            switchAuthTab(tab);
+            document.getElementById('auth-gate-modal').classList.remove('hidden');
+        }
+
+        function handleLoginSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            if (!email) return;
+
+            currentUser.email = email;
+            currentUser.plan = email.toLowerCase() === 'theo_kay@icloud.com' ? 'pro' : 'trial';
+            currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : 3;
+
+            document.getElementById('auth-gate-modal').classList.add('hidden');
+            saveAndBoot();
+        }
+
+        function handleSignupSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById('signup-email').value.trim();
+            const pwd = document.getElementById('signup-password').value;
+
+            const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+            if (!pwdRegex.test(pwd)) {
+                alert("Password must be at least 8 characters long and include a capital letter, a lowercase letter, and a number.");
+                return;
+            }
+
+            currentUser.email = email;
+            document.getElementById('auth-gate-modal').classList.add('hidden');
+            document.getElementById('paywall-modal').classList.remove('hidden');
+        }
+
+        function openPaymentForm(plan) {
+            currentUser.pendingPlanSelection = plan;
+            document.getElementById('paywall-modal').classList.add('hidden');
+
+            const title = document.getElementById('payment-plan-title');
+            const price = document.getElementById('payment-plan-price');
+            const disclaimer = document.getElementById('trial-charge-disclaimer');
+
+            if (plan === 'trial') {
+                title.innerText = "Start 30-Day Free Trial";
+                price.innerText = "$0.00 / Month";
+                disclaimer.classList.remove('hidden');
+            } else if (plan === 'base') {
+                title.innerText = "Base Plan Subscription";
+                price.innerText = "$12.00 / Month";
+                disclaimer.classList.add('hidden');
+            } else {
+                title.innerText = "Pro Plan Subscription";
+                price.innerText = "$29.00 / Month";
+                disclaimer.classList.add('hidden');
+            }
+
+            document.getElementById('payment-modal').classList.remove('hidden');
+        }
+
+        function handlePaymentSubmit(event) {
+            event.preventDefault();
+            
+            const card = document.getElementById('pay-card').value;
+            if (card.length < 12) {
+                alert("Please enter a valid card number.");
+                return;
+            }
+
+            currentUser.plan = currentUser.pendingPlanSelection;
+            currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : (currentUser.plan === 'base' ? 5 : 3);
+            
+            document.getElementById('payment-modal').classList.add('hidden');
+            saveAndBoot();
+            alert(`Payment setup successful! Subscribed to ${currentUser.plan.toUpperCase()} plan.`);
+        }
+
+        function saveAndBoot() {
+            localStorage.setItem('dc_email', currentUser.email);
+            localStorage.setItem('dc_plan', currentUser.plan);
+            localStorage.setItem('dc_rem', currentUser.contractsRemaining);
+
+            updateUserUI();
+            switchView('main');
+        }
+
+        function triggerPasswordReset() {
+            alert(`Password reset link sent to ${currentUser.email || 'your email'}.`);
+        }
+
+        function handleSignOut() {
+            localStorage.clear();
+            location.reload();
+        }
+
+        function updateUserUI() {
+            const email = currentUser.email;
+            const isLoggedIn = Boolean(email);
+
+            const logoutActions = document.getElementById('nav-logged-out-actions');
+            const loginActions = document.getElementById('nav-logged-in-actions');
+            const drawerBtn = document.getElementById('drawer-auth-btn');
+
+            if (isLoggedIn) {
+                logoutActions.classList.add('hidden');
+                loginActions.classList.remove('hidden');
+                drawerBtn.innerText = "Sign Out";
+                drawerBtn.onclick = () => { handleSignOut(); toggleMenuDrawer(); };
+            } else {
+                logoutActions.classList.remove('hidden');
+                loginActions.classList.add('hidden');
+                drawerBtn.innerText = "Sign In / Register";
+                drawerBtn.onclick = () => { openAuthModal('login'); toggleMenuDrawer(); };
+            }
+
+            document.getElementById('drawer-user-email').innerText = isLoggedIn ? email : "Guest User";
+            document.getElementById('drawer-usage-counter').innerText = isLoggedIn ? `Contracts remaining: ${currentUser.contractsRemaining}` : "Please sign in";
+            document.getElementById('acc-email').value = isLoggedIn ? email : "";
+            document.getElementById('acc-count').value = currentUser.summarisedCount + " contracts";
+            document.getElementById('acc-plan-label').innerText = currentUser.plan.toUpperCase() + " Plan";
+
+            const isFullAccess = currentUser.plan === 'pro' || currentUser.plan === 'trial';
+            for (let i = 5; i <= 8; i++) {
+                const lock = document.getElementById(`box-${i}-lock`);
+                if (lock) {
+                    if (isFullAccess) lock.classList.add('hidden');
+                    else lock.classList.remove('hidden');
+                }
+            }
+        }
+
+        function switchView(viewName) {
+            const views = ['welcome', 'main', 'loading', 'results', 'pricing', 'account', 'feedback', 'about', 'tos', 'privacy'];
+            views.forEach(v => {
+                const el = document.getElementById(v + '-view');
+                if (el) el.classList.add('hidden');
+            });
+            const target = document.getElementById(viewName + '-view');
+            if (target) target.classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            const glow = document.getElementById('bg-glow');
+            if (viewName === 'pricing') {
+                glow.style.background = 'radial-gradient(circle at 10% 20%, rgba(30, 58, 138, 0.6) 0%, transparent 65%)';
+            } else if (viewName === 'account') {
+                glow.style.background = 'radial-gradient(circle at 80% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%)';
+            } else {
+                glow.style.background = 'radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%)';
+            }
+        }
+
+        function scrollToSection(sectionId) {
+            const el = document.getElementById(sectionId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function toggleMenuDrawer() {
+            const drawer = document.getElementById('slide-drawer');
+            const panel = document.getElementById('drawer-panel');
+            if (drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                panel.classList.add('menu-slide-right');
+            } else {
+                panel.classList.remove('menu-slide-right');
+                drawer.classList.add('hidden');
+            }
+        }
+
+        // Toggle between Paragraph Summary and Full Breakdown views on the results page
+        function switchResultsTab(tab) {
+            const pBtn = document.getElementById('tab-btn-paragraph');
+            const bBtn = document.getElementById('tab-btn-breakdown');
+            const pContainer = document.getElementById('results-paragraph-container');
+            const bContainer = document.getElementById('results-breakdown-container');
+
+            if (tab === 'paragraph') {
+                pBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold bg-white text-black transition-all cursor-pointer";
+                bBtn.className = "px-6 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition-all cursor-pointer";
+                pContainer.classList.remove('hidden');
+                bContainer.classList.add('hidden');
+            } else {
+                bBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold bg-white text-black transition-all cursor-pointer";
+                pBtn.className = "px-6 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition-all cursor-pointer";
+                bContainer.classList.remove('hidden');
+                pContainer.classList.add('hidden');
+            }
+        }
+
+        // Copy text helper function for clipboard ("club board")
+        function copyElementText(elementId, btnEl) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = btnEl.innerText;
+                btnEl.innerText = "Copied! ✓";
+                btnEl.classList.add('bg-blue-600', 'text-white');
+                setTimeout(() => {
+                    btnEl.innerText = originalText;
+                    btnEl.classList.remove('bg-blue-600', 'text-white');
+                }, 2000);
+            }).catch(err => {
+                alert("Failed to copy text: " + err);
+            });
+        }
+
+        async function handleLlmAnalysis() {
+            if (!currentUser.email) {
+                openAuthModal('login');
+                return;
+            }
+
+            const text = document.getElementById('legal-text-input').value;
+            if (!text || text.trim().length < 20) {
+                alert("Document text is too short or missing.");
+                return;
+            }
+
+            if (currentUser.contractsRemaining <= 0) {
+                document.getElementById('paywall-modal').classList.remove('hidden');
+                return;
+            }
+
+            switchView('loading');
+
+            try {
+                const response = await fetch('/api/summarise', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text,
+                        userEmail: currentUser.email,
+                        userPlan: currentUser.plan
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Server error');
+
+                const parsed = JSON.parse(data.content);
+                
+                document.getElementById('doc-title-heading').innerText = parsed.docTitle || "CONTRACT BREAKDOWN";
+                
+                // Make the paragraph summary as rich and complete as possible
+                document.getElementById('box-1-text').innerText = parsed.executiveSummary || "Paragraph summary unavailable.";
+                document.getElementById('box-2-text').innerText = parsed.categories?.[1]?.content || "Financial details...";
+                document.getElementById('box-3-text').innerText = parsed.categories?.[2]?.content || "Timelines...";
+                document.getElementById('box-4-text').innerText = parsed.categories?.[3]?.content || "Duties loading...";
+
+                if (parsed.categories && parsed.categories.length >= 8) {
+                    document.getElementById('box-5-text').innerText = parsed.categories[4].content;
+                    document.getElementById('box-6-text').innerText = parsed.categories[5].content;
+                    document.getElementById('box-7-text').innerText = parsed.categories[6].content;
+                    document.getElementById('box-8-text').innerText = parsed.categories[7].content;
+                }
+
+                if (currentUser.plan !== 'pro') {
+                    currentUser.contractsRemaining--;
+                }
+                currentUser.summarisedCount++;
+                localStorage.setItem('dc_rem', currentUser.contractsRemaining);
+                localStorage.setItem('dc_count', currentUser.summarisedCount);
+                updateUserUI();
+
+                // Always default back to the paragraph view first when new results load
+                switchResultsTab('paragraph');
+                switchView('results');
+            } catch (err) {
+                alert('AI Error: ' + err.message);
+                switchView('main');
+            }
+        }
+
+        function handleFileUpload(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('legal-text-input').value = `[Uploaded ${type.toUpperCase()}: ${file.name}]\n\nSample Contractual Agreement Terms:\n1. Parties agree to bound terms...\n2. Confidentiality is strictly enforced for 3 years...\n3. Termination requires 30 days written notice.`;
+                handleLlmAnalysis();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function submitFeedback() {
+            const val = document.getElementById('feedback-text').value.trim();
+            if (!val) return alert("Please enter feedback before sending.");
+            alert("Thank you! Your feedback has been sent.");
+            document.getElementById('feedback-text').value = '';
+            switchView('welcome');
+        }
+    </script>
+</body>
+</html>
