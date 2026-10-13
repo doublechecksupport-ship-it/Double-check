@@ -309,36 +309,33 @@
         </div>
     </nav>
 
-    <!-- RIGHT-SIDE SLIDE-OUT DRAWER MENU -->
+    <!-- DYNAMIC SLIDE-OUT DRAWER MENU (CLEANED UP FOR WELCOME PAGE / LOGGED OUT USERS) -->
     <div id="slide-drawer" class="fixed inset-0 z-50 hidden flex justify-end">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleMenuDrawer()"></div>
         <div id="drawer-panel" class="relative h-full w-80 bg-slate-900/98 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 overflow-hidden menu-slide-right" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.99) 70%);">
             <div>
-                <div class="flex justify-between items-start pb-6 border-b border-white/10">
+                <!-- DYNAMIC DRAWER HEADER: HIDES PERSONAL STUFF WHEN LOGGED OUT -->
+                <div class="flex justify-between items-start pb-6 border-b border-white/10" id="drawer-header-container">
                     <div class="pr-6">
-                        <span class="font-semibold text-sm block truncate max-w-[150px] text-white" id="drawer-user-email">Guest User</span>
-                        <div class="text-xs apple-body mt-1 text-slate-300" id="drawer-usage-counter">Please sign in</div>
+                        <span class="font-semibold text-sm block truncate max-w-[150px] text-white" id="drawer-user-email">Welcome Visitor</span>
+                        <div class="text-xs apple-body mt-1 text-slate-300" id="drawer-usage-counter">AI Legal Document Intelligence</div>
                     </div>
                     <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
                 </div>
-                <div class="mt-8 space-y-3">
-                    <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome / Home</button>
-                    <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Home Dashboard</button>
-                    <button onclick="switchView('account'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">My Account</button>
-                    <button onclick="switchView('pricing'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing & Plans</button>
-                    <button onclick="switchView('about'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">About, FAQ & How to Use</button>
-                    <button onclick="switchView('feedback'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Send Feedback</button>
-                    <button onclick="switchView('tos'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Terms of Service</button>
-                    <button onclick="switchView('privacy'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Privacy Policy</button>
+
+                <!-- DYNAMIC DRAWER LINKS -->
+                <div class="mt-8 space-y-3" id="drawer-links-container">
+                    <!-- Populated dynamically via JS depending on login state -->
                 </div>
             </div>
+            
             <div class="pt-6 border-t border-white/10">
                 <button id="drawer-auth-btn" onclick="openAuthModal('login'); toggleMenuDrawer();" class="apple-button w-full py-3 text-xs font-semibold">Sign In / Register</button>
             </div>
         </div>
     </div>
 
-    <!-- WELCOME VIEW (EXPANDED WITH MORE INFORMATION & HOW TO GET STARTED BELOW PRICING) -->
+    <!-- WELCOME VIEW (EXPANDED WITH COMPLETE PLANS, TERMS & CONDITIONS, AND HOW TO GET STARTED) -->
     <div id="welcome-view" class="flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10 space-y-16">
         <div class="space-y-6 max-w-3xl mt-6">
             <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Next-Gen Legal Intelligence</span>
@@ -354,7 +351,7 @@
             </div>
         </div>
 
-        <!-- EXTENDED FEATURE DETAILS & DOCUMENT COMPATIBILITY -->
+        <!-- DETAILED FEATURES & COMPATIBILITY -->
         <div class="w-full space-y-6 pt-4">
             <h2 class="apple-heading text-2xl font-bold text-white">Built for Every Agreement You Encounter</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
@@ -372,7 +369,6 @@
                 </div>
             </div>
 
-            <!-- Additional Info Card -->
             <div class="glass-pane p-8 rounded-3xl text-left space-y-4 border border-white/10">
                 <h3 class="apple-heading text-base font-bold text-white">Why Professionals Trust Double Check</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs apple-body text-slate-300">
@@ -388,7 +384,7 @@
             </div>
         </div>
 
-        <!-- Pricing Section -->
+        <!-- PRICING SECTION (3 PLANS) -->
         <div id="pricing-section" class="w-full space-y-8 pt-6">
             <h2 class="apple-heading text-3xl font-bold text-white">Transparent Plans</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
@@ -431,7 +427,7 @@
             </div>
         </div>
 
-        <!-- HOW TO GET STARTED SECTION (POSITIONED BELOW PRICING) -->
+        <!-- HOW TO GET STARTED SECTION -->
         <div id="how-to-get-started-section" class="w-full space-y-6 pt-10 border-t border-white/10 text-left">
             <div class="text-center space-y-2">
                 <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Simple 3-Step Process</span>
@@ -460,6 +456,16 @@
             </div>
         </div>
 
+        <!-- TERMS & CONDITIONS AND LEGAL DISCLAIMER SECTION ON WELCOME PAGE -->
+        <div id="terms-section" class="w-full max-w-3xl space-y-6 text-left pt-6 border-t border-white/10">
+            <h2 class="apple-heading text-2xl font-bold text-white text-center">Terms & Conditions / Legal Notice</h2>
+            <div class="glass-pane p-8 rounded-3xl space-y-4 text-xs apple-body text-slate-300 leading-relaxed">
+                <p><strong>1. Informational Purpose Only:</strong> Double Check provides AI-generated contract summaries and risk analyses for informational purposes only. Our platform does not constitute formal legal counsel or advice.</p>
+                <p><strong>2. User Accounts & Subscriptions:</strong> Users must provide valid credentials during registration. Subscriptions (Base and Pro tiers) renew monthly and can be managed directly through your account dashboard.</p>
+                <p><strong>3. Data Privacy & Confidentiality:</strong> We adhere strictly to GDPR data protection guidelines. Document contents uploaded for analysis are processed securely and are never sold or shared with third parties.</p>
+            </div>
+        </div>
+
         <!-- FAQ Section -->
         <div id="faq-section" class="w-full max-w-3xl space-y-6 text-left pt-6">
             <h2 class="apple-heading text-2xl font-bold text-white text-center">Frequently Asked Questions</h2>
@@ -476,7 +482,7 @@
         </div>
     </div>
 
-    <!-- MAIN CONTRACT WORKSPACE (RENAMED TO HOME) -->
+    <!-- MAIN CONTRACT WORKSPACE (HOME) -->
     <div id="main-view" class="hidden flex-1 flex flex-col px-6 py-10 max-w-4xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
         <h1 class="apple-heading text-3xl sm:text-5xl font-semibold tracking-tight text-white max-w-2xl mt-4">
             Summarise Any Legal Document.
@@ -988,6 +994,7 @@
             location.reload();
         }
 
+        // RENDER CONTEXT-AWARE MENU DRAWER & UI
         function updateUserUI() {
             const email = currentUser.email;
             const isLoggedIn = Boolean(email);
@@ -995,21 +1002,62 @@
             const logoutActions = document.getElementById('nav-logged-out-actions');
             const loginActions = document.getElementById('nav-logged-in-actions');
             const drawerBtn = document.getElementById('drawer-auth-btn');
+            const drawerHeader = document.getElementById('drawer-header-container');
+            const drawerLinks = document.getElementById('drawer-links-container');
 
             if (isLoggedIn) {
                 logoutActions.classList.add('hidden');
                 loginActions.classList.remove('hidden');
+                
+                // Logged-in drawer header (with personal info)
+                drawerHeader.innerHTML = `
+                    <div class="pr-6">
+                        <span class="font-semibold text-sm block truncate max-w-[150px] text-white">${email}</span>
+                        <div class="text-xs apple-body mt-1 text-slate-300">Contracts remaining: ${currentUser.contractsRemaining}</div>
+                    </div>
+                    <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
+                `;
+
+                // Logged-in drawer links
+                drawerLinks.innerHTML = `
+                    <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome / Home</button>
+                    <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Home Dashboard</button>
+                    <button onclick="switchView('account'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">My Account</button>
+                    <button onclick="switchView('pricing'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing & Plans</button>
+                    <button onclick="switchView('about'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">About & FAQ</button>
+                    <button onclick="switchView('feedback'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Send Feedback</button>
+                    <button onclick="switchView('tos'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Terms of Service</button>
+                    <button onclick="switchView('privacy'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Privacy Policy</button>
+                `;
+
                 drawerBtn.innerText = "Sign Out";
                 drawerBtn.onclick = () => { handleSignOut(); toggleMenuDrawer(); };
             } else {
                 logoutActions.classList.remove('hidden');
                 loginActions.classList.add('hidden');
+
+                // Logged-out / Welcome page drawer header (NO personal info, strictly general info)
+                drawerHeader.innerHTML = `
+                    <div class="pr-6">
+                        <span class="font-semibold text-sm block text-white">Double Check</span>
+                        <div class="text-xs apple-body mt-1 text-slate-300">AI Legal Intelligence</div>
+                    </div>
+                    <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
+                `;
+
+                // Logged-out drawer links (only general info, signup/pricing, and FAQ)
+                drawerLinks.innerHTML = `
+                    <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome Home</button>
+                    <button onclick="switchView('welcome'); scrollToSection('pricing-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing Plans</button>
+                    <button onclick="switchView('welcome'); scrollToSection('how-to-get-started-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">How to Get Started</button>
+                    <button onclick="switchView('welcome'); scrollToSection('terms-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Terms & Conditions</button>
+                    <button onclick="switchView('welcome'); scrollToSection('faq-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">FAQ & Support</button>
+                `;
+
                 drawerBtn.innerText = "Sign In / Register";
-                drawerBtn.onclick = () => { openAuthModal('login'); toggleMenuDrawer(); };
+                drawerBtn.onclick = () => { openAuthModal('signup'); toggleMenuDrawer(); };
             }
 
-            document.getElementById('drawer-user-email').innerText = isLoggedIn ? email : "Guest User";
-            document.getElementById('drawer-usage-counter').innerText = isLoggedIn ? `Contracts remaining: ${currentUser.contractsRemaining}` : "Please sign in";
             document.getElementById('acc-email').value = isLoggedIn ? email : "";
             document.getElementById('acc-count').value = currentUser.summarisedCount + " contracts";
             document.getElementById('acc-plan-label').innerText = currentUser.plan.toUpperCase() + " Plan";
@@ -1064,6 +1112,7 @@
             const drawer = document.getElementById('slide-drawer');
             const panel = document.getElementById('drawer-panel');
             if (drawer.classList.contains('hidden')) {
+                updateUserUI(); // refresh drawer state based on current session
                 drawer.classList.remove('hidden');
                 panel.classList.add('menu-slide-right');
             } else {
