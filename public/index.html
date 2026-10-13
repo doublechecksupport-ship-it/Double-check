@@ -19,7 +19,7 @@
         background-attachment: fixed;
         min-height: 100vh;
         scroll-behavior: smooth;
-        padding-top: 80px; /* Offset for floating header widget */
+        padding-top: 80px;
       }
 
       .apple-heading {
@@ -74,7 +74,6 @@
         animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
 
-      /* Slide in from the right edge */
       @keyframes slideInRight {
         from { transform: translateX(100%); }
         to { transform: translateX(0); }
@@ -110,7 +109,6 @@
         transition: opacity 0.3s ease, background 0.5s ease;
       }
 
-      /* Floating Header Widget Styling & Reading Mode Dissolve */
       #top-navbar {
         transition: background-color 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease, opacity 0.4s ease, box-shadow 0.4s ease;
         background-color: rgba(15, 23, 42, 0.85);
@@ -126,11 +124,11 @@
         border: 1px solid rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(6px);
         -webkit-backdrop-filter: blur(6px);
-        opacity: 0.55; /* Becomes less potent as you read */
+        opacity: 0.55;
       }
       
       #top-navbar:hover {
-        opacity: 1; /* Return full potency when hovered */
+        opacity: 1;
       }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -325,10 +323,10 @@
         </div>
     </nav>
 
-    <!-- RIGHT-SIDE SLIDE-OUT DRAWER MENU (LOCKED TO THE RIGHT EDGE) -->
-    <div id="slide-drawer" class="fixed inset-0 z-50 hidden">
+    <!-- RIGHT-SIDE SLIDE-OUT DRAWER MENU (LOCKED TO THE RIGHT VIA FLEX JUSTIFY-END) -->
+    <div id="slide-drawer" class="fixed inset-0 z-50 hidden flex justify-end">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleMenuDrawer()"></div>
-        <div id="drawer-panel" class="absolute right-0 top-0 bottom-0 h-full w-80 bg-slate-900/98 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 relative overflow-hidden menu-slide-right" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.99) 70%);">
+        <div id="drawer-panel" class="relative h-full w-80 bg-slate-900/98 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 overflow-hidden menu-slide-right" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.99) 70%);">
             <div>
                 <div class="flex justify-between items-start pb-6 border-b border-white/10">
                     <div class="pr-6">
@@ -730,19 +728,16 @@
             }
         });
 
-        // Dynamic Scroll Glow & Header Reading-Mode Dissolve
         window.addEventListener('scroll', () => {
             const scrollTop = window.scrollY;
             const navbar = document.getElementById('top-navbar');
             
-            // As user scrolls down to read, widget becomes less potent and see-through
             if (scrollTop > 50) {
                 navbar.classList.add('reading-mode');
             } else {
                 navbar.classList.remove('reading-mode');
             }
 
-            // Glow intensity adjustment
             const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
             const scrollFraction = maxScroll > 0 ? scrollTop / maxScroll : 0;
             const glow = document.getElementById('bg-glow');
@@ -889,7 +884,6 @@
                 ? email.replace(/^(.{3})(.*)(@.*)$/, (_, a, b, c) => a + '•'.repeat(Math.max(b.length, 3)) + c)
                 : (isLoggedIn ? email : "Guest User");
 
-            document.getElementById('nav-user-email').innerText = masked;
             document.getElementById('drawer-user-email').innerText = isLoggedIn ? email : "Guest User";
             document.getElementById('drawer-usage-counter').innerText = isLoggedIn ? `Contracts remaining: ${currentUser.contractsRemaining}` : "Please sign in";
             document.getElementById('acc-email').value = isLoggedIn ? email : "";
@@ -986,7 +980,7 @@
                 document.getElementById('box-1-text').innerText = parsed.executiveSummary || "Paragraph summary unavailable.";
                 document.getElementById('box-2-text').innerText = parsed.categories?.[1]?.content || "Financial details...";
                 document.getElementById('box-3-text').innerText = parsed.categories?.[2]?.content || "Timelines...";
-                document.getElementById('box-4-text').innerText = parsed.categories?.[3]?.content || "Obligations...";
+                document.getElementById('box-4-text').innerText = parsed.categories?.[3]?.content || "Duties loading...";
 
                 if (parsed.categories && parsed.categories.length >= 8) {
                     document.getElementById('box-5-text').innerText = parsed.categories[4].content;
