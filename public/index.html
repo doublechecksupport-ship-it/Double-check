@@ -91,10 +91,11 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
-    <!-- AUTHENTICATION / LOGIN MODAL -->
-    <div id="auth-gate-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/75 backdrop-blur-md px-4 overflow-y-auto py-10">
+    <!-- STEP 1: WELCOME LANDING / AUTH MODAL -->
+    <div id="auth-gate-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md px-4 overflow-y-auto py-10">
         <div class="glass-pane w-full max-w-lg p-8 rounded-3xl shadow-2xl border border-white/10 text-left bg-slate-900/95 animate-fade-in relative z-10">
             <div class="flex items-center space-x-3 mb-6">
+                <!-- Darker Luxury Blue Document Logo Matching Menu Icon Lines -->
                 <svg class="w-9 h-11 text-blue-900" viewBox="0 0 24 30" fill="currentColor">
                     <path d="M2 0C0.89543 0 0 0.89543 0 2V28C0 29.1046 0.89543 30 2 30H22C23.1046 30 24 29.1046 24 28V9L15 0H2Z" fill="#0f172a"/>
                     <path d="M15 0V9H24" fill="#1e3a8a"/>
@@ -128,7 +129,6 @@
                     <span onclick="triggerPasswordReset()" class="text-xs text-blue-400 hover:underline cursor-pointer">Forgot Password?</span>
                 </div>
                 <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer">Sign In to Workspace</button>
-                <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden')" class="w-full text-center text-xs apple-body hover:text-white pt-2">Cancel</button>
             </form>
 
             <!-- SIGNUP FORM -->
@@ -147,12 +147,11 @@
                     </label>
                 </div>
                 <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer">Continue to Plan Selection</button>
-                <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden')" class="w-full text-center text-xs apple-body hover:text-white pt-2">Cancel</button>
             </form>
         </div>
     </div>
 
-    <!-- PLAN SELECTION FLOW (POST-SIGNUP) -->
+    <!-- STEP 2: PLAN SELECTION FLOW (POST-SIGNUP) -->
     <div id="plan-selection-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-md px-4 py-10 overflow-y-auto">
         <div class="glass-pane w-full max-w-3xl p-8 rounded-3xl shadow-2xl border border-white/10 text-center bg-slate-900/95 animate-fade-in relative z-10">
             <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full uppercase tracking-wider">Step 2: Choose Your Plan</span>
@@ -160,6 +159,7 @@
             <p class="apple-body text-xs mt-1">Get started instantly with 3 free contract reviews.</p>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 text-left">
+                <!-- TRIAL -->
                 <div class="p-6 rounded-2xl border border-white/10 bg-black/30 flex flex-col justify-between">
                     <div>
                         <h3 class="apple-heading text-base font-bold text-white">Free Trial</h3>
@@ -172,6 +172,7 @@
                     <button onclick="completePlanSelection('trial')" class="apple-button-secondary w-full py-2.5 text-xs font-semibold mt-6 cursor-pointer">Start Free Trial</button>
                 </div>
 
+                <!-- BASE -->
                 <div class="p-6 rounded-2xl border border-white/10 bg-black/30 flex flex-col justify-between">
                     <div>
                         <h3 class="apple-heading text-base font-bold text-white">Base Plan</h3>
@@ -184,6 +185,7 @@
                     <button onclick="completePlanSelection('base')" class="apple-button-secondary w-full py-2.5 text-xs font-semibold mt-6 cursor-pointer">Select Base</button>
                 </div>
 
+                <!-- PRO -->
                 <div class="p-6 rounded-2xl border-2 border-white bg-slate-800 flex flex-col justify-between shadow-lg">
                     <div>
                         <h3 class="apple-heading text-base font-bold text-white">Pro Membership</h3>
@@ -237,7 +239,7 @@
         </div>
     </div>
 
-    <!-- FLOATING HEADER (LOGO LEFT, NAV/MENU RIGHT) -->
+    <!-- FLOATING HEADER -->
     <nav class="sticky top-0 z-40 w-full py-4 px-6">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('main')">
@@ -255,9 +257,8 @@
             <div class="flex items-center space-x-4">
                 <button onclick="switchView('pricing')" class="text-xs apple-body hover:text-white transition-colors cursor-pointer hidden sm:inline-block">Pricing</button>
                 <button onclick="switchView('about')" class="text-xs apple-body hover:text-white transition-colors cursor-pointer hidden sm:inline-block">About</button>
-                <button onclick="openAuthModal('login')" class="text-xs apple-body hover:text-white transition-colors cursor-pointer hidden sm:inline-block" id="nav-login-btn">Log In</button>
-                <span id="nav-user-email" class="text-xs apple-body font-medium hidden">••••••@••••.com</span>
-                <!-- Floating Menu Icon on Right -->
+                <span id="nav-user-email" class="text-xs apple-body font-medium hidden sm:inline-block">••••••@••••.com</span>
+                <!-- Floating Menu Icon Matching Logo White Lines (No Background Bubble) -->
                 <button onclick="toggleMenuDrawer()" class="p-2 text-white hover:opacity-85 transition-opacity cursor-pointer" aria-label="Open Menu">
                     <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                         <line x1="3" y1="7" x2="21" y2="7"></line>
@@ -269,14 +270,14 @@
         </div>
     </nav>
 
-    <!-- RIGHT-SIDE SLIDE-OUT DRAWER MENU -->
+    <!-- SLIDE-OUT DRAWER MENU (RECTANGULAR, SPACED OUT, ROUNDED LEFT CORNERS) -->
     <div id="slide-drawer" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleMenuDrawer()"></div>
         <div class="absolute right-0 top-0 bottom-0 w-80 bg-slate-900/95 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 rounded-l-3xl relative overflow-hidden" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.45) 0%, rgba(15, 23, 42, 0.98) 60%);">
             <div>
                 <div class="flex justify-between items-center pb-6 border-b border-white/10">
                     <div>
-                        <span class="font-semibold text-sm block truncate max-w-[170px] text-white" id="drawer-user-email">Guest User</span>
+                        <span class="font-semibold text-sm block truncate max-w-[170px] text-white" id="drawer-user-email">••••••@••••.com</span>
                         <div class="text-xs apple-body mt-1" id="drawer-usage-counter"></div>
                     </div>
                     <button onclick="toggleMenuDrawer()" class="text-xs text-slate-400 hover:text-white font-semibold uppercase">Close</button>
@@ -292,12 +293,12 @@
                 </div>
             </div>
             <div class="pt-6 border-t border-white/10">
-                <button id="drawer-auth-btn" onclick="openAuthModal('login'); toggleMenuDrawer();" class="apple-button w-full py-3 text-xs font-semibold">Sign In / Register</button>
+                <button onclick="handleSignOut()" class="apple-button-secondary w-full py-3 text-xs text-red-400 font-medium">Sign Out</button>
             </div>
         </div>
     </div>
 
-    <!-- WELCOME LANDING & WORKSPACE VIEW -->
+    <!-- STEP 3: MAIN LANDING & WORKSPACE VIEW -->
     <div id="main-view" class="flex-1 flex flex-col px-6 py-10 max-w-4xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
         <!-- Hero Section -->
         <h1 class="apple-heading text-3xl sm:text-5xl font-semibold tracking-tight text-white max-w-2xl mt-4">
@@ -309,12 +310,12 @@
 
         <!-- CTA & Trust Badges -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-5 w-full max-w-md">
-            <button onclick="openAuthModal('signup')" class="apple-button px-6 py-3 text-xs font-semibold w-full shadow-lg cursor-pointer">Try 3 Free Summaries</button>
+            <button onclick="document.getElementById('tool-workspace').scrollIntoView({behavior: 'smooth'})" class="apple-button px-6 py-3 text-xs font-semibold w-full shadow-lg cursor-pointer">Try 3 Free Summaries</button>
             <button onclick="loadSamplePreview()" class="apple-button-secondary px-6 py-3 text-xs font-semibold w-full cursor-pointer">View Sample Contract Breakdown</button>
         </div>
         <p class="text-[11px] apple-body mt-2">No credit card required • 100% Private & Encrypted</p>
 
-        <!-- Interactive App Workspace (3 Neat Input Tiles) -->
+        <!-- Interactive Workspace (Aligned 3 Tiles) -->
         <div id="tool-workspace" class="w-full mt-12 pt-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto w-full">
                 <label class="glass-pane p-5 rounded-2xl cursor-pointer flex flex-col items-center justify-center border border-white/10 group hover:border-white/30 transition-all shadow-sm">
@@ -349,7 +350,7 @@
             </div>
         </div>
 
-        <!-- 3-Step "How It Works" Section -->
+        <!-- STEP 4: "HOW IT WORKS" 3-STEP SECTION -->
         <div class="w-full max-w-4xl mt-20 pt-10 border-t border-white/10 text-center">
             <h2 class="apple-heading text-2xl font-bold text-white">How Double Check Works</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
@@ -375,7 +376,7 @@
     <!-- LOADING STATE -->
     <div id="loading-view" class="hidden flex-1 flex flex-col items-center justify-center px-6 max-w-xl mx-auto w-full text-center animate-fade-in py-24 relative z-10">
         <div class="w-10 h-10 rounded-full border-2 border-white border-t-transparent spin-smooth"></div>
-        <h2 id="loading-status-text" class="apple-heading text-lg font-semibold mt-5 text-white">Processing contract...</h2>
+        <h2 id="loading-status-text" class="apple-heading text-lg font-semibold mt-5 text-white">Reading clauses...</h2>
         <p class="apple-body text-xs mt-1">Extracting legal terms and paragraph overview...</p>
     </div>
 
@@ -447,7 +448,7 @@
         </div>
     </div>
 
-    <!-- MY ACCOUNT VIEW -->
+    <!-- MY ACCOUNT VIEW (WITH RETENTION / DISCOUNT OFFER CANCELLATION FLOW) -->
     <div id="account-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-4xl mx-auto w-full text-left animate-fade-in space-y-8 relative z-10">
         <h2 class="apple-heading text-3xl font-bold text-white">My Account</h2>
         <div class="glass-pane p-10 rounded-3xl space-y-8 shadow-sm">
@@ -611,10 +612,10 @@
     <!-- SCRIPT ENGINE -->
     <script>
         let currentUser = {
-            email: "",
-            plan: "trial",
-            contractsRemaining: 3,
-            summarisedCount: 0
+            email: "theo_kay@icloud.com",
+            plan: "pro",
+            contractsRemaining: 30,
+            summarisedCount: 8
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -625,9 +626,11 @@
 
             if (savedEmail) {
                 currentUser.email = savedEmail;
-                currentUser.plan = savedPlan || 'trial';
-                currentUser.contractsRemaining = savedRem ? parseInt(savedRem) : 3;
-                currentUser.summarisedCount = savedCount ? parseInt(savedCount) : 0;
+                currentUser.plan = savedPlan || 'pro';
+                currentUser.contractsRemaining = savedRem ? parseInt(savedRem) : 30;
+                currentUser.summarisedCount = savedCount ? parseInt(savedCount) : 8;
+
+                document.getElementById('auth-gate-modal').classList.add('hidden');
                 updateUserUI();
             }
         });
@@ -651,11 +654,6 @@
             }
         }
 
-        function openAuthModal(tab) {
-            switchAuthTab(tab);
-            document.getElementById('auth-gate-modal').classList.remove('hidden');
-        }
-
         function handleLoginSubmit(event) {
             event.preventDefault();
             const email = document.getElementById('login-email').value.trim();
@@ -665,7 +663,6 @@
             currentUser.plan = email.toLowerCase() === 'theo_kay@icloud.com' ? 'pro' : 'trial';
             currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : 3;
 
-            document.getElementById('auth-gate-modal').classList.add('hidden');
             saveAndBoot();
         }
 
@@ -696,9 +693,7 @@
             localStorage.setItem('dc_email', currentUser.email);
             localStorage.setItem('dc_plan', currentUser.plan);
             localStorage.setItem('dc_rem', currentUser.contractsRemaining);
-            localStorage.setItem('dc_count', currentUser.summarisedCount);
             updateUserUI();
-            switchView('main');
         }
 
         function triggerPasswordReset() {
@@ -752,19 +747,10 @@
         }
 
         function updateUserUI() {
-            if (!currentUser.email) return;
-
-            const email = currentUser.email;
+            const email = currentUser.email || "theo_kay@icloud.com";
             const masked = email.replace(/^(.{3})(.*)(@.*)$/, (_, a, b, c) => a + '•'.repeat(Math.max(b.length, 3)) + c);
-            
             document.getElementById('nav-user-email').innerText = masked;
-            document.getElementById('nav-user-email').classList.remove('hidden');
-            document.getElementById('nav-login-btn').classList.add('hidden');
-
             document.getElementById('drawer-user-email').innerText = email;
-            document.getElementById('drawer-auth-btn').innerText = "Sign Out";
-            document.getElementById('drawer-auth-btn').onclick = handleSignOut;
-
             document.getElementById('acc-email').value = email;
             document.getElementById('acc-count').value = currentUser.summarisedCount + " contracts";
             document.getElementById('acc-plan-label').innerText = currentUser.plan.toUpperCase() + " Plan";
@@ -804,11 +790,6 @@
         }
 
         async function handleLlmAnalysis() {
-            if (!currentUser.email) {
-                openAuthModal('login');
-                return;
-            }
-
             const text = document.getElementById('legal-text-input').value;
             if (!text || text.trim().length < 20) {
                 alert("Document text is too short or missing.");
@@ -851,9 +832,7 @@
                     document.getElementById('box-8-text').innerText = parsed.categories[7].content;
                 }
 
-                if (currentUser.plan !== 'pro') {
-                    currentUser.contractsRemaining--;
-                }
+                currentUser.contractsRemaining--;
                 currentUser.summarisedCount++;
                 localStorage.setItem('dc_rem', currentUser.contractsRemaining);
                 localStorage.setItem('dc_count', currentUser.summarisedCount);
