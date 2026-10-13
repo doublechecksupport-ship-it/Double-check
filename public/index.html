@@ -7,17 +7,14 @@
     <style>
       :root {
         --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        background-color: #0b0f19;
-        color: #f5f5f7;
+        background-color: #fbfbfd;
+        color: #1d1d1f;
         letter-spacing: -0.01em;
       }
 
       body {
         font-family: var(--apple-font);
         overflow-x: hidden;
-        background: radial-gradient(circle at 50% 15%, #1e3a8a 0%, #0b0f19 65%);
-        background-attachment: fixed;
-        min-height: 100vh;
       }
 
       .apple-heading {
@@ -28,39 +25,39 @@
 
       .apple-body {
         font-family: var(--apple-font);
-        color: #94a3b8;
+        color: #86868b;
       }
 
       .glass-pane {
-        background: rgba(15, 23, 42, 0.75);
+        background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(25px);
         -webkit-backdrop-filter: blur(25px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.08);
       }
 
       .apple-button {
-        background-color: #ffffff;
-        color: #0b0f19;
-        font-weight: 600;
+        background-color: #000000;
+        color: white;
+        font-weight: 500;
         border-radius: 980px;
         transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
       }
 
       .apple-button:hover {
-        background-color: #e2e8f0;
+        background-color: #222222;
         transform: scale(1.005);
       }
 
       .apple-button-secondary {
-        background-color: rgba(255, 255, 255, 0.08);
-        color: #f5f5f7;
+        background-color: rgba(0, 0, 0, 0.05);
+        color: #1d1d1f;
         font-weight: 500;
         border-radius: 980px;
         transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
       }
 
       .apple-button-secondary:hover {
-        background-color: rgba(255, 255, 255, 0.15);
+        background-color: rgba(0, 0, 0, 0.1);
       }
 
       @keyframes fadeIn {
@@ -84,11 +81,10 @@
       .blur-overlay {
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
-        background: rgba(11, 15, 25, 0.88);
+        background: rgba(255, 255, 255, 0.88);
       }
 
-      /* Glowing background gradients per view */
-      #bg-glow {
+      #particle-canvas {
         position: fixed;
         top: 0;
         left: 0;
@@ -96,21 +92,20 @@
         height: 100vh;
         pointer-events: none;
         z-index: 0;
-        transition: background 0.5s ease;
+        opacity: 0.35;
       }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+<body class="min-h-screen flex flex-col antialiased selection:bg-gray-800 selection:text-white">
 
-    <div id="bg-glow" style="background: radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.45) 0%, transparent 60%);"></div>
+    <canvas id="particle-canvas"></canvas>
 
-    <!-- SEPARATE AUTH GATE MODALS (LOGIN & SIGNUP) -->
-    <div id="auth-gate-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md px-4">
-        <div class="glass-pane w-full max-w-md p-8 rounded-3xl shadow-2xl border border-white/10 text-left bg-slate-900/90 animate-fade-in relative z-10">
+    <!-- AUTHENTICATION GATE MODAL -->
+    <div id="auth-gate-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md px-4">
+        <div class="glass-pane w-full max-w-md p-8 rounded-3xl shadow-2xl border border-black/10 text-left bg-white animate-fade-in relative z-10">
             <div class="flex items-center space-x-3 mb-6">
-                <!-- Luxury Dark Blue Document Logo -->
-                <svg class="w-9 h-11 text-blue-500" viewBox="0 0 24 30" fill="currentColor">
+                <svg class="w-8 h-10 text-blue-900" viewBox="0 0 24 30" fill="currentColor">
                     <path d="M2 0C0.89543 0 0 0.89543 0 2V28C0 29.1046 0.89543 30 2 30H22C23.1046 30 24 29.1046 24 28V9L15 0H2Z" fill="#1e3a8a"/>
                     <path d="M15 0V9H24" fill="#3b82f6"/>
                     <line x1="5" y1="14" x2="19" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
@@ -119,97 +114,75 @@
                     <line x1="5" y1="26" x2="14" y2="26" stroke="white" stroke-width="2" stroke-linecap="round"/>
                 </svg>
                 <div>
-                    <h2 class="apple-heading text-xl font-bold text-white">Double Check</h2>
-                    <p class="text-xs apple-body">Luxury AI Legal Assistant</p>
+                    <h2 class="apple-heading text-xl font-bold">Double Check</h2>
+                    <p class="text-xs apple-body">AI Legal Document Assistant</p>
                 </div>
             </div>
-
-            <!-- Tabs to toggle between Login and Signup -->
-            <div class="flex bg-black/40 p-1 rounded-xl mb-6 text-xs font-semibold">
-                <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-white text-black transition-all">Sign In</button>
-                <button id="tab-signup-btn" onclick="switchAuthTab('signup')" class="flex-1 py-2 rounded-lg text-slate-400 transition-all">Register</button>
-            </div>
-
-            <!-- LOGIN FORM -->
-            <form id="form-login" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
                 <div>
                     <label class="text-xs font-semibold apple-body uppercase">Email Address</label>
-                    <input type="email" id="login-email" required placeholder="Enter your email" class="w-full mt-1.5 p-3 bg-black/40 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="email" id="auth-email-input" required placeholder="theo_kay@icloud.com" class="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black">
                 </div>
                 <div>
                     <label class="text-xs font-semibold apple-body uppercase">Password</label>
-                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full mt-1.5 p-3 bg-black/40 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="password" id="auth-password-input" required placeholder="••••••••" class="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black">
                 </div>
-                <div class="text-right">
-                    <span onclick="triggerPasswordReset()" class="text-xs text-blue-400 hover:underline cursor-pointer">Forgot Account?</span>
-                </div>
-                <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer">Sign In</button>
-            </form>
-
-            <!-- SIGNUP FORM -->
-            <form id="form-signup" onsubmit="handleSignupSubmit(event)" class="space-y-4 hidden">
-                <div>
-                    <label class="text-xs font-semibold apple-body uppercase">Email Address</label>
-                    <input type="email" id="signup-email" required placeholder="Enter your email" class="w-full mt-1.5 p-3 bg-black/40 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold apple-body uppercase">Password (8+ chars, 1 uppercase, 1 lowercase, 1 number)</label>
-                    <input type="password" id="signup-password" required placeholder="••••••••" class="w-full mt-1.5 p-3 bg-black/40 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="pt-1">
-                    <label class="flex items-center text-xs apple-body cursor-pointer">
-                        <input type="checkbox" id="signup-tos" required class="mr-2 accent-blue-500"> I agree to Terms of Service & Privacy Policy
+                <div class="flex items-center justify-between text-xs apple-body pt-1">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" required class="mr-2 accent-black"> Agree to Terms & Privacy Policy
                     </label>
+                    <span onclick="triggerPasswordReset()" class="text-blue-600 hover:underline cursor-pointer">Forgot?</span>
                 </div>
-                <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer">Create Account</button>
+                <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold mt-2 shadow-lg cursor-pointer">Sign In / Register</button>
             </form>
         </div>
     </div>
 
-    <!-- USAGE LIMIT PAYWALL MODAL -->
-    <div id="paywall-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 backdrop-blur-md px-4 py-10">
-        <div class="glass-pane w-full max-w-2xl p-8 rounded-3xl shadow-2xl border border-white/10 text-center bg-slate-900/95 animate-fade-in relative z-10">
-            <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full uppercase tracking-wider">Usage Limit Reached</span>
-            <h2 class="apple-heading text-2xl sm:text-3xl font-bold mt-3 text-white">Choose Your Plan</h2>
-            <p class="apple-body text-xs mt-1">Upgrade your plan to process more contract summaries.</p>
+    <!-- USAGE LIMIT / PAYWALL POP-UP -->
+    <div id="paywall-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/50 backdrop-blur-md px-4 py-10">
+        <div class="glass-pane w-full max-w-2xl p-8 rounded-3xl shadow-2xl border border-black/10 text-center bg-white animate-fade-in relative z-10">
+            <span class="text-xs font-semibold bg-gray-100 text-gray-800 px-3 py-1 rounded-full uppercase tracking-wider">Usage Limit Reached</span>
+            <h2 class="apple-heading text-2xl sm:text-3xl font-bold mt-3">Choose Your Plan</h2>
+            <p class="apple-body text-xs mt-1">Upgrade your subscription to process more contracts.</p>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 text-left">
-                <!-- BASE PLAN -->
-                <div class="p-6 rounded-2xl border border-white/10 bg-black/30 flex flex-col justify-between">
+                <div class="p-6 rounded-2xl border border-gray-200 bg-gray-50 flex flex-col justify-between shadow-sm">
                     <div>
-                        <h3 class="apple-heading text-lg font-bold text-white">Base Plan</h3>
-                        <p class="text-2xl font-bold mt-2 text-white">$12 <span class="text-[10px] font-normal apple-body">/ month</span></p>
-                        <ul class="text-xs apple-body space-y-1.5 mt-3 text-slate-300">
-                            <li>✓ 5 summaries / month</li>
-                            <li>✓ Core 4-Box Breakdown + Paragraph Summary</li>
+                        <span class="text-[10px] font-bold uppercase apple-body">Base Tier</span>
+                        <h3 class="apple-heading text-lg font-bold mt-0.5">Base Plan</h3>
+                        <p class="text-2xl font-bold mt-2">$12 <span class="text-[10px] font-normal apple-body">/ month</span></p>
+                        <ul class="text-xs apple-body space-y-1.5 mt-3">
+                            <li>✓ <strong>5 contract reviews</strong> / month</li>
+                            <li>✓ Core 4-Box Summary</li>
+                            <li>✕ Risk Radar locked</li>
                         </ul>
                     </div>
-                    <button onclick="selectPlan('base')" class="apple-button-secondary w-full py-2.5 text-xs font-semibold mt-6 cursor-pointer">Select Base Plan</button>
+                    <button onclick="selectTier('base')" class="apple-button-secondary w-full py-2.5 text-xs font-semibold mt-6 cursor-pointer">Select Base Plan</button>
                 </div>
 
-                <!-- PRO PLAN -->
-                <div class="p-6 rounded-2xl border-2 border-white bg-slate-800/80 flex flex-col justify-between shadow-md">
+                <div class="p-6 rounded-2xl border-2 border-black bg-white flex flex-col justify-between shadow-md">
                     <div>
-                        <h3 class="apple-heading text-lg font-bold text-white">Pro Membership</h3>
-                        <p class="text-2xl font-bold mt-2 text-white">$29 <span class="text-[10px] font-normal apple-body">/ month</span></p>
-                        <ul class="text-xs apple-body space-y-1.5 mt-3 text-slate-200">
-                            <li>✓ 30 summaries / month</li>
-                            <li>✓ Full 8-Box Breakdown + Paragraph Summary</li>
+                        <span class="text-[10px] font-bold uppercase text-black">Pro Tier</span>
+                        <h3 class="apple-heading text-lg font-bold mt-0.5">Pro Membership</h3>
+                        <p class="text-2xl font-bold mt-2">$29 <span class="text-[10px] font-normal apple-body">/ month</span></p>
+                        <ul class="text-xs apple-body text-black space-y-1.5 mt-3">
+                            <li>✓ <strong>30 contract reviews</strong> / month</li>
+                            <li>✓ Full 8-Box Deep Breakdown</li>
                             <li>✓ One-click PDF Downloads</li>
                         </ul>
                     </div>
-                    <button onclick="selectPlan('pro')" class="apple-button w-full py-2.5 text-xs font-semibold mt-6 shadow-md cursor-pointer">Select Pro Plan</button>
+                    <button onclick="selectTier('pro')" class="apple-button w-full py-2.5 text-xs font-semibold mt-6 shadow-md cursor-pointer">Subscribe to Pro</button>
                 </div>
             </div>
-            <button onclick="document.getElementById('paywall-modal').classList.add('hidden')" class="text-xs apple-body hover:text-white mt-6 cursor-pointer">Close</button>
+            <button onclick="document.getElementById('paywall-modal').classList.add('hidden')" class="text-xs apple-body hover:text-black mt-6 cursor-pointer">Close</button>
         </div>
     </div>
 
-    <!-- FLOATING HEADER (LOGO & NAME LEFT, EMAIL & MENU RIGHT) -->
-    <nav class="sticky top-0 z-40 w-full py-4 px-6">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <!-- HEADER & NAVIGATION -->
+    <nav class="glass-pane sticky top-0 z-40 w-full border-b border-black/5">
+        <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('main')">
-                <svg class="w-8 h-10 text-blue-500 group-hover:scale-105 transition-transform" viewBox="0 0 24 30" fill="currentColor">
+                <svg class="w-6 h-7 text-blue-900 group-hover:scale-105 transition-transform" viewBox="0 0 24 30" fill="currentColor">
                     <path d="M2 0C0.89543 0 0 0.89543 0 2V28C0 29.1046 0.89543 30 2 30H22C23.1046 30 24 29.1046 24 28V9L15 0H2Z" fill="#1e3a8a"/>
                     <path d="M15 0V9H24" fill="#3b82f6"/>
                     <line x1="5" y1="14" x2="19" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
@@ -217,101 +190,99 @@
                     <line x1="5" y1="22" x2="19" y2="22" stroke="white" stroke-width="2" stroke-linecap="round"/>
                     <line x1="5" y1="26" x2="14" y2="26" stroke="white" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                <span class="font-bold text-lg tracking-tight text-white">Double Check</span>
+                <span class="font-bold text-lg tracking-tight">Double Check</span>
             </div>
             
             <div class="flex items-center space-x-4">
-                <span id="nav-user-email" class="text-xs apple-body font-medium hidden sm:inline-block">••••••@••••.com</span>
-                <button onclick="toggleMenuDrawer()" class="p-2.5 text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer" aria-label="Open Menu">
+                <span id="nav-user-email" class="text-xs apple-body font-medium hidden sm:inline-block">theo_kay@icloud.com</span>
+                <button onclick="toggleMenuDrawer()" class="p-2 text-black hover:bg-black/5 rounded-full transition-colors cursor-pointer" aria-label="Open Menu">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- SLIDE-OUT DRAWER MENU (RIGHT-SIDE GLOW & ROUNDED CORNERS) -->
+    <!-- SLIDE-OUT DRAWER MENU -->
     <div id="slide-drawer" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleMenuDrawer()"></div>
-        <div class="absolute right-0 top-0 bottom-0 w-80 bg-slate-900/95 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 rounded-l-3xl relative overflow-hidden" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.45) 0%, rgba(15, 23, 42, 0.98) 60%);">
+        <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="toggleMenuDrawer()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-80 bg-white backdrop-blur-xl p-8 shadow-2xl flex flex-col justify-between border-l border-black/5">
             <div>
-                <div class="flex justify-between items-center pb-6 border-b border-white/10">
+                <div class="flex justify-between items-center pb-6 border-b border-black/5">
                     <div>
-                        <span class="font-semibold text-sm block truncate max-w-[170px] text-white" id="drawer-user-email">••••••@••••.com</span>
-                        <div class="text-xs apple-body mt-1" id="drawer-usage-counter"></div>
+                        <span class="font-semibold text-sm block truncate max-w-[180px]" id="drawer-user-email">theo_kay@icloud.com</span>
+                        <div class="text-xs apple-body mt-1" id="drawer-usage-counter">Contracts remaining: 3</div>
                     </div>
-                    <button onclick="toggleMenuDrawer()" class="text-xs text-slate-400 hover:text-white font-semibold uppercase">Close</button>
+                    <button onclick="toggleMenuDrawer()" class="text-xs text-black/50 hover:text-black font-semibold uppercase">Close</button>
                 </div>
                 <div class="mt-8 space-y-4">
-                    <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Home</button>
-                    <button onclick="switchView('account'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">My Account</button>
-                    <button onclick="switchView('pricing'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing & Plans</button>
-                    <button onclick="switchView('about'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">About, FAQ & How to Use</button>
-                    <button onclick="switchView('feedback'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Send Feedback</button>
-                    <button onclick="switchView('tos'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Terms of Service</button>
-                    <button onclick="switchView('privacy'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Privacy Policy</button>
+                    <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2 px-3 rounded-lg hover:bg-black/5 text-sm font-semibold transition-colors">Home</button>
+                    <button onclick="switchView('account'); toggleMenuDrawer();" class="w-full text-left py-2 px-3 rounded-lg hover:bg-black/5 text-sm font-semibold transition-colors">My Account</button>
+                    <button onclick="switchView('pricing'); toggleMenuDrawer();" class="w-full text-left py-2 px-3 rounded-lg hover:bg-black/5 text-sm font-semibold transition-colors">Pricing & Plans</button>
+                    <button onclick="switchView('about'); toggleMenuDrawer();" class="w-full text-left py-2 px-3 rounded-lg hover:bg-black/5 text-sm font-semibold transition-colors">About & FAQ</button>
+                    <button onclick="switchView('feedback'); toggleMenuDrawer();" class="w-full text-left py-2 px-3 rounded-lg hover:bg-black/5 text-sm font-semibold transition-colors">Send Feedback</button>
+                    <button onclick="switchView('tos'); toggleMenuDrawer();" class="w-full text-left py-2 px-3 rounded-lg hover:bg-black/5 text-sm font-semibold transition-colors">Terms of Service</button>
+                    <button onclick="switchView('privacy'); toggleMenuDrawer();" class="w-full text-left py-2 px-3 rounded-lg hover:bg-black/5 text-sm font-semibold transition-colors">Privacy Policy</button>
                 </div>
             </div>
-            <div class="pt-6 border-t border-white/10">
-                <button onclick="handleSignOut()" class="apple-button-secondary w-full py-3 text-xs text-red-400 font-medium">Sign Out</button>
+            <div class="pt-6 border-t border-black/5">
+                <button onclick="handleSignOut()" class="apple-button-secondary w-full py-3 text-xs text-red-600 font-medium">Sign Out</button>
             </div>
         </div>
     </div>
 
-    <!-- MAIN HOMEPAGE WORKSPACE (LOWERED & SPACED OUT) -->
-    <div id="main-view" class="flex-1 flex flex-col px-6 py-10 max-w-4xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
-        <h1 class="apple-heading text-3xl sm:text-5xl font-semibold tracking-tight text-white max-w-2xl mt-4">
+    <!-- MAIN HOMEPAGE -->
+    <div id="main-view" class="flex-1 flex flex-col px-6 py-6 max-w-4xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
+        <h1 class="apple-heading text-2xl sm:text-4xl font-semibold tracking-tight text-black max-w-2xl">
             Summarise Any Legal Document.
         </h1>
-        <p class="apple-body text-xs sm:text-sm mt-2 max-w-lg">
-            Upload a PDF, image scan, or paste contract terms below for instant AI paragraph summary and breakdown.
+        <p class="apple-body text-xs sm:text-sm mt-1 max-w-lg">
+            Upload a PDF, image scan, or paste contract terms below for instant AI breakdown.
         </p>
 
-        <!-- UPLOAD BOXES (PDF LEFT, IMAGE RIGHT) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 max-w-xl w-full">
-            <label class="glass-pane p-5 rounded-2xl cursor-pointer flex flex-col items-center justify-center border border-white/10 group hover:border-white/30 transition-all shadow-sm">
-                <div class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-105 transition-transform text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 max-w-xl w-full">
+            <label class="glass-pane p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center border border-black/5 group hover:border-black/20 transition-all shadow-sm">
+                <div class="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 </div>
-                <span class="apple-heading text-xs font-semibold mt-2 text-white">Upload PDF</span>
+                <span class="apple-heading text-xs font-semibold mt-2">Upload PDF</span>
                 <input type="file" accept="application/pdf" class="hidden" onchange="handleFileUpload(event, 'pdf')">
             </label>
 
-            <label class="glass-pane p-5 rounded-2xl cursor-pointer flex flex-col items-center justify-center border border-white/10 group hover:border-white/30 transition-all shadow-sm">
-                <div class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-105 transition-transform text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            <label class="glass-pane p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center border border-black/5 group hover:border-black/20 transition-all shadow-sm">
+                <div class="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                 </div>
-                <span class="apple-heading text-xs font-semibold mt-2 text-white">Upload Image</span>
+                <span class="apple-heading text-xs font-semibold mt-2">Upload Image</span>
                 <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload(event, 'image')">
             </label>
         </div>
 
-        <!-- PASTE CONTRACT BOX -->
-        <div class="glass-pane mt-5 rounded-2xl p-4 max-w-xl w-full border border-white/10 text-left shadow-sm">
-            <div class="flex justify-between items-center mb-2">
-                <span class="text-xs font-semibold uppercase tracking-wider apple-body">Paste Contract Text</span>
-                <button onclick="document.getElementById('legal-text-input').value='';" class="text-xs text-blue-400 hover:underline cursor-pointer">Clear</button>
+        <div class="glass-pane mt-4 rounded-xl p-3 max-w-xl w-full border border-black/5 text-left shadow-sm">
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-[11px] font-semibold uppercase tracking-wider apple-body">Paste Contract Text</span>
+                <button onclick="document.getElementById('legal-text-input').value='';" class="text-[11px] text-blue-600 hover:underline cursor-pointer">Clear</button>
             </div>
-            <textarea id="legal-text-input" rows="5" placeholder="Paste full agreement or contract terms here..." class="w-full bg-transparent text-xs focus:outline-none resize-none apple-body text-white"></textarea>
+            <textarea id="legal-text-input" rows="4" placeholder="Paste full agreement or contract terms here..." class="w-full bg-transparent text-xs focus:outline-none resize-none apple-body text-black"></textarea>
         </div>
 
-        <button onclick="handleLlmAnalysis()" class="apple-button mt-6 px-8 py-4 text-xs font-semibold w-full max-w-xl shadow-lg cursor-pointer">
+        <button onclick="handleLlmAnalysis()" class="apple-button mt-4 px-8 py-3 text-xs font-medium w-full max-w-xl shadow-md cursor-pointer">
             Summarise Contract
         </button>
     </div>
 
     <!-- LOADING STATE -->
-    <div id="loading-view" class="hidden flex-1 flex flex-col items-center justify-center px-6 max-w-xl mx-auto w-full text-center animate-fade-in py-24 relative z-10">
-        <div class="w-10 h-10 rounded-full border-2 border-white border-t-transparent spin-smooth"></div>
-        <h2 id="loading-status-text" class="apple-heading text-lg font-semibold mt-5 text-white">Reading clauses...</h2>
-        <p class="apple-body text-xs mt-1">Extracting legal terms and paragraph overview...</p>
+    <div id="loading-view" class="hidden flex-1 flex flex-col items-center justify-center px-6 max-w-xl mx-auto w-full text-center animate-fade-in py-20 relative z-10">
+        <div class="w-10 h-10 rounded-full border-2 border-black border-t-transparent spin-smooth"></div>
+        <h2 id="loading-status-text" class="apple-heading text-lg font-semibold mt-5">Reading clauses...</h2>
+        <p class="apple-body text-xs mt-1">Extracting legal terms and verifying requirements...</p>
     </div>
 
-    <!-- RESULTS VIEW (PARAGRAPH OVERVIEW + BREAKDOWN BOXES) -->
-    <div id="results-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-6xl mx-auto w-full animate-fade-in text-left relative z-10">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-white/10 pb-6 gap-4">
+    <!-- RESULTS VIEW -->
+    <div id="results-view" class="hidden flex-1 flex flex-col px-6 py-10 max-w-6xl mx-auto w-full animate-fade-in text-left relative z-10">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-black/10 pb-4 gap-4">
             <div>
-                <span class="text-xs font-semibold uppercase tracking-wider apple-body">Executive Report</span>
-                <h2 id="doc-title-heading" class="apple-heading text-2xl font-bold mt-1 text-white">Contract Breakdown</h2>
+                <span class="text-xs font-semibold uppercase tracking-wider apple-body">Executive Analysis</span>
+                <h2 id="doc-title-heading" class="apple-heading text-2xl font-bold mt-1">Contract Breakdown</h2>
             </div>
             <div class="flex items-center space-x-3">
                 <button id="pdf-download-btn" onclick="window.print()" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer">Download PDF Report</button>
@@ -319,283 +290,226 @@
             </div>
         </div>
 
-        <!-- PARAGRAPH SUMMARY BANNER -->
-        <div class="glass-pane p-6 rounded-2xl border border-white/10 mt-8">
-            <h3 class="apple-heading text-xs font-bold text-white mb-2 uppercase tracking-wider">Paragraph Summary Overview</h3>
-            <p id="box-1-text" class="text-xs apple-body text-slate-200 leading-relaxed">Paragraph summary loading...</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm">
-                <h3 class="apple-heading text-xs font-bold text-white mb-2 uppercase tracking-wider">Financial Breakdown & Money</h3>
-                <p id="box-2-text" class="text-xs apple-body text-slate-300 leading-relaxed">Financial terms loading...</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div class="glass-pane p-6 rounded-2xl border border-black/5 shadow-sm">
+                <h3 class="apple-heading text-xs font-bold text-black mb-2 uppercase tracking-wider">1. Executive Overview</h3>
+                <p id="box-1-text" class="text-xs apple-body text-black leading-relaxed">Overview loading...</p>
             </div>
-            <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm">
-                <h3 class="apple-heading text-xs font-bold text-white mb-2 uppercase tracking-wider">Important Dates & Timelines</h3>
-                <p id="box-3-text" class="text-xs apple-body text-slate-300 leading-relaxed">Deadlines loading...</p>
+            <div class="glass-pane p-6 rounded-2xl border border-black/5 shadow-sm">
+                <h3 class="apple-heading text-xs font-bold text-black mb-2 uppercase tracking-wider">2. Financial Breakdown & Money</h3>
+                <p id="box-2-text" class="text-xs apple-body text-black leading-relaxed">Financial terms loading...</p>
             </div>
-            <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm">
-                <h3 class="apple-heading text-xs font-bold text-white mb-2 uppercase tracking-wider">Obligations Checklist</h3>
-                <p id="box-4-text" class="text-xs apple-body text-slate-300 leading-relaxed">Duties loading...</p>
+            <div class="glass-pane p-6 rounded-2xl border border-black/5 shadow-sm">
+                <h3 class="apple-heading text-xs font-bold text-black mb-2 uppercase tracking-wider">3. Important Dates & Timelines</h3>
+                <p id="box-3-text" class="text-xs apple-body text-black leading-relaxed">Deadlines loading...</p>
+            </div>
+            <div class="glass-pane p-6 rounded-2xl border border-black/5 shadow-sm">
+                <h3 class="apple-heading text-xs font-bold text-black mb-2 uppercase tracking-wider">4. Obligations Checklist</h3>
+                <p id="box-4-text" class="text-xs apple-body text-black leading-relaxed">Duties loading...</p>
             </div>
 
-            <!-- Box 5 (Base Plan Lock) -->
-            <div id="box-5-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden">
+            <div id="box-5-wrapper" class="glass-pane p-6 rounded-2xl border border-black/5 shadow-sm relative overflow-hidden">
                 <div id="box-5-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                     <span class="text-xl mb-1">🔒</span>
-                    <h4 class="font-bold text-xs text-white">Upgrade to Pro to Unlock Full Breakdown</h4>
+                    <h4 class="font-bold text-xs text-black">Upgrade to Pro to Unlock Risk Radar & Deep Analysis</h4>
                     <button onclick="switchView('pricing')" class="apple-button mt-3 px-4 py-2 text-[11px]">Upgrade to Pro</button>
                 </div>
-                <h3 class="apple-heading text-xs font-bold text-white mb-2 uppercase tracking-wider">Red Flags & Liabilities</h3>
-                <p id="box-5-text" class="text-xs apple-body text-slate-300 leading-relaxed">Liabilities loading...</p>
+                <h3 class="apple-heading text-xs font-bold text-black mb-2 uppercase tracking-wider">5. Red Flags & Risk Radar</h3>
+                <p id="box-5-text" class="text-xs apple-body text-black leading-relaxed">Liabilities loading...</p>
             </div>
-            <div id="box-6-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden">
+            <div id="box-6-wrapper" class="glass-pane p-6 rounded-2xl border border-black/5 shadow-sm relative overflow-hidden">
                 <div id="box-6-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                     <span class="text-xl mb-1">🔒</span>
                     <button onclick="switchView('pricing')" class="apple-button mt-3 px-4 py-2 text-[11px]">Upgrade to Pro</button>
                 </div>
-                <h3 class="apple-heading text-xs font-bold text-white mb-2 uppercase tracking-wider">Termination & Exit Rules</h3>
-                <p id="box-6-text" class="text-xs apple-body text-slate-300 leading-relaxed">Termination terms...</p>
+                <h3 class="apple-heading text-xs font-bold text-black mb-2 uppercase tracking-wider">6. Termination & Exit Rules</h3>
+                <p id="box-6-text" class="text-xs apple-body text-black leading-relaxed">Termination terms...</p>
             </div>
-            <div id="box-7-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden">
+            <div id="box-7-wrapper" class="glass-pane p-6 rounded-2xl border border-black/5 shadow-sm relative overflow-hidden">
                 <div id="box-7-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                     <span class="text-xl mb-1">🔒</span>
                     <button onclick="switchView('pricing')" class="apple-button mt-3 px-4 py-2 text-[11px]">Upgrade to Pro</button>
                 </div>
-                <h3 class="apple-heading text-xs font-bold text-white mb-2 uppercase tracking-wider">IP & Ownership Rights</h3>
-                <p id="box-7-text" class="text-xs apple-body text-slate-300 leading-relaxed">Ownership rights...</p>
+                <h3 class="apple-heading text-xs font-bold text-black mb-2 uppercase tracking-wider">7. IP & Ownership Rights</h3>
+                <p id="box-7-text" class="text-xs apple-body text-black leading-relaxed">Ownership rights...</p>
             </div>
-            <div id="box-8-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden">
+            <div id="box-8-wrapper" class="glass-pane p-6 rounded-2xl border border-black/5 shadow-sm relative overflow-hidden">
                 <div id="box-8-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                     <span class="text-xl mb-1">🔒</span>
                     <button onclick="switchView('pricing')" class="apple-button mt-3 px-4 py-2 text-[11px]">Upgrade to Pro</button>
                 </div>
-                <h3 class="apple-heading text-xs font-bold text-white mb-2 uppercase tracking-wider">Plain-English Legal Glossary</h3>
-                <p id="box-8-text" class="text-xs apple-body text-slate-300 leading-relaxed">Glossary terms...</p>
+                <h3 class="apple-heading text-xs font-bold text-black mb-2 uppercase tracking-wider">8. Plain-English Legal Glossary</h3>
+                <p id="box-8-text" class="text-xs apple-body text-black leading-relaxed">Glossary terms...</p>
             </div>
         </div>
     </div>
 
-    <!-- FULL SCREEN MY ACCOUNT VIEW (SPACED OUT) -->
-    <div id="account-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-4xl mx-auto w-full text-left animate-fade-in space-y-8 relative z-10">
-        <h2 class="apple-heading text-3xl font-bold text-white">My Account</h2>
-        <div class="glass-pane p-10 rounded-3xl space-y-8 shadow-sm">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+    <!-- MY ACCOUNT -->
+    <div id="account-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-3xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
+        <h2 class="apple-heading text-3xl font-bold">My Account</h2>
+        <div class="glass-pane p-8 rounded-3xl space-y-6 shadow-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                     <label class="text-xs font-semibold uppercase apple-body">Registered Email</label>
-                    <input type="text" id="acc-email" readonly class="w-full mt-2 p-4 bg-black/40 border border-white/10 rounded-xl text-sm font-medium text-white">
-                    <button onclick="triggerPasswordReset()" class="text-xs text-blue-400 hover:underline mt-2 inline-block">Forgot Password?</button>
+                    <input type="text" id="acc-email" readonly class="w-full mt-1.5 p-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-black">
+                    <button onclick="triggerPasswordReset()" class="text-xs text-blue-600 hover:underline mt-2 inline-block">Forgot / Change Password?</button>
                 </div>
                 <div>
                     <label class="text-xs font-semibold uppercase apple-body">Total Contracts Summarised</label>
-                    <input type="text" id="acc-count" readonly class="w-full mt-2 p-4 bg-black/40 border border-white/10 rounded-xl text-sm font-medium text-white">
+                    <input type="text" id="acc-count" readonly class="w-full mt-1.5 p-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-black">
                 </div>
             </div>
-            <div class="pt-6 border-t border-white/10">
+            <div class="pt-4 border-t border-black/5">
                 <div class="flex items-center justify-between">
                     <div>
                         <label class="text-xs font-semibold uppercase apple-body block">Active Plan</label>
-                        <span id="acc-plan-label" class="text-xl font-bold text-white">Free Trial</span>
+                        <span id="acc-plan-label" class="text-lg font-bold text-black">1-Month Free Trial</span>
                     </div>
-                    <button onclick="switchView('pricing')" class="apple-button px-6 py-3 text-xs">Change Plan</button>
+                    <button onclick="switchView('pricing')" class="apple-button px-6 py-2.5 text-xs">Manage / Change Plan</button>
                 </div>
             </div>
         </div>
         <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Home</button>
     </div>
 
-    <!-- PRICING & PLANS VIEW -->
+    <!-- PRICING & PLANS -->
     <div id="pricing-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
-        <span class="text-xs font-semibold bg-white/10 text-white px-3 py-1 rounded-full uppercase tracking-wider">Subscription Plans</span>
-        <h2 class="apple-heading text-3xl sm:text-5xl font-semibold mt-3 text-white">Choose Your Plan</h2>
+        <span class="text-xs font-semibold bg-gray-100 text-gray-800 px-3 py-1 rounded-full uppercase tracking-wider">Subscription Tiers</span>
+        <h2 class="apple-heading text-3xl sm:text-5xl font-semibold mt-3">Choose Your Access Tier</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 w-full text-left">
-            <!-- TRIAL -->
-            <div id="card-trial" class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
+            <div id="card-trial" class="glass-pane p-6 rounded-3xl border border-gray-200 flex flex-col justify-between shadow-sm">
                 <div>
-                    <span class="text-[10px] font-bold uppercase apple-body">3 Summaries Total</span>
-                    <h3 class="apple-heading text-xl font-bold mt-1 text-white">1-Month Free Trial</h3>
-                    <p class="text-3xl font-bold mt-3 text-white">$0 <span class="text-xs font-normal apple-body">/ 30 days</span></p>
-                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
-                        <li>✓ 3 contract summaries</li>
-                        <li>✓ Paragraph Summary Overview</li>
-                        <li>✓ Full 8-Box Breakdown</li>
+                    <span class="text-[10px] font-bold uppercase apple-body">3 Reviews Included</span>
+                    <h3 class="apple-heading text-xl font-bold mt-1">1-Month Free Trial</h3>
+                    <p class="text-2xl font-bold mt-2">$0 <span class="text-xs font-normal apple-body">/ 30 days</span></p>
+                    <ul class="text-xs apple-body space-y-2 mt-4">
+                        <li>✓ 3 total contract reviews</li>
+                        <li>✓ Full 8-Box Access</li>
                     </ul>
                 </div>
-                <button id="btn-trial" onclick="selectPlan('trial')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Select Trial</button>
+                <button onclick="selectTier('trial')" class="apple-button-secondary mt-8 w-full py-2.5 text-xs">Select Trial</button>
             </div>
 
-            <!-- BASE -->
-            <div id="card-base" class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
+            <div id="card-base" class="glass-pane p-6 rounded-3xl border border-gray-200 flex flex-col justify-between shadow-sm">
                 <div>
-                    <span class="text-[10px] font-bold uppercase apple-body">5 Summaries / mo</span>
-                    <h3 class="apple-heading text-xl font-bold mt-1 text-white">Base Plan</h3>
-                    <p class="text-3xl font-bold mt-3 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
-                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
-                        <li>✓ 5 summaries per month</li>
-                        <li>✓ Paragraph Summary Overview</li>
-                        <li>✓ Core 4-Box Breakdown</li>
+                    <span class="text-[10px] font-bold uppercase apple-body">5 Reviews / mo</span>
+                    <h3 class="apple-heading text-xl font-bold mt-1">Base Plan</h3>
+                    <p class="text-2xl font-bold mt-2">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
+                    <ul class="text-xs apple-body space-y-2 mt-4">
+                        <li>✓ 5 reviews per month</li>
+                        <li>✓ Core 4-Box Output</li>
                     </ul>
                 </div>
-                <button onclick="selectPlan('base')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Select Base</button>
+                <button onclick="selectTier('base')" class="apple-button-secondary mt-8 w-full py-2.5 text-xs">Select Base</button>
             </div>
 
-            <!-- PRO -->
-            <div id="card-pro" class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between shadow-xl bg-slate-800/90">
+            <div id="card-pro" class="glass-pane p-6 rounded-3xl border-2 border-black flex flex-col justify-between shadow-lg bg-white">
                 <div>
-                    <span class="text-[10px] font-bold uppercase text-white">30 Summaries / mo</span>
-                    <h3 class="apple-heading text-xl font-bold mt-1 text-white">Pro Membership</h3>
-                    <p class="text-3xl font-bold mt-3 text-white">$29 <span class="text-xs font-normal apple-body">/ month</span></p>
-                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-200">
-                        <li>✓ 30 summaries per month</li>
-                        <li>✓ Paragraph Summary Overview</li>
+                    <span class="text-[10px] font-bold uppercase text-black">30 Reviews / mo</span>
+                    <h3 class="apple-heading text-xl font-bold mt-1">Pro Membership</h3>
+                    <p class="text-2xl font-bold mt-2">$29 <span class="text-xs font-normal apple-body">/ month</span></p>
+                    <ul class="text-xs apple-body space-y-2 mt-4">
+                        <li>✓ 30 reviews per month</li>
                         <li>✓ Full 8-Box Breakdown</li>
                         <li>✓ PDF Downloads</li>
                     </ul>
                 </div>
-                <button onclick="selectPlan('pro')" class="apple-button mt-8 w-full py-3 text-xs font-bold">Select Pro</button>
+                <button onclick="selectTier('pro')" class="apple-button mt-8 w-full py-3 text-xs font-bold">Select Pro</button>
             </div>
         </div>
     </div>
 
-    <!-- ABOUT, FAQ & HOW TO USE -->
+    <!-- ABOUT & HOW TO USE -->
     <div id="about-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-3xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
-        <h2 class="apple-heading text-3xl font-bold text-white">About, FAQ & How to Use</h2>
-        <div class="glass-pane p-8 rounded-3xl space-y-6 text-xs apple-body text-slate-300 leading-relaxed">
+        <h2 class="apple-heading text-3xl font-bold">About & How to Use</h2>
+        <div class="glass-pane p-8 rounded-3xl space-y-6 text-xs apple-body">
             <div>
-                <h3 class="font-bold text-white text-sm mb-2">How to Use Double Check</h3>
-                <ol class="list-decimal pl-4 space-y-1.5 text-slate-200">
-                    <li>Upload a PDF document, image scan, or paste legal text directly on the homepage.</li>
-                    <li>Click <strong>Summarise Contract</strong> to begin secure analysis.</li>
-                    <li>Review your paragraph summary overview and breakdown boxes instantly.</li>
+                <h3 class="font-bold text-black text-sm mb-2">How to Use Double Check</h3>
+                <ol class="list-decimal pl-4 space-y-1 text-black">
+                    <li>Upload a PDF file, image scan, or paste full contract text on the homepage.</li>
+                    <li>Click <strong>Summarise Contract</strong> to begin secure processing.</li>
+                    <li>Review your Executive Overview and structured breakdown boxes instantly.</li>
                 </ol>
-            </div>
-            <div class="pt-4 border-t border-white/10">
-                <h3 class="font-bold text-white text-sm mb-1">Document Privacy</h3>
-                <p>All contracts are analyzed in real time via serverless encryption and are never permanently stored.</p>
             </div>
         </div>
         <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Home</button>
     </div>
 
-    <!-- FEEDBACK VIEW -->
+    <!-- FEEDBACK -->
     <div id="feedback-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
-        <h2 class="apple-heading text-3xl font-bold text-white">Send Feedback</h2>
+        <h2 class="apple-heading text-3xl font-bold">Send Feedback</h2>
         <div class="glass-pane p-6 rounded-2xl space-y-4">
-            <textarea id="feedback-text" rows="4" class="w-full p-3 bg-black/40 border border-white/10 rounded-xl text-xs text-white focus:outline-none" placeholder="How can we improve Double Check?"></textarea>
+            <textarea id="feedback-text" rows="4" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:outline-none" placeholder="How can we improve Double Check?"></textarea>
             <button onclick="submitFeedback()" class="apple-button w-full py-3 text-xs">Submit Feedback</button>
         </div>
         <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Home</button>
     </div>
 
-    <!-- TERMS OF SERVICE -->
+    <!-- TOS -->
     <div id="tos-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-2xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
-        <h2 class="apple-heading text-3xl font-bold text-white">Terms of Service</h2>
-        <div class="glass-pane p-6 rounded-2xl text-xs apple-body leading-relaxed space-y-2 text-slate-300">
+        <h2 class="apple-heading text-3xl font-bold">Terms of Service</h2>
+        <div class="glass-pane p-6 rounded-2xl text-xs apple-body leading-relaxed space-y-2">
             <p>Double Check provides AI-generated contract summaries for informational purposes only. This service does not constitute formal legal counsel.</p>
         </div>
         <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Home</button>
     </div>
 
-    <!-- PRIVACY POLICY -->
+    <!-- PRIVACY -->
     <div id="privacy-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-2xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
-        <h2 class="apple-heading text-3xl font-bold text-white">Privacy Policy</h2>
-        <div class="glass-pane p-6 rounded-2xl text-xs apple-body leading-relaxed space-y-2 text-slate-300">
+        <h2 class="apple-heading text-3xl font-bold">Privacy Policy</h2>
+        <div class="glass-pane p-6 rounded-2xl text-xs apple-body leading-relaxed space-y-2">
             <p>We respect your privacy in accordance with GDPR guidelines. No document content is shared or sold.</p>
         </div>
         <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Home</button>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="mt-auto py-6 text-center text-xs apple-body border-t border-white/10 px-6 relative z-10 text-slate-400">
+    <footer class="mt-auto py-6 text-center text-xs apple-body border-t border-black/5 px-6 relative z-10">
         Double Check provides AI-generated summaries for informational purposes only and does not constitute formal legal advice.
         <div class="mt-1">© 2026 Double Check LLC. All rights reserved.</div>
     </footer>
 
-    <!-- SCRIPT ENGINE -->
     <script>
         let currentUser = {
             email: "theo_kay@icloud.com",
-            plan: "pro", // admin default
+            tier: "pro",
             contractsRemaining: 30,
-            summarisedCount: 8,
-            trialUsed: false
+            summarisedCount: 8
         };
 
         window.addEventListener('DOMContentLoaded', () => {
+            initParticles();
             const savedEmail = localStorage.getItem('dc_email');
-            const savedPlan = localStorage.getItem('dc_plan');
+            const savedTier = localStorage.getItem('dc_tier');
             const savedRem = localStorage.getItem('dc_rem');
             const savedCount = localStorage.getItem('dc_count');
-            const savedTrialUsed = localStorage.getItem('dc_trial_used');
 
             if (savedEmail) {
                 currentUser.email = savedEmail;
-                currentUser.plan = savedPlan || (savedEmail === 'theo_kay@icloud.com' ? 'pro' : 'trial');
-                currentUser.contractsRemaining = savedRem ? parseInt(savedRem) : (currentUser.plan === 'pro' ? 30 : 3);
+                currentUser.tier = savedTier || (savedEmail === 'theo_kay@icloud.com' ? 'pro' : 'trial');
+                currentUser.contractsRemaining = savedRem ? parseInt(savedRem) : (currentUser.tier === 'pro' ? 30 : 3);
                 currentUser.summarisedCount = savedCount ? parseInt(savedCount) : 8;
-                currentUser.trialUsed = savedTrialUsed === 'true';
-
                 document.getElementById('auth-gate-modal').classList.add('hidden');
                 updateUserUI();
             }
         });
 
-        function switchAuthTab(tab) {
-            const loginBtn = document.getElementById('tab-login-btn');
-            const signupBtn = document.getElementById('tab-signup-btn');
-            const loginForm = document.getElementById('form-login');
-            const signupForm = document.getElementById('form-signup');
-
-            if (tab === 'login') {
-                loginBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all";
-                signupBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all";
-                loginForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
-            } else {
-                signupBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all";
-                loginBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all";
-                signupForm.classList.remove('hidden');
-                loginForm.classList.add('hidden');
-            }
-        }
-
-        function handleLoginSubmit(event) {
+        function handleAuthSubmit(event) {
             event.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
+            const email = document.getElementById('auth-email-input').value.trim();
             if (!email) return;
 
             currentUser.email = email;
-            currentUser.plan = email.toLowerCase() === 'theo_kay@icloud.com' ? 'pro' : 'trial';
-            currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : 3;
-
-            saveAndBoot();
-        }
-
-        function handleSignupSubmit(event) {
-            event.preventDefault();
-            const email = document.getElementById('signup-email').value.trim();
-            const pwd = document.getElementById('signup-password').value;
-
-            // Password validation: 8+ chars, 1 uppercase, 1 lowercase, 1 number
-            const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-            if (!pwdRegex.test(pwd)) {
-                alert("Password must be at least 8 characters long and include a capital letter, a lowercase letter, and a number.");
-                return;
+            if (email.toLowerCase() === 'theo_kay@icloud.com') {
+                currentUser.tier = 'pro';
+                currentUser.contractsRemaining = 30;
+            } else {
+                currentUser.tier = 'trial';
+                currentUser.contractsRemaining = 3;
             }
 
-            currentUser.email = email;
-            currentUser.plan = 'trial';
-            currentUser.contractsRemaining = 3;
-            currentUser.trialUsed = true;
-            localStorage.setItem('dc_trial_used', 'true');
-
-            saveAndBoot();
-        }
-
-        function saveAndBoot() {
             localStorage.setItem('dc_email', currentUser.email);
-            localStorage.setItem('dc_plan', currentUser.plan);
+            localStorage.setItem('dc_tier', currentUser.tier);
             localStorage.setItem('dc_rem', currentUser.contractsRemaining);
 
             document.getElementById('auth-gate-modal').classList.add('hidden');
@@ -606,25 +520,14 @@
             alert(`Password reset link sent to ${currentUser.email || 'your email'}.`);
         }
 
-        function selectPlan(plan) {
-            if (plan === 'trial' && currentUser.trialUsed && currentUser.plan !== 'trial') {
-                alert("You have already used your free trial. Please select the Base or Pro plan.");
-                return;
-            }
-
-            if (plan === 'trial') {
-                currentUser.trialUsed = true;
-                localStorage.setItem('dc_trial_used', 'true');
-            }
-
-            currentUser.plan = plan;
-            currentUser.contractsRemaining = plan === 'pro' ? 30 : (plan === 'base' ? 5 : 3);
-            localStorage.setItem('dc_plan', currentUser.plan);
+        function selectTier(tier) {
+            currentUser.tier = tier;
+            currentUser.contractsRemaining = tier === 'pro' ? 30 : (tier === 'base' ? 5 : 3);
+            localStorage.setItem('dc_tier', currentUser.tier);
             localStorage.setItem('dc_rem', currentUser.contractsRemaining);
-
             document.getElementById('paywall-modal').classList.add('hidden');
             updateUserUI();
-            alert(`Switched to ${plan.toUpperCase()} plan.`);
+            alert(`Switched to ${tier.toUpperCase()} tier.`);
             switchView('main');
         }
 
@@ -634,32 +537,20 @@
         }
 
         function updateUserUI() {
-            // Mask email in header
-            const email = currentUser.email || "theo_kay@icloud.com";
-            const masked = email.replace(/^(.{3})(.*)(@.*)$/, (_, a, b, c) => a + '•'.repeat(Math.max(b.length, 3)) + c);
-            document.getElementById('nav-user-email').innerText = masked;
-            document.getElementById('drawer-user-email').innerText = email;
-            document.getElementById('acc-email').value = email;
+            document.getElementById('nav-user-email').innerText = currentUser.email;
+            document.getElementById('drawer-user-email').innerText = currentUser.email;
+            document.getElementById('acc-email').value = currentUser.email;
             document.getElementById('acc-count').value = currentUser.summarisedCount + " contracts";
-            document.getElementById('acc-plan-label').innerText = currentUser.plan.toUpperCase() + " Plan";
+            document.getElementById('acc-plan-label').innerText = currentUser.tier.toUpperCase() + " Plan";
 
             const usageCounter = document.getElementById('drawer-usage-counter');
-            if (currentUser.plan === 'pro') {
+            if (currentUser.tier === 'pro') {
                 usageCounter.innerText = "Contracts remaining: Unlimited (Pro)";
             } else {
                 usageCounter.innerText = `Contracts remaining: ${currentUser.contractsRemaining}`;
             }
 
-            // Disable trial button if already used
-            const trialBtn = document.getElementById('btn-trial');
-            if (currentUser.trialUsed && currentUser.plan !== 'trial') {
-                trialBtn.innerText = "Trial Already Claimed";
-                trialBtn.disabled = true;
-                trialBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            }
-
-            // Lock Boxes 5-8 for Base tier
-            const isFullAccess = currentUser.plan === 'pro' || currentUser.plan === 'trial';
+            const isFullAccess = currentUser.tier === 'pro' || currentUser.tier === 'trial';
             for (let i = 5; i <= 8; i++) {
                 const lock = document.getElementById(`box-${i}-lock`);
                 if (lock) {
@@ -668,109 +559,4 @@
                 }
             }
 
-            document.getElementById('pdf-download-btn').style.display = isFullAccess ? 'inline-block' : 'none';
-        }
-
-        function switchView(viewName) {
-            const views = ['main', 'loading', 'results', 'pricing', 'account', 'feedback', 'about', 'tos', 'privacy'];
-            views.forEach(v => {
-                const el = document.getElementById(v + '-view');
-                if (el) el.classList.add('hidden');
-            });
-            const target = document.getElementById(viewName + '-view');
-            if (target) target.classList.remove('hidden');
-            window.scrollTo(0, 0);
-
-            // Adjust background glow per view
-            const glow = document.getElementById('bg-glow');
-            if (viewName === 'pricing') {
-                glow.style.background = 'radial-gradient(circle at 10% 20%, rgba(30, 58, 138, 0.5) 0%, transparent 60%)';
-            } else if (viewName === 'account') {
-                glow.style.background = 'radial-gradient(circle at 80% 20%, rgba(30, 58, 138, 0.45) 0%, transparent 60%)';
-            } else {
-                glow.style.background = 'radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.45) 0%, transparent 60%)';
-            }
-        }
-
-        function toggleMenuDrawer() {
-            document.getElementById('slide-drawer').classList.toggle('hidden');
-        }
-
-        async function handleLlmAnalysis() {
-            const text = document.getElementById('legal-text-input').value;
-            if (!text || text.trim().length < 20) {
-                alert("Document text is too short or missing.");
-                return;
-            }
-
-            if (currentUser.contractsRemaining <= 0) {
-                document.getElementById('paywall-modal').classList.remove('hidden');
-                return;
-            }
-
-            switchView('loading');
-
-            try {
-                const response = await fetch('/api/summarise', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        text,
-                        userEmail: currentUser.email,
-                        userPlan: currentUser.plan
-                    })
-                });
-
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Server error');
-
-                const parsed = JSON.parse(data.content);
-                
-                document.getElementById('doc-title-heading').innerText = parsed.docTitle || "CONTRACT BREAKDOWN";
-                document.getElementById('box-1-text').innerText = parsed.executiveSummary || "Paragraph summary unavailable.";
-                document.getElementById('box-2-text').innerText = parsed.categories?.[1]?.content || "Financial details...";
-                document.getElementById('box-3-text').innerText = parsed.categories?.[2]?.content || "Timelines...";
-                document.getElementById('box-4-text').innerText = parsed.categories?.[3]?.content || "Obligations...";
-
-                if (parsed.categories && parsed.categories.length >= 8) {
-                    document.getElementById('box-5-text').innerText = parsed.categories[4].content;
-                    document.getElementById('box-6-text').innerText = parsed.categories[5].content;
-                    document.getElementById('box-7-text').innerText = parsed.categories[6].content;
-                    document.getElementById('box-8-text').innerText = parsed.categories[7].content;
-                }
-
-                currentUser.contractsRemaining--;
-                currentUser.summarisedCount++;
-                localStorage.setItem('dc_rem', currentUser.contractsRemaining);
-                localStorage.setItem('dc_count', currentUser.summarisedCount);
-                updateUserUI();
-
-                switchView('results');
-            } catch (err) {
-                alert('AI Error: ' + err.message);
-                switchView('main');
-            }
-        }
-
-        function handleFileUpload(event, type) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('legal-text-input').value = `[Uploaded ${type.toUpperCase()}: ${file.name}]\n\nSample Contractual Agreement Terms:\n1. Parties agree to bound terms...\n2. Confidentiality is strictly enforced for 3 years...\n3. Termination requires 30 days written notice.`;
-                handleLlmAnalysis();
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function submitFeedback() {
-            const val = document.getElementById('feedback-text').value.trim();
-            if (!val) return alert("Please enter feedback before sending.");
-            alert("Thank you! Your feedback has been sent.");
-            document.getElementById('feedback-text').value = '';
-            switchView('main');
-        }
-    </script>
-</body>
-</html>
+            document.getElementById('pdf-download-btn').style.display = isFullAccess ? 'inline
