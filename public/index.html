@@ -73,7 +73,7 @@
         animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
 
-      /* Slide in animation from the right side */
+      /* Slide in from the right edge */
       @keyframes slideInRight {
         from { transform: translateX(100%); }
         to { transform: translateX(0); }
@@ -109,20 +109,26 @@
         transition: opacity 0.3s ease, background 0.5s ease;
       }
 
-      /* Dynamic Navigation Bar styling for smooth fade-in on scroll */
+      /* Navbar starts visible, but as you scroll down it becomes less potent / transparent / dissolves */
       #top-navbar {
-        transition: background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
-        background-color: rgba(11, 15, 25, 0);
-        border-bottom: 1px solid rgba(255, 255, 255, 0);
-        backdrop-filter: blur(0px);
-        -webkit-backdrop-filter: blur(0px);
-      }
-
-      #top-navbar.scrolled {
-        background-color: rgba(11, 15, 25, 0.75);
+        transition: background-color 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease, opacity 0.4s ease;
+        background-color: rgba(11, 15, 25, 0.85);
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
+        opacity: 1;
+      }
+
+      #top-navbar.reading-mode {
+        background-color: rgba(11, 15, 25, 0.35);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        opacity: 0.6; /* Becomes less potent as you read */
+      }
+      
+      #top-navbar:hover {
+        opacity: 1; /* Return full potency when hovered */
       }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -280,7 +286,7 @@
         </div>
     </div>
 
-    <!-- PERSISTENT TOP NAVIGATION BAR WITH DYNAMIC DISSOLVE/BLUR ON SCROLL -->
+    <!-- PERSISTENT TOP NAVIGATION BAR -->
     <nav id="top-navbar" class="sticky top-0 z-40 w-full py-4 px-6">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('welcome')">
@@ -305,6 +311,7 @@
                     <button onclick="switchView('main')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Workspace</button>
                     <button onclick="switchView('account')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Account</button>
                 </div>
+                <!-- Three menu lines button -->
                 <button onclick="toggleMenuDrawer()" class="p-2 text-white hover:opacity-80 transition-opacity cursor-pointer relative z-50" aria-label="Open Menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -316,7 +323,7 @@
         </div>
     </nav>
 
-    <!-- RIGHT-SIDE SLIDE-OUT DRAWER MENU (EXPLICITLY LOCKED TO THE RIGHT EDGE) -->
+    <!-- RIGHT-SIDE SLIDE-OUT DRAWER MENU (LOCKED TO THE RIGHT EDGE) -->
     <div id="slide-drawer" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleMenuDrawer()"></div>
         <div id="drawer-panel" class="absolute right-0 top-0 bottom-0 h-full w-80 bg-slate-900/98 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 relative overflow-hidden menu-slide-right" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.99) 70%);">
@@ -721,16 +728,16 @@
             }
         });
 
-        // Dynamic Scroll Glow & Dynamic Header Dissolve/Blur
+        // Dynamic Scroll Glow & Header Dissolve/Blur in Reading Mode
         window.addEventListener('scroll', () => {
             const scrollTop = window.scrollY;
             const navbar = document.getElementById('top-navbar');
             
-            // Add frosted blur background to navbar when scrolling down past 30px
-            if (scrollTop > 30) {
-                navbar.classList.add('scrolled');
+            // As user scrolls down to read content, header becomes less potent (dissolves / fades)
+            if (scrollTop > 50) {
+                navbar.classList.add('reading-mode');
             } else {
-                navbar.classList.remove('scrolled');
+                navbar.classList.remove('reading-mode');
             }
 
             // Glow intensity adjustment
