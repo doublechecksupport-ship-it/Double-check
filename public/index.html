@@ -18,6 +18,7 @@
         background: radial-gradient(circle at 50% 15%, #1e3a8a 0%, #0b0f19 65%);
         background-attachment: fixed;
         min-height: 100vh;
+        scroll-behavior: smooth;
       }
 
       .apple-heading {
@@ -48,7 +49,7 @@
 
       .apple-button:hover {
         background-color: #e2e8f0;
-        transform: scale(1.005);
+        transform: scale(1.01);
       }
 
       .apple-button-secondary {
@@ -106,7 +107,7 @@
 
     <!-- AUTHENTICATION MODAL (LOGIN / SIGNUP) -->
     <div id="auth-gate-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/75 backdrop-blur-md px-4 overflow-y-auto py-10">
-        <div class="glass-pane w-full max-w-md p-8 rounded-3xl shadow-2xl border border-white/10 text-left bg-slate-900/90 animate-fade-in relative z-10">
+        <div class="glass-pane w-full max-w-md p-8 rounded-3xl shadow-2xl border border-white/10 text-left bg-slate-900/95 animate-fade-in relative z-10">
             <div class="flex items-center space-x-3 mb-6">
                 <svg class="w-10 h-12 text-blue-500" viewBox="0 0 24 30" fill="currentColor">
                     <path d="M2 0C0.89543 0 0 0.89543 0 2V28C0 29.1046 0.89543 30 2 30H22C23.1046 30 24 29.1046 24 28V9L15 0H2Z" fill="#1e3a8a"/>
@@ -173,7 +174,6 @@
             <p class="apple-body text-xs mt-1">Payment details required for verification and recurring access.</p>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 text-left">
-                <!-- FREE TRIAL -->
                 <div class="p-6 rounded-2xl border border-white/10 bg-black/30 flex flex-col justify-between">
                     <div>
                         <h3 class="apple-heading text-base font-bold text-white">Free Trial</h3>
@@ -187,7 +187,6 @@
                     <button onclick="openPaymentForm('trial')" class="apple-button-secondary w-full py-2.5 text-xs font-semibold mt-6 cursor-pointer">Start Free Trial</button>
                 </div>
 
-                <!-- BASE PLAN -->
                 <div class="p-6 rounded-2xl border border-white/10 bg-black/30 flex flex-col justify-between">
                     <div>
                         <h3 class="apple-heading text-base font-bold text-white">Base Plan</h3>
@@ -200,7 +199,6 @@
                     <button onclick="openPaymentForm('base')" class="apple-button-secondary w-full py-2.5 text-xs font-semibold mt-6 cursor-pointer">Select Base Plan</button>
                 </div>
 
-                <!-- PRO PLAN -->
                 <div class="p-6 rounded-2xl border-2 border-white bg-slate-800 flex flex-col justify-between shadow-lg">
                     <div>
                         <h3 class="apple-heading text-base font-bold text-white">Pro Plan</h3>
@@ -256,11 +254,11 @@
         </div>
     </div>
 
-    <!-- FLOATING HEADER -->
-    <nav class="sticky top-0 z-40 w-full py-4 px-6">
+    <!-- PERSISTENT TOP NAVIGATION BAR (CONNECTED EXPERIENCE) -->
+    <nav class="sticky top-0 z-40 w-full py-4 px-6 glass-pane border-b border-white/10">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('welcome')">
-                <svg class="w-10 h-12 text-blue-500 group-hover:scale-105 transition-transform" viewBox="0 0 24 30" fill="currentColor">
+                <svg class="w-9 h-11 text-blue-500 group-hover:scale-105 transition-transform" viewBox="0 0 24 30" fill="currentColor">
                     <path d="M2 0C0.89543 0 0 0.89543 0 2V28C0 29.1046 0.89543 30 2 30H22C23.1046 30 24 29.1046 24 28V9L15 0H2Z" fill="#1e3a8a"/>
                     <path d="M15 0V9H24" fill="#3b82f6"/>
                     <line x1="5" y1="14" x2="19" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
@@ -272,7 +270,15 @@
             </div>
             
             <div class="flex items-center space-x-4">
-                <span id="nav-user-email" class="text-xs apple-body font-medium hidden sm:inline-block">••••••@••••.com</span>
+                <div id="nav-logged-out-actions" class="flex items-center space-x-3">
+                    <button onclick="switchView('welcome'); scrollToSection('pricing-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block">Pricing</button>
+                    <button onclick="switchView('welcome'); scrollToSection('faq-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block">FAQ</button>
+                    <button onclick="openAuthModal('login')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Sign In</button>
+                </div>
+                <div id="nav-logged-in-actions" class="hidden items-center space-x-3">
+                    <button onclick="switchView('main')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Workspace</button>
+                    <button onclick="switchView('account')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Account</button>
+                </div>
                 <button onclick="toggleMenuDrawer()" class="p-2 text-white hover:opacity-80 transition-opacity cursor-pointer" aria-label="Open Menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -296,7 +302,7 @@
                     </div>
                     <button onclick="toggleMenuDrawer()" class="text-xs text-slate-400 hover:text-white font-semibold uppercase pt-1">Close</button>
                 </div>
-                <div class="mt-8 space-y-4">
+                <div class="mt-8 space-y-3">
                     <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome / Home</button>
                     <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Contract Workspace</button>
                     <button onclick="switchView('account'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">My Account</button>
@@ -313,7 +319,7 @@
         </div>
     </div>
 
-    <!-- WELCOME / FIRST IMPRESSION PAGE (STEP 1) -->
+    <!-- WELCOME / FIRST IMPRESSION LANDING PAGE -->
     <div id="welcome-view" class="flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10 space-y-16">
         <div class="space-y-6 max-w-3xl mt-6">
             <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Next-Gen Legal Intelligence</span>
@@ -329,9 +335,8 @@
             </div>
         </div>
 
-        <!-- 3-STEP FEATURE GRID WITH CLEAN WHITE SVG ICONS (NO EMOJIS) -->
+        <!-- 3-STEP FEATURE GRID WITH CLEAN WHITE SVG ICONS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
-            <!-- Box 1: Instant Analysis -->
             <div class="glass-pane p-8 rounded-3xl space-y-3">
                 <div class="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center">
                     <svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -340,7 +345,6 @@
                 <p class="text-xs apple-body text-slate-300 leading-relaxed">Upload PDFs, image scans, or paste contract text to extract key clauses, payment terms, and deadlines instantly.</p>
             </div>
 
-            <!-- Box 2: Paragraph Summary (Replaced Security Box) -->
             <div class="glass-pane p-8 rounded-3xl space-y-3">
                 <div class="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center">
                     <svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -349,7 +353,6 @@
                 <p class="text-xs apple-body text-slate-300 leading-relaxed">Get a concise, clear plain-English overview paragraph explaining exactly what you are signing without legal jargon.</p>
             </div>
 
-            <!-- Box 3: 8-Box Deep Breakdown -->
             <div class="glass-pane p-8 rounded-3xl space-y-3">
                 <div class="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center">
                     <svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
@@ -360,7 +363,7 @@
         </div>
 
         <!-- Pricing Preview Section -->
-        <div class="w-full space-y-8 pt-6">
+        <div id="pricing-section" class="w-full space-y-8 pt-6">
             <h2 class="apple-heading text-3xl font-bold text-white">Transparent Plans</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
@@ -403,7 +406,7 @@
         </div>
 
         <!-- FAQ Section -->
-        <div class="w-full max-w-3xl space-y-6 text-left pt-6">
+        <div id="faq-section" class="w-full max-w-3xl space-y-6 text-left pt-6">
             <h2 class="apple-heading text-2xl font-bold text-white text-center">Frequently Asked Questions</h2>
             <div class="space-y-4">
                 <div class="glass-pane p-6 rounded-2xl">
@@ -418,7 +421,7 @@
         </div>
     </div>
 
-    <!-- MAIN CONTRACT WORKSPACE (STEP 5) -->
+    <!-- MAIN CONTRACT WORKSPACE -->
     <div id="main-view" class="hidden flex-1 flex flex-col px-6 py-10 max-w-4xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
         <h1 class="apple-heading text-3xl sm:text-5xl font-semibold tracking-tight text-white max-w-2xl mt-4">
             Summarise Any Legal Document.
@@ -687,6 +690,7 @@
                 updateUserUI();
                 switchView('main');
             } else {
+                updateUserUI();
                 switchView('welcome');
             }
         });
@@ -805,19 +809,35 @@
         }
 
         function updateUserUI() {
-            const email = currentUser.email || "Guest";
-            const masked = email.includes('@') 
+            const email = currentUser.email;
+            const isLoggedIn = Boolean(email);
+
+            const logoutActions = document.getElementById('nav-logged-out-actions');
+            const loginActions = document.getElementById('nav-logged-in-actions');
+            const drawerBtn = document.getElementById('drawer-auth-btn');
+
+            if (isLoggedIn) {
+                logoutActions.classList.add('hidden');
+                loginActions.classList.remove('hidden');
+                drawerBtn.innerText = "Sign Out";
+                drawerBtn.onclick = () => { handleSignOut(); toggleMenuDrawer(); };
+            } else {
+                logoutActions.classList.remove('hidden');
+                loginActions.classList.add('hidden');
+                drawerBtn.innerText = "Sign In / Register";
+                drawerBtn.onclick = () => { openAuthModal('login'); toggleMenuDrawer(); };
+            }
+
+            const masked = isLoggedIn && email.includes('@') 
                 ? email.replace(/^(.{3})(.*)(@.*)$/, (_, a, b, c) => a + '•'.repeat(Math.max(b.length, 3)) + c)
-                : email;
+                : (isLoggedIn ? email : "Guest User");
 
             document.getElementById('nav-user-email').innerText = masked;
-            document.getElementById('drawer-user-email').innerText = email;
-            document.getElementById('acc-email').value = email;
+            document.getElementById('drawer-user-email').innerText = isLoggedIn ? email : "Guest User";
+            document.getElementById('drawer-usage-counter').innerText = isLoggedIn ? `Contracts remaining: ${currentUser.contractsRemaining}` : "Please sign in";
+            document.getElementById('acc-email').value = isLoggedIn ? email : "";
             document.getElementById('acc-count').value = currentUser.summarisedCount + " contracts";
             document.getElementById('acc-plan-label').innerText = currentUser.plan.toUpperCase() + " Plan";
-
-            const usageCounter = document.getElementById('drawer-usage-counter');
-            usageCounter.innerText = `Contracts remaining: ${currentUser.contractsRemaining}`;
 
             const isFullAccess = currentUser.plan === 'pro' || currentUser.plan === 'trial';
             for (let i = 5; i <= 8; i++) {
@@ -848,6 +868,13 @@
                 glow.style.background = 'radial-gradient(circle at 80% 20%, rgba(30, 58, 138, 0.45) 0%, transparent 60%)';
             } else {
                 glow.style.background = 'radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.45) 0%, transparent 60%)';
+            }
+        }
+
+        function scrollToSection(sectionId) {
+            const el = document.getElementById(sectionId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
             }
         }
 
