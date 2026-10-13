@@ -309,33 +309,31 @@
         </div>
     </nav>
 
-    <!-- DYNAMIC SLIDE-OUT DRAWER MENU (CLEANED UP FOR WELCOME PAGE / LOGGED OUT USERS) -->
+    <!-- SLIDE-OUT DRAWER MENU (CONTEXT-AWARE: NO PERSONAL ACCOUNT DATA WHEN LOGGED OUT) -->
     <div id="slide-drawer" class="fixed inset-0 z-50 hidden flex justify-end">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleMenuDrawer()"></div>
         <div id="drawer-panel" class="relative h-full w-80 bg-slate-900/98 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 overflow-hidden menu-slide-right" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.99) 70%);">
             <div>
-                <!-- DYNAMIC DRAWER HEADER: HIDES PERSONAL STUFF WHEN LOGGED OUT -->
                 <div class="flex justify-between items-start pb-6 border-b border-white/10" id="drawer-header-container">
                     <div class="pr-6">
-                        <span class="font-semibold text-sm block truncate max-w-[150px] text-white" id="drawer-user-email">Welcome Visitor</span>
-                        <div class="text-xs apple-body mt-1 text-slate-300" id="drawer-usage-counter">AI Legal Document Intelligence</div>
+                        <span class="font-semibold text-sm block text-white">Double Check</span>
+                        <div class="text-xs apple-body mt-1 text-slate-300">AI Legal Intelligence</div>
                     </div>
                     <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
                 </div>
 
-                <!-- DYNAMIC DRAWER LINKS -->
                 <div class="mt-8 space-y-3" id="drawer-links-container">
-                    <!-- Populated dynamically via JS depending on login state -->
+                    <!-- Populated dynamically via JS -->
                 </div>
             </div>
             
             <div class="pt-6 border-t border-white/10">
-                <button id="drawer-auth-btn" onclick="openAuthModal('login'); toggleMenuDrawer();" class="apple-button w-full py-3 text-xs font-semibold">Sign In / Register</button>
+                <button id="drawer-auth-btn" onclick="openAuthModal('signup'); toggleMenuDrawer();" class="apple-button w-full py-3 text-xs font-semibold">Sign In / Register</button>
             </div>
         </div>
     </div>
 
-    <!-- WELCOME VIEW (EXPANDED WITH COMPLETE PLANS, TERMS & CONDITIONS, AND HOW TO GET STARTED) -->
+    <!-- WELCOME VIEW (COMPREHENSIVE HOMEPAGE WITH ALL INFORMATION, PLANS & TERMS) -->
     <div id="welcome-view" class="flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10 space-y-16">
         <div class="space-y-6 max-w-3xl mt-6">
             <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Next-Gen Legal Intelligence</span>
@@ -456,7 +454,7 @@
             </div>
         </div>
 
-        <!-- TERMS & CONDITIONS AND LEGAL DISCLAIMER SECTION ON WELCOME PAGE -->
+        <!-- TERMS & CONDITIONS AND LEGAL NOTICE SECTION ON WELCOME PAGE -->
         <div id="terms-section" class="w-full max-w-3xl space-y-6 text-left pt-6 border-t border-white/10">
             <h2 class="apple-heading text-2xl font-bold text-white text-center">Terms & Conditions / Legal Notice</h2>
             <div class="glass-pane p-8 rounded-3xl space-y-4 text-xs apple-body text-slate-300 leading-relaxed">
@@ -994,7 +992,7 @@
             location.reload();
         }
 
-        // RENDER CONTEXT-AWARE MENU DRAWER & UI
+        // CONTEXT-AWARE MENU DRAWER: NO ACCOUNT STATS WHEN LOGGED OUT
         function updateUserUI() {
             const email = currentUser.email;
             const isLoggedIn = Boolean(email);
@@ -1009,7 +1007,6 @@
                 logoutActions.classList.add('hidden');
                 loginActions.classList.remove('hidden');
                 
-                // Logged-in drawer header (with personal info)
                 drawerHeader.innerHTML = `
                     <div class="pr-6">
                         <span class="font-semibold text-sm block truncate max-w-[150px] text-white">${email}</span>
@@ -1018,7 +1015,6 @@
                     <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
                 `;
 
-                // Logged-in drawer links
                 drawerLinks.innerHTML = `
                     <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome / Home</button>
                     <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Home Dashboard</button>
@@ -1036,7 +1032,7 @@
                 logoutActions.classList.remove('hidden');
                 loginActions.classList.add('hidden');
 
-                // Logged-out / Welcome page drawer header (NO personal info, strictly general info)
+                // Clean header for logged-out / welcome users
                 drawerHeader.innerHTML = `
                     <div class="pr-6">
                         <span class="font-semibold text-sm block text-white">Double Check</span>
@@ -1045,7 +1041,7 @@
                     <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
                 `;
 
-                // Logged-out drawer links (only general info, signup/pricing, and FAQ)
+                // Strictly general information links + signup action (no personal account details)
                 drawerLinks.innerHTML = `
                     <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome Home</button>
                     <button onclick="switchView('welcome'); scrollToSection('pricing-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing Plans</button>
@@ -1112,7 +1108,7 @@
             const drawer = document.getElementById('slide-drawer');
             const panel = document.getElementById('drawer-panel');
             if (drawer.classList.contains('hidden')) {
-                updateUserUI(); // refresh drawer state based on current session
+                updateUserUI();
                 drawer.classList.remove('hidden');
                 panel.classList.add('menu-slide-right');
             } else {
