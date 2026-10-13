@@ -22,6 +22,10 @@
         padding-top: 80px;
       }
 
+      body.onboarding-active {
+        padding-top: 20px;
+      }
+
       .apple-heading {
         font-family: var(--apple-font);
         font-weight: 600;
@@ -133,12 +137,12 @@
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+<body id="app-body" class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
     <div id="bg-glow" style="background: radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%); opacity: 0.6;"></div>
 
-    <!-- PERSISTENT ONBOARDING PROGRESS BAR (VISIBLE DURING NEW USER SETUP) -->
-    <div id="onboarding-progress-wrapper" class="hidden fixed top-0 left-0 right-0 z-50 bg-slate-900/95 border-b border-white/10 px-6 py-3 backdrop-blur-md animate-fade-in">
+    <!-- PERSISTENT ONBOARDING PROGRESS BAR (SEPARATED FROM HEADER) -->
+    <div id="onboarding-progress-wrapper" class="hidden fixed top-0 left-0 right-0 z-50 bg-slate-900/98 border-b border-white/10 px-6 py-3 backdrop-blur-md animate-fade-in shadow-xl">
         <div class="max-w-3xl mx-auto flex flex-col space-y-1.5">
             <div class="flex justify-between items-center text-[11px] font-semibold uppercase tracking-wider text-slate-300">
                 <span id="onboarding-step-label">Step 1 of 3: Account Creation</span>
@@ -186,7 +190,7 @@
                     <span onclick="triggerPasswordReset()" class="text-xs text-blue-400 hover:underline cursor-pointer">Forgot Password?</span>
                 </div>
                 <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer">Sign In</button>
-                <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden')" class="w-full text-center text-xs apple-body hover:text-white pt-1">Cancel</button>
+                <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden'); hideOnboardingProgress();" class="w-full text-center text-xs apple-body hover:text-white pt-1">Cancel</button>
             </form>
 
             <form id="form-signup" onsubmit="handleSignupSubmit(event)" class="space-y-4 hidden">
@@ -204,7 +208,7 @@
                     </label>
                 </div>
                 <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer">Create Account & Proceed</button>
-                <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden')" class="w-full text-center text-xs apple-body hover:text-white pt-1">Cancel</button>
+                <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden'); hideOnboardingProgress();" class="w-full text-center text-xs apple-body hover:text-white pt-1">Cancel</button>
             </form>
         </div>
     </div>
@@ -255,7 +259,7 @@
         </div>
     </div>
 
-    <!-- SUBSCRIPTION CELEBRATION / SUCCESS ANIMATION VIEW -->
+    <!-- SUBSCRIPTION CELEBRATION ANIMATION VIEW -->
     <div id="celebration-view" class="hidden flex-1 flex flex-col items-center justify-center px-6 max-w-xl mx-auto w-full text-center animate-fade-in py-24 relative z-10 space-y-6">
         <div class="w-16 h-16 rounded-full bg-blue-500/20 border-2 border-blue-400 text-blue-400 flex items-center justify-center mx-auto text-2xl font-bold shadow-lg animate-bounce">
             ✓
@@ -267,7 +271,7 @@
         </div>
     </div>
 
-    <!-- FLOATING LONG HEADER WIDGET -->
+    <!-- FLOATING LONG HEADER WIDGET (HIDDEN DURING ONBOARDING/SIGNUP) -->
     <nav id="top-navbar" class="fixed top-4 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-5xl py-3 px-6 rounded-2xl">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('welcome')">
@@ -649,23 +653,15 @@
         let currentUser = {
             email: "",
             plan: "trial",
-            contractsRemaining: 0,
+            contractsRemaining: 3,
             summarisedCount: 0,
-            onboardingStep: 0 // 0 = none, 1 = signup, 2 = terms, 3 = plans
+            onboardingStep: 0
         };
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('dc_email');
-            const savedPlan = localStorage.getItem('dc_plan');
-            const savedRem = localStorage.getItem('dc_rem');
-            const savedCount = localStorage.getItem('dc_count');
-
             if (savedEmail) {
-                currentUser.email = savedEmail;
-                currentUser.plan = savedPlan || 'trial';
-                currentUser.contractsRemaining = savedRem ? parseInt(savedRem) : 3;
-                currentUser.summarisedCount = savedCount ? parseInt(savedCount) : 0;
-
+                loadAccountProfile(savedEmail);
                 updateUserUI();
                 switchView('main');
             } else {
@@ -678,7 +674,7 @@
             const scrollTop = window.scrollY;
             const navbar = document.getElementById('top-navbar');
             
-            if (scrollTop > 50) {
+            if (scrollTop > 50 && !navbar.classList.contains('hidden')) {
                 navbar.classList.add('reading-mode');
             } else {
                 navbar.classList.remove('reading-mode');
@@ -705,11 +701,13 @@
                 loginForm.classList.remove('hidden');
                 signupForm.classList.add('hidden');
                 hideOnboardingProgress();
+                showTopHeader();
             } else {
                 signupBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all";
                 loginBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all";
                 signupForm.classList.remove('hidden');
                 loginForm.classList.add('hidden');
+                hideTopHeader();
                 updateOnboardingProgress(1, "Step 1 of 3: Account Creation & Credentials", "33%");
             }
         }
@@ -719,23 +717,10 @@
             document.getElementById('auth-gate-modal').classList.remove('hidden');
         }
 
-        function handleLoginSubmit(event) {
-            event.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            if (!email) return;
-
-            currentUser.email = email;
-            currentUser.plan = email.toLowerCase() === 'theo_kay@icloud.com' ? 'pro' : 'trial';
-            currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : 3;
-
-            document.getElementById('auth-gate-modal').classList.add('hidden');
-            hideOnboardingProgress();
-            saveAndBoot();
-        }
-
+        // Account Memory & Duplicate Check Handler
         function handleSignupSubmit(event) {
             event.preventDefault();
-            const email = document.getElementById('signup-email').value.trim();
+            const email = document.getElementById('signup-email').value.trim().toLowerCase();
             const pwd = document.getElementById('signup-password').value;
             const termsChecked = document.getElementById('signup-tos').checked;
 
@@ -750,18 +735,58 @@
                 return;
             }
 
+            // Check existing accounts stored in localStorage
+            let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
+            if (accounts[email]) {
+                alert("An account with this email already exists. Please sign in instead.");
+                document.getElementById('signup-email').value = '';
+                document.getElementById('signup-password').value = '';
+                switchAuthTab('login');
+                return;
+            }
+
             currentUser.email = email;
+            currentUser.plan = email === 'theo_kay@icloud.com' ? 'pro' : 'trial';
+            currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : 3;
+            currentUser.summarisedCount = 0;
+
             document.getElementById('auth-gate-modal').classList.add('hidden');
 
-            // Advance to Step 3: Immediate Onboarding Paywall / Plan Selection
+            // Advance to Step 3: Membership Plan Selection
             updateOnboardingProgress(3, "Step 3 of 3: Membership Plan Selection", "66%");
             switchView('onboarding-plans');
+        }
+
+        function handleLoginSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const pwd = document.getElementById('login-password').value;
+            if (!email) return;
+
+            let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
+            if (accounts[email]) {
+                loadAccountProfile(email);
+            } else {
+                // If account doesn't exist yet in local memory, initialize it
+                currentUser.email = email;
+                currentUser.plan = email === 'theo_kay@icloud.com' ? 'pro' : 'trial';
+                currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : 3;
+                currentUser.summarisedCount = 0;
+                saveAccountProfile();
+            }
+
+            document.getElementById('auth-gate-modal').classList.add('hidden');
+            hideOnboardingProgress();
+            showTopHeader();
+            saveAndBoot();
         }
 
         function completeOnboardingPlan(plan) {
             currentUser.plan = plan;
             currentUser.contractsRemaining = plan === 'pro' ? 30 : (plan === 'base' ? 5 : 3);
             
+            saveAccountProfile();
+
             // Advance progress to 100% and show celebration animation
             updateOnboardingProgress(3, "Subscription Confirmed", "100%");
             hideOnboardingProgress();
@@ -769,8 +794,35 @@
             switchView('celebration');
 
             setTimeout(() => {
+                showTopHeader();
                 saveAndBoot();
             }, 2000);
+        }
+
+        function saveAccountProfile() {
+            let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
+            accounts[currentUser.email] = {
+                email: currentUser.email,
+                plan: currentUser.plan,
+                contractsRemaining: currentUser.contractsRemaining,
+                summarisedCount: currentUser.summarisedCount
+            };
+            localStorage.setItem('dc_accounts', JSON.stringify(accounts));
+        }
+
+        function loadAccountProfile(email) {
+            let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
+            if (accounts[email]) {
+                currentUser.email = accounts[email].email;
+                currentUser.plan = accounts[email].plan;
+                currentUser.contractsRemaining = accounts[email].contractsRemaining;
+                currentUser.summarisedCount = accounts[email].summarisedCount;
+            } else {
+                currentUser.email = email;
+                currentUser.plan = 'trial';
+                currentUser.contractsRemaining = 3;
+                currentUser.summarisedCount = 0;
+            }
         }
 
         function updateOnboardingProgress(stepNum, labelText, percentText) {
@@ -791,10 +843,19 @@
             document.getElementById('onboarding-progress-wrapper').classList.add('hidden');
         }
 
+        function hideTopHeader() {
+            document.getElementById('top-navbar').classList.add('hidden');
+            document.getElementById('app-body').classList.add('onboarding-active');
+        }
+
+        function showTopHeader() {
+            document.getElementById('top-navbar').classList.remove('hidden');
+            document.getElementById('app-body').classList.remove('onboarding-active');
+        }
+
         function saveAndBoot() {
             localStorage.setItem('dc_email', currentUser.email);
-            localStorage.setItem('dc_plan', currentUser.plan);
-            localStorage.setItem('dc_rem', currentUser.contractsRemaining);
+            saveAccountProfile();
 
             updateUserUI();
             switchView('main');
@@ -805,7 +866,7 @@
         }
 
         function handleSignOut() {
-            localStorage.clear();
+            localStorage.removeItem('dc_email');
             location.reload();
         }
 
@@ -834,6 +895,12 @@
             document.getElementById('acc-email').value = isLoggedIn ? email : "";
             document.getElementById('acc-count').value = currentUser.summarisedCount + " contracts";
             document.getElementById('acc-plan-label').innerText = currentUser.plan.toUpperCase() + " Plan";
+
+            let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
+            if (accounts[currentUser.email]) {
+                currentUser.contractsRemaining = accounts[currentUser.email].contractsRemaining;
+                currentUser.summarisedCount = accounts[currentUser.email].summarisedCount;
+            }
 
             const isFullAccess = currentUser.plan === 'pro' || currentUser.plan === 'trial';
             for (let i = 5; i <= 8; i++) {
@@ -970,8 +1037,7 @@
                     currentUser.contractsRemaining--;
                 }
                 currentUser.summarisedCount++;
-                localStorage.setItem('dc_rem', currentUser.contractsRemaining);
-                localStorage.setItem('dc_count', currentUser.summarisedCount);
+                saveAccountProfile();
                 updateUserUI();
 
                 switchResultsTab('paragraph');
