@@ -137,6 +137,19 @@
 
     <div id="bg-glow" style="background: radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%); opacity: 0.6;"></div>
 
+    <!-- PERSISTENT ONBOARDING PROGRESS BAR (VISIBLE DURING NEW USER SETUP) -->
+    <div id="onboarding-progress-wrapper" class="hidden fixed top-0 left-0 right-0 z-50 bg-slate-900/95 border-b border-white/10 px-6 py-3 backdrop-blur-md animate-fade-in">
+        <div class="max-w-3xl mx-auto flex flex-col space-y-1.5">
+            <div class="flex justify-between items-center text-[11px] font-semibold uppercase tracking-wider text-slate-300">
+                <span id="onboarding-step-label">Step 1 of 3: Account Creation</span>
+                <span id="onboarding-percent-label">33% Complete</span>
+            </div>
+            <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden border border-white/10">
+                <div id="onboarding-progress-fill" class="bg-blue-500 h-full transition-all duration-500 ease-out" style="width: 33%;"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- AUTHENTICATION MODAL -->
     <div id="auth-gate-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/75 backdrop-blur-md px-4 overflow-y-auto py-10">
         <div class="glass-pane w-full max-w-md p-8 rounded-3xl shadow-2xl border border-white/10 text-left bg-slate-900/95 animate-fade-in relative z-10">
@@ -190,96 +203,67 @@
                         <input type="checkbox" id="signup-tos" required class="mr-2 accent-blue-500"> I agree to Terms of Service & Privacy Policy
                     </label>
                 </div>
-                <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer">Continue to Plan Selection</button>
+                <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer">Create Account & Proceed</button>
                 <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden')" class="w-full text-center text-xs apple-body hover:text-white pt-1">Cancel</button>
             </form>
         </div>
     </div>
 
-    <!-- PLAN SELECTION PAYWALL MODAL -->
-    <div id="paywall-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-md px-4 py-10 overflow-y-auto">
-        <div class="glass-pane w-full max-w-3xl p-8 rounded-3xl shadow-2xl border border-white/10 text-center bg-slate-900/95 animate-fade-in relative z-10">
-            <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full uppercase tracking-wider">Select Subscription</span>
-            <h2 class="apple-heading text-2xl sm:text-3xl font-bold mt-3 text-white">Choose Your Plan</h2>
-            <p class="apple-body text-xs mt-1">Payment details required for verification and recurring access.</p>
+    <!-- ONBOARDING PAYWALL / PLAN SELECTION VIEW -->
+    <div id="onboarding-plans-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
+        <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full uppercase tracking-wider">Step 3: Membership Selection</span>
+        <h2 class="apple-heading text-3xl sm:text-5xl font-semibold mt-3 text-white">Choose Your Plan</h2>
+        <p class="apple-body text-xs mt-2 max-w-md">Select your subscription tier to activate your AI workspace credits instantly.</p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 text-left">
-                <div class="p-6 rounded-2xl border border-white/10 bg-black/30 flex flex-col justify-between">
-                    <div>
-                        <h3 class="apple-heading text-base font-bold text-white">Free Trial</h3>
-                        <p class="text-xl font-bold mt-2 text-white">$0 <span class="text-[10px] font-normal apple-body">/ 30 days</span></p>
-                        <ul class="text-xs apple-body space-y-1.5 mt-3 text-slate-300">
-                            <li>✓ 3 contract summaries</li>
-                            <li>✓ Full 8-Box Breakdown</li>
-                            <li class="text-[10px] text-blue-300 pt-2 font-medium">⚠️ Requires card verification. Auto-charges $12/mo after 30 days unless canceled.</li>
-                        </ul>
-                    </div>
-                    <button onclick="openPaymentForm('trial')" class="apple-button-secondary w-full py-2.5 text-xs font-semibold mt-6 cursor-pointer">Start Free Trial</button>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 w-full text-left">
+            <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
+                <div>
+                    <h3 class="apple-heading text-xl font-bold text-white">Free Trial</h3>
+                    <p class="text-3xl font-bold mt-3 text-white">$0 <span class="text-xs font-normal apple-body">/ 30 days</span></p>
+                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
+                        <li>✓ 3 contract summaries</li>
+                        <li>✓ Paragraph Summary Overview</li>
+                        <li>✓ Full 8-Box Breakdown</li>
+                    </ul>
                 </div>
-
-                <div class="p-6 rounded-2xl border border-white/10 bg-black/30 flex flex-col justify-between">
-                    <div>
-                        <h3 class="apple-heading text-base font-bold text-white">Base Plan</h3>
-                        <p class="text-xl font-bold mt-2 text-white">$12 <span class="text-[10px] font-normal apple-body">/ month</span></p>
-                        <ul class="text-xs apple-body space-y-1.5 mt-3 text-slate-300">
-                            <li>✓ 5 summaries / month</li>
-                            <li>✓ Core 4-Box Breakdown</li>
-                        </ul>
-                    </div>
-                    <button onclick="openPaymentForm('base')" class="apple-button-secondary w-full py-2.5 text-xs font-semibold mt-6 cursor-pointer">Select Base Plan</button>
-                </div>
-
-                <div class="p-6 rounded-2xl border-2 border-white bg-slate-800 flex flex-col justify-between shadow-lg">
-                    <div>
-                        <h3 class="apple-heading text-base font-bold text-white">Pro Plan</h3>
-                        <p class="text-xl font-bold mt-2 text-white">$29 <span class="text-[10px] font-normal apple-body">/ month</span></p>
-                        <ul class="text-xs apple-body space-y-1.5 mt-3 text-slate-200">
-                            <li>✓ 30 summaries / month</li>
-                            <li>✓ Full 8-Box Breakdown</li>
-                        </ul>
-                    </div>
-                    <button onclick="openPaymentForm('pro')" class="apple-button w-full py-2.5 text-xs font-semibold mt-6 shadow-md cursor-pointer">Select Pro Plan</button>
-                </div>
+                <button onclick="completeOnboardingPlan('trial')" class="apple-button-secondary mt-8 w-full py-3 text-xs cursor-pointer">Start Free Trial</button>
             </div>
-            <button onclick="document.getElementById('paywall-modal').classList.add('hidden')" class="text-xs apple-body hover:text-white mt-6 cursor-pointer">Cancel</button>
+
+            <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
+                <div>
+                    <h3 class="apple-heading text-xl font-bold text-white">Base Plan</h3>
+                    <p class="text-3xl font-bold mt-3 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
+                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
+                        <li>✓ 5 summaries / month</li>
+                        <li>✓ Core Breakdown</li>
+                    </ul>
+                </div>
+                <button onclick="completeOnboardingPlan('base')" class="apple-button-secondary mt-8 w-full py-3 text-xs cursor-pointer">Select Base Plan</button>
+            </div>
+
+            <div class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between shadow-xl bg-slate-800/90">
+                <div>
+                    <h3 class="apple-heading text-xl font-bold text-white">Pro Plan</h3>
+                    <p class="text-3xl font-bold mt-3 text-white">$29 <span class="text-xs font-normal apple-body">/ month</span></p>
+                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-200">
+                        <li>✓ 30 summaries / month</li>
+                        <li>✓ Full 8-Box Breakdown</li>
+                    </ul>
+                </div>
+                <button onclick="completeOnboardingPlan('pro')" class="apple-button mt-8 w-full py-3 text-xs font-bold cursor-pointer">Select Pro Plan</button>
+            </div>
         </div>
     </div>
 
-    <!-- PAYMENT & BILLING DETAILS MODAL -->
-    <div id="payment-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-md px-4 py-10 overflow-y-auto">
-        <div class="glass-pane w-full max-w-md p-8 rounded-3xl shadow-2xl border border-white/10 text-left bg-slate-900/95 animate-fade-in relative z-10 space-y-4">
-            <div class="flex justify-between items-center pb-2 border-b border-white/10">
-                <h3 class="apple-heading text-lg font-bold text-white" id="payment-plan-title">Complete Plan Checkout</h3>
-                <span class="text-xs font-bold text-blue-400 uppercase" id="payment-plan-price">$0.00</span>
-            </div>
-
-            <form onsubmit="handlePaymentSubmit(event)" class="space-y-3">
-                <div>
-                    <label class="text-[11px] font-semibold apple-body uppercase">Cardholder Name</label>
-                    <input type="text" id="pay-name" required placeholder="Full Name" class="w-full mt-1 p-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="text-[11px] font-semibold apple-body uppercase">Card Number</label>
-                    <input type="text" id="pay-card" required placeholder="4532 •••• •••• 8892" maxlength="19" class="w-full mt-1 p-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[11px] font-semibold apple-body uppercase">Expiry Date</label>
-                        <input type="text" id="pay-exp" required placeholder="MM/YY" maxlength="5" class="w-full mt-1 p-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="text-[11px] font-semibold apple-body uppercase">CVC / CVV</label>
-                        <input type="text" id="pay-cvc" required placeholder="123" maxlength="4" class="w-full mt-1 p-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                </div>
-
-                <div id="trial-charge-disclaimer" class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-[11px] text-blue-200 leading-relaxed">
-                    <strong>Auto-Renewal Notice:</strong> Your $0 Free Trial lasts 30 days. You will be automatically charged $12/month when your trial period ends unless you cancel beforehand in your account settings.
-                </div>
-
-                <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer mt-2">Confirm & Access Workspace</button>
-                <button type="button" onclick="document.getElementById('payment-modal').classList.add('hidden'); document.getElementById('paywall-modal').classList.remove('hidden');" class="w-full text-center text-xs apple-body hover:text-white pt-1">← Back to Plans</button>
-            </form>
+    <!-- SUBSCRIPTION CELEBRATION / SUCCESS ANIMATION VIEW -->
+    <div id="celebration-view" class="hidden flex-1 flex flex-col items-center justify-center px-6 max-w-xl mx-auto w-full text-center animate-fade-in py-24 relative z-10 space-y-6">
+        <div class="w-16 h-16 rounded-full bg-blue-500/20 border-2 border-blue-400 text-blue-400 flex items-center justify-center mx-auto text-2xl font-bold shadow-lg animate-bounce">
+            ✓
+        </div>
+        <h2 class="apple-heading text-3xl font-bold text-white">You're All Set!</h2>
+        <p class="apple-body text-sm text-slate-300">Subscription confirmed. Progress bar complete. Launching your workspace...</p>
+        <div class="w-48 bg-black/50 h-2 rounded-full overflow-hidden mx-auto border border-white/10">
+            <div class="bg-blue-500 h-full w-full transition-all duration-1000"></div>
         </div>
     </div>
 
@@ -420,10 +404,8 @@
         <p class="apple-body text-xs mt-1">Extracting comprehensive summary & risk breakdown...</p>
     </div>
 
-    <!-- RESULTS VIEW (WITH TOGGLE SLIDER AND COPY BUTTONS) -->
+    <!-- RESULTS VIEW -->
     <div id="results-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-6xl mx-auto w-full animate-fade-in text-left relative z-10">
-        
-        <!-- Header & New Scan button -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-white/10 pb-6 gap-4">
             <div>
                 <span class="text-xs font-semibold uppercase tracking-wider apple-body">Executive Report</span>
@@ -434,7 +416,6 @@
             </div>
         </div>
 
-        <!-- SLIDER / TOGGLE SWITCH (Positioned below header, above content) -->
         <div class="flex justify-center my-8">
             <div class="glass-pane p-1.5 rounded-2xl flex items-center space-x-2 border border-white/10 shadow-lg">
                 <button id="tab-btn-paragraph" onclick="switchResultsTab('paragraph')" class="px-6 py-2.5 rounded-xl text-xs font-bold bg-white text-black transition-all cursor-pointer">
@@ -446,13 +427,11 @@
             </div>
         </div>
 
-        <!-- VIEW 1: PARAGRAPH SUMMARY (DEFAULT & PROMINENT) -->
         <div id="results-paragraph-container" class="space-y-6">
             <div class="glass-pane p-8 rounded-3xl border border-white/10 relative shadow-xl">
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
                     <span class="apple-heading text-xs font-bold uppercase tracking-wider text-blue-400">Simplified Plain-English Summary</span>
                     <button onclick="copyElementText('box-1-text', this)" class="apple-button-secondary px-4 py-1.5 text-[11px] font-medium flex items-center space-x-1.5 cursor-pointer">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                         <span>Copy Summary</span>
                     </button>
                 </div>
@@ -460,10 +439,8 @@
             </div>
         </div>
 
-        <!-- VIEW 2: FULL 8-BOX BREAKDOWN GRID (TOGGLED VIA SLIDER) -->
         <div id="results-breakdown-container" class="hidden space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Box 2: Financial -->
                 <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-3">
@@ -474,7 +451,6 @@
                     </div>
                 </div>
 
-                <!-- Box 3: Timelines -->
                 <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-3">
@@ -485,7 +461,6 @@
                     </div>
                 </div>
 
-                <!-- Box 4: Obligations -->
                 <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-3">
@@ -496,7 +471,6 @@
                     </div>
                 </div>
 
-                <!-- Box 5: Red Flags -->
                 <div id="box-5-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
                     <div id="box-5-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                         <h4 class="font-bold text-xs text-white mb-2">Upgrade to Unlock Full Breakdown</h4>
@@ -511,7 +485,6 @@
                     </div>
                 </div>
 
-                <!-- Box 6: Termination -->
                 <div id="box-6-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
                     <div id="box-6-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                         <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
@@ -525,7 +498,6 @@
                     </div>
                 </div>
 
-                <!-- Box 7: IP & Ownership -->
                 <div id="box-7-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
                     <div id="box-7-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                         <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
@@ -539,7 +511,6 @@
                     </div>
                 </div>
 
-                <!-- Box 8: Glossary -->
                 <div id="box-8-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between md:col-span-2">
                     <div id="box-8-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                         <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
@@ -554,7 +525,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- ACCOUNT VIEW -->
@@ -607,7 +577,7 @@
                     <p class="text-3xl font-bold mt-3 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
                     <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
                         <li>✓ 5 summaries / month</li>
-                        <li>✓ Core 4-Box Breakdown</li>
+                        <li>✓ Core Breakdown</li>
                     </ul>
                 </div>
                 <button onclick="openPaymentForm('base')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Select Base Plan</button>
@@ -681,7 +651,7 @@
             plan: "trial",
             contractsRemaining: 0,
             summarisedCount: 0,
-            pendingPlanSelection: "trial"
+            onboardingStep: 0 // 0 = none, 1 = signup, 2 = terms, 3 = plans
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -734,11 +704,13 @@
                 signupBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all";
                 loginForm.classList.remove('hidden');
                 signupForm.classList.add('hidden');
+                hideOnboardingProgress();
             } else {
                 signupBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all";
                 loginBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all";
                 signupForm.classList.remove('hidden');
                 loginForm.classList.add('hidden');
+                updateOnboardingProgress(1, "Step 1 of 3: Account Creation & Credentials", "33%");
             }
         }
 
@@ -757,6 +729,7 @@
             currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : 3;
 
             document.getElementById('auth-gate-modal').classList.add('hidden');
+            hideOnboardingProgress();
             saveAndBoot();
         }
 
@@ -764,6 +737,7 @@
             event.preventDefault();
             const email = document.getElementById('signup-email').value.trim();
             const pwd = document.getElementById('signup-password').value;
+            const termsChecked = document.getElementById('signup-tos').checked;
 
             const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
             if (!pwdRegex.test(pwd)) {
@@ -771,51 +745,50 @@
                 return;
             }
 
-            currentUser.email = email;
-            document.getElementById('auth-gate-modal').classList.add('hidden');
-            document.getElementById('paywall-modal').classList.remove('hidden');
-        }
-
-        function openPaymentForm(plan) {
-            currentUser.pendingPlanSelection = plan;
-            document.getElementById('paywall-modal').classList.add('hidden');
-
-            const title = document.getElementById('payment-plan-title');
-            const price = document.getElementById('payment-plan-price');
-            const disclaimer = document.getElementById('trial-charge-disclaimer');
-
-            if (plan === 'trial') {
-                title.innerText = "Start 30-Day Free Trial";
-                price.innerText = "$0.00 / Month";
-                disclaimer.classList.remove('hidden');
-            } else if (plan === 'base') {
-                title.innerText = "Base Plan Subscription";
-                price.innerText = "$12.00 / Month";
-                disclaimer.classList.add('hidden');
-            } else {
-                title.innerText = "Pro Plan Subscription";
-                price.innerText = "$29.00 / Month";
-                disclaimer.classList.add('hidden');
-            }
-
-            document.getElementById('payment-modal').classList.remove('hidden');
-        }
-
-        function handlePaymentSubmit(event) {
-            event.preventDefault();
-            
-            const card = document.getElementById('pay-card').value;
-            if (card.length < 12) {
-                alert("Please enter a valid card number.");
+            if (!termsChecked) {
+                alert("Please accept the Terms of Service to continue.");
                 return;
             }
 
-            currentUser.plan = currentUser.pendingPlanSelection;
-            currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : (currentUser.plan === 'base' ? 5 : 3);
+            currentUser.email = email;
+            document.getElementById('auth-gate-modal').classList.add('hidden');
+
+            // Advance to Step 3: Immediate Onboarding Paywall / Plan Selection
+            updateOnboardingProgress(3, "Step 3 of 3: Membership Plan Selection", "66%");
+            switchView('onboarding-plans');
+        }
+
+        function completeOnboardingPlan(plan) {
+            currentUser.plan = plan;
+            currentUser.contractsRemaining = plan === 'pro' ? 30 : (plan === 'base' ? 5 : 3);
             
-            document.getElementById('payment-modal').classList.add('hidden');
-            saveAndBoot();
-            alert(`Payment setup successful! Subscribed to ${currentUser.plan.toUpperCase()} plan.`);
+            // Advance progress to 100% and show celebration animation
+            updateOnboardingProgress(3, "Subscription Confirmed", "100%");
+            hideOnboardingProgress();
+
+            switchView('celebration');
+
+            setTimeout(() => {
+                saveAndBoot();
+            }, 2000);
+        }
+
+        function updateOnboardingProgress(stepNum, labelText, percentText) {
+            currentUser.onboardingStep = stepNum;
+            const wrapper = document.getElementById('onboarding-progress-wrapper');
+            const label = document.getElementById('onboarding-step-label');
+            const percent = document.getElementById('onboarding-percent-label');
+            const fill = document.getElementById('onboarding-progress-fill');
+
+            wrapper.classList.remove('hidden');
+            label.innerText = labelText;
+            percent.innerText = percentText;
+            fill.style.width = percentText;
+        }
+
+        function hideOnboardingProgress() {
+            currentUser.onboardingStep = 0;
+            document.getElementById('onboarding-progress-wrapper').classList.add('hidden');
         }
 
         function saveAndBoot() {
@@ -873,7 +846,7 @@
         }
 
         function switchView(viewName) {
-            const views = ['welcome', 'main', 'loading', 'results', 'pricing', 'account', 'feedback', 'about', 'tos', 'privacy'];
+            const views = ['welcome', 'main', 'loading', 'results', 'pricing', 'account', 'feedback', 'about', 'tos', 'privacy', 'onboarding-plans', 'celebration'];
             views.forEach(v => {
                 const el = document.getElementById(v + '-view');
                 if (el) el.classList.add('hidden');
@@ -883,7 +856,7 @@
             window.scrollTo(0, 0);
 
             const glow = document.getElementById('bg-glow');
-            if (viewName === 'pricing') {
+            if (viewName === 'pricing' || viewName === 'onboarding-plans') {
                 glow.style.background = 'radial-gradient(circle at 10% 20%, rgba(30, 58, 138, 0.6) 0%, transparent 65%)';
             } else if (viewName === 'account') {
                 glow.style.background = 'radial-gradient(circle at 80% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%)';
@@ -911,7 +884,6 @@
             }
         }
 
-        // Toggle between Paragraph Summary and Full Breakdown views on the results page
         function switchResultsTab(tab) {
             const pBtn = document.getElementById('tab-btn-paragraph');
             const bBtn = document.getElementById('tab-btn-breakdown');
@@ -931,7 +903,6 @@
             }
         }
 
-        // Copy text helper function for clipboard ("club board")
         function copyElementText(elementId, btnEl) {
             const textToCopy = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(textToCopy).then(() => {
@@ -960,7 +931,7 @@
             }
 
             if (currentUser.contractsRemaining <= 0) {
-                document.getElementById('paywall-modal').classList.remove('hidden');
+                switchView('pricing');
                 return;
             }
 
@@ -983,8 +954,6 @@
                 const parsed = JSON.parse(data.content);
                 
                 document.getElementById('doc-title-heading').innerText = parsed.docTitle || "CONTRACT BREAKDOWN";
-                
-                // Make the paragraph summary as rich and complete as possible
                 document.getElementById('box-1-text').innerText = parsed.executiveSummary || "Paragraph summary unavailable.";
                 document.getElementById('box-2-text').innerText = parsed.categories?.[1]?.content || "Financial details...";
                 document.getElementById('box-3-text').innerText = parsed.categories?.[2]?.content || "Timelines...";
@@ -1005,7 +974,6 @@
                 localStorage.setItem('dc_count', currentUser.summarisedCount);
                 updateUserUI();
 
-                // Always default back to the paragraph view first when new results load
                 switchResultsTab('paragraph');
                 switchView('results');
             } catch (err) {
