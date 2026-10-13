@@ -267,7 +267,7 @@
             ✓
         </div>
         <h2 class="apple-heading text-3xl font-bold text-white">You're All Set!</h2>
-        <p class="apple-body text-sm text-slate-300">Subscription confirmed. Progress bar complete. Launching your workspace...</p>
+        <p class="apple-body text-sm text-slate-300">Subscription confirmed. Progress bar complete. Launching your home...</p>
         <div class="w-48 bg-black/50 h-2 rounded-full overflow-hidden mx-auto border border-white/10">
             <div class="bg-blue-500 h-full w-full transition-all duration-1000"></div>
         </div>
@@ -295,7 +295,7 @@
                     <button onclick="openAuthModal('login')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Sign In</button>
                 </div>
                 <div id="nav-logged-in-actions" class="hidden items-center space-x-3">
-                    <button onclick="switchView('main')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Workspace</button>
+                    <button onclick="switchView('main')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Home</button>
                     <button onclick="switchView('account')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Account</button>
                 </div>
                 <button onclick="toggleMenuDrawer()" class="p-2 text-white hover:opacity-80 transition-opacity cursor-pointer relative z-50" aria-label="Open Menu">
@@ -323,7 +323,7 @@
                 </div>
                 <div class="mt-8 space-y-3">
                     <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome / Home</button>
-                    <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Contract Workspace</button>
+                    <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Home Dashboard</button>
                     <button onclick="switchView('account'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">My Account</button>
                     <button onclick="switchView('pricing'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing & Plans</button>
                     <button onclick="switchView('about'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">About, FAQ & How to Use</button>
@@ -338,7 +338,7 @@
         </div>
     </div>
 
-    <!-- WELCOME VIEW -->
+    <!-- WELCOME VIEW (EXPANDED WITH MORE INFORMATION & HOW TO GET STARTED BELOW PRICING) -->
     <div id="welcome-view" class="flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10 space-y-16">
         <div class="space-y-6 max-w-3xl mt-6">
             <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Next-Gen Legal Intelligence</span>
@@ -346,7 +346,7 @@
                 Understand Any Legal Contract in Seconds.
             </h1>
             <p class="apple-body text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto">
-                Double Check transforms complex legal agreements, terms of service, and contracts into plain-English summaries and instant 8-box risk breakdowns.
+                Double Check transforms complex legal agreements, terms of service, and contracts into plain-English summaries and instant 8-box risk breakdowns. Never sign blindly again.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                 <button onclick="openAuthModal('signup')" class="apple-button px-8 py-4 text-xs font-bold shadow-xl cursor-pointer">Get Started Free</button>
@@ -354,23 +354,129 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
-            <div class="glass-pane p-8 rounded-3xl space-y-3">
-                <h3 class="apple-heading text-lg font-bold text-white">1. Instant Analysis</h3>
-                <p class="text-xs apple-body text-slate-300 leading-relaxed">Upload PDFs, image scans, or paste contract text to extract key clauses instantly.</p>
+        <!-- EXTENDED FEATURE DETAILS & DOCUMENT COMPATIBILITY -->
+        <div class="w-full space-y-6 pt-4">
+            <h2 class="apple-heading text-2xl font-bold text-white">Built for Every Agreement You Encounter</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
+                <div class="glass-pane p-8 rounded-3xl space-y-3">
+                    <h3 class="apple-heading text-lg font-bold text-white">1. Instant Analysis</h3>
+                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Upload PDFs, image scans, or paste text to instantly parse complex clauses, payment deadlines, and fine print without delays.</p>
+                </div>
+                <div class="glass-pane p-8 rounded-3xl space-y-3">
+                    <h3 class="apple-heading text-lg font-bold text-white">2. Paragraph Summary</h3>
+                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Get a comprehensive, crystal clear plain-English overview paragraph explaining exactly what obligations you are taking on.</p>
+                </div>
+                <div class="glass-pane p-8 rounded-3xl space-y-3">
+                    <h3 class="apple-heading text-lg font-bold text-white">3. 8-Box Deep Breakdown</h3>
+                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Examine financial obligations, termination rules, IP ownership rights, and liability red flags in structured interactive tiles.</p>
+                </div>
             </div>
-            <div class="glass-pane p-8 rounded-3xl space-y-3">
-                <h3 class="apple-heading text-lg font-bold text-white">2. Paragraph Summary</h3>
-                <p class="text-xs apple-body text-slate-300 leading-relaxed">Get a comprehensive, crystal clear plain-English overview paragraph explaining exactly what you are signing.</p>
+
+            <!-- Additional Info Card -->
+            <div class="glass-pane p-8 rounded-3xl text-left space-y-4 border border-white/10">
+                <h3 class="apple-heading text-base font-bold text-white">Why Professionals Trust Double Check</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs apple-body text-slate-300">
+                    <div class="flex items-start space-x-2">
+                        <span class="text-blue-400 font-bold">✓</span>
+                        <span><strong>Bank-Grade Privacy:</strong> All uploaded files and contract terms are encrypted in transit and never stored or shared with third parties.</span>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <span class="text-blue-400 font-bold">✓</span>
+                        <span><strong>Universal Compatibility:</strong> Works seamlessly with lease agreements, employment contracts, NDAs, SaaS terms, and contractor agreements.</span>
+                    </div>
+                </div>
             </div>
-            <div class="glass-pane p-8 rounded-3xl space-y-3">
-                <h3 class="apple-heading text-lg font-bold text-white">3. 8-Box Deep Breakdown</h3>
-                <p class="text-xs apple-body text-slate-300 leading-relaxed">Examine risk radars, financial obligations, and termination rules in detail.</p>
+        </div>
+
+        <!-- Pricing Section -->
+        <div id="pricing-section" class="w-full space-y-8 pt-6">
+            <h2 class="apple-heading text-3xl font-bold text-white">Transparent Plans</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
+                    <div>
+                        <h3 class="apple-heading text-xl font-bold text-white">Free Trial</h3>
+                        <p class="text-3xl font-bold mt-2 text-white">$0 <span class="text-xs font-normal apple-body">/ 30 days</span></p>
+                        <ul class="text-xs apple-body space-y-2 mt-4 text-slate-300">
+                            <li>✓ 3 contract summaries</li>
+                            <li>✓ Full 8-Box Breakdown</li>
+                        </ul>
+                    </div>
+                    <button onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Get Started</button>
+                </div>
+
+                <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
+                    <div>
+                        <h3 class="apple-heading text-xl font-bold text-white">Base Plan</h3>
+                        <p class="text-3xl font-bold mt-2 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
+                        <ul class="text-xs apple-body space-y-2 mt-4 text-slate-300">
+                            <li>✓ 5 summaries / month</li>
+                            <li>✓ Core Breakdown (Boxes 1–4)</li>
+                        </ul>
+                    </div>
+                    <button onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Select Base Plan</button>
+                </div>
+
+                <div class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between bg-slate-800">
+                    <div>
+                        <h3 class="apple-heading text-xl font-bold text-white">Pro Plan</h3>
+                        <p class="text-3xl font-bold mt-2 text-white">$29 <span class="text-xs font-normal apple-body">/ month</span></p>
+                        <ul class="text-xs apple-body space-y-2 mt-4 text-slate-200">
+                            <li>✓ 30 summaries / month</li>
+                            <li>✓ Full 8-Box Breakdown</li>
+                            <li>✓ Full Risk Radar & Deep Analysis</li>
+                        </ul>
+                    </div>
+                    <button onclick="openAuthModal('signup')" class="apple-button mt-8 w-full py-3 text-xs font-bold">Select Pro Plan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOW TO GET STARTED SECTION (POSITIONED BELOW PRICING) -->
+        <div id="how-to-get-started-section" class="w-full space-y-6 pt-10 border-t border-white/10 text-left">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Simple 3-Step Process</span>
+                <h2 class="apple-heading text-2xl sm:text-3xl font-bold text-white">How to Get Started with Double Check</h2>
+                <p class="apple-body text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">From signup to complete legal clarity in under 60 seconds.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                <div class="glass-pane p-8 rounded-3xl space-y-3 relative">
+                    <span class="text-2xl font-bold text-blue-400 block">01</span>
+                    <h3 class="apple-heading text-base font-bold text-white">Create Your Account</h3>
+                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Sign up with your email, accept our privacy terms, and select your preferred membership plan (Free Trial, Base, or Pro).</p>
+                </div>
+
+                <div class="glass-pane p-8 rounded-3xl space-y-3 relative">
+                    <span class="text-2xl font-bold text-blue-400 block">02</span>
+                    <h3 class="apple-heading text-base font-bold text-white">Upload or Paste Document</h3>
+                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Drop your PDF, upload an image scan, or paste contract terms directly into your secure Home workspace.</p>
+                </div>
+
+                <div class="glass-pane p-8 rounded-3xl space-y-3 relative">
+                    <span class="text-2xl font-bold text-blue-400 block">03</span>
+                    <h3 class="apple-heading text-base font-bold text-white">Review & Copy Insights</h3>
+                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Read your plain-English paragraph summary, check financial and liability breakdowns, and copy text to your clipboard anytime.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div id="faq-section" class="w-full max-w-3xl space-y-6 text-left pt-6">
+            <h2 class="apple-heading text-2xl font-bold text-white text-center">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                <div class="glass-pane p-6 rounded-2xl">
+                    <h4 class="font-bold text-white text-sm">Is my contract data kept private?</h4>
+                    <p class="text-xs apple-body text-slate-300 mt-1">Yes, all documents are encrypted in transit and never stored or shared with third parties.</p>
+                </div>
+                <div class="glass-pane p-6 rounded-2xl">
+                    <h4 class="font-bold text-white text-sm">Does this replace formal legal counsel?</h4>
+                    <p class="text-xs apple-body text-slate-300 mt-1">No, Double Check provides AI-generated summaries for informational purposes and does not constitute formal legal advice.</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN CONTRACT WORKSPACE -->
+    <!-- MAIN CONTRACT WORKSPACE (RENAMED TO HOME) -->
     <div id="main-view" class="hidden flex-1 flex flex-col px-6 py-10 max-w-4xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
         <h1 class="apple-heading text-3xl sm:text-5xl font-semibold tracking-tight text-white max-w-2xl mt-4">
             Summarise Any Legal Document.
@@ -403,7 +509,7 @@
         </button>
     </div>
 
-    <!-- REFINED LOADING STATE WITH DYNAMIC STEP MESSAGES -->
+    <!-- LOADING STATE -->
     <div id="loading-view" class="hidden flex-1 flex flex-col items-center justify-center px-6 max-w-xl mx-auto w-full text-center animate-fade-in py-24 relative z-10 space-y-4">
         <div class="w-12 h-12 rounded-full border-2 border-white border-t-transparent spin-smooth mx-auto"></div>
         <h2 id="loading-status-text" class="apple-heading text-lg font-semibold text-white transition-all duration-300">Scanning contract clauses...</h2>
@@ -413,7 +519,7 @@
         <p class="apple-body text-xs text-slate-400">Analyzing terms with neural legal intelligence...</p>
     </div>
 
-    <!-- RESULTS VIEW WITH EXPORT TOOLS & GATED BOXES -->
+    <!-- RESULTS VIEW -->
     <div id="results-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-6xl mx-auto w-full animate-fade-in text-left relative z-10">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-white/10 pb-6 gap-4">
             <div>
@@ -421,7 +527,6 @@
                 <h2 id="doc-title-heading" class="apple-heading text-2xl font-bold mt-1 text-white">Contract Breakdown</h2>
             </div>
             <div class="flex items-center space-x-3">
-                <!-- ONE-CLICK EXPORT ACTIONS -->
                 <button onclick="copyElementText('box-1-text', this)" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer flex items-center space-x-1.5">
                     <span>Copy Summary to Clipboard</span>
                 </button>
@@ -457,7 +562,6 @@
 
         <div id="results-breakdown-container" class="hidden space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Box 2 -->
                 <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-3">
@@ -468,7 +572,6 @@
                     </div>
                 </div>
 
-                <!-- Box 3 -->
                 <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-3">
@@ -479,7 +582,6 @@
                     </div>
                 </div>
 
-                <!-- Box 4 -->
                 <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-3">
@@ -490,7 +592,6 @@
                     </div>
                 </div>
 
-                <!-- Box 5 (Gated for Base Plan) -->
                 <div id="box-5-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
                     <div id="box-5-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                         <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -506,7 +607,6 @@
                     </div>
                 </div>
 
-                <!-- Box 6 (Gated for Base Plan) -->
                 <div id="box-6-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
                     <div id="box-6-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                         <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -522,7 +622,6 @@
                     </div>
                 </div>
 
-                <!-- Box 7 (Gated for Base Plan) -->
                 <div id="box-7-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
                     <div id="box-7-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                         <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -538,7 +637,6 @@
                     </div>
                 </div>
 
-                <!-- Box 8 (Gated for Base Plan) -->
                 <div id="box-8-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between md:col-span-2">
                     <div id="box-8-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
                         <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -579,7 +677,7 @@
                 <button onclick="switchView('pricing')" class="apple-button px-6 py-3 text-xs">Change Plan</button>
             </div>
         </div>
-        <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Workspace</button>
+        <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Home</button>
     </div>
 
     <!-- PRICING VIEW -->
@@ -634,7 +732,7 @@
         <h2 class="apple-heading text-3xl font-bold text-white">About & How to Use</h2>
         <div class="glass-pane p-8 rounded-3xl space-y-6 text-xs apple-body text-slate-300 leading-relaxed">
             <ol class="list-decimal pl-4 space-y-1.5 text-slate-200">
-                <li>Upload a PDF document, image scan, or paste legal text on the workspace.</li>
+                <li>Upload a PDF document, image scan, or paste legal text on your Home dashboard.</li>
                 <li>Click <strong>Summarise Contract</strong> to review the comprehensive plain-English paragraph summary first.</li>
                 <li>Use the toggle slider to explore detailed risk breakdowns and copy text to your clipboard anytime.</li>
             </ol>
@@ -890,7 +988,6 @@
             location.reload();
         }
 
-        // REFINEMENT 1: FRONTEND-GATED 8-BOX RENDERING (BASE VS. PRO)
         function updateUserUI() {
             const email = currentUser.email;
             const isLoggedIn = Boolean(email);
@@ -923,7 +1020,6 @@
                 currentUser.summarisedCount = accounts[currentUser.email].summarisedCount;
             }
 
-            // If user is on Base plan, lock boxes 5-8 with specific CTA button. Pro and Trial see boxes 5-8 unlocked.
             const isBasePlan = currentUser.plan === 'base';
             for (let i = 5; i <= 8; i++) {
                 const lock = document.getElementById(`box-${i}-lock`);
@@ -995,7 +1091,6 @@
             }
         }
 
-        // REFINEMENT 4: ONE-CLICK EXPORT ACTION TOOLS
         function copyElementText(elementId, btnEl) {
             const textToCopy = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(textToCopy).then(() => {
@@ -1011,12 +1106,10 @@
             });
         }
 
-        // REFINEMENT 3: CONSUMER-FRIENDLY ERROR HANDLING
         function showFriendlyError(message) {
             alert("Double Check Notice: " + message);
         }
 
-        // REFINEMENT 2: ENGAGING LOADING & PROGRESS STATES WITH STEP-BY-STEP MESSAGES
         async function handleLlmAnalysis() {
             if (!currentUser.email) {
                 openAuthModal('login');
@@ -1036,7 +1129,6 @@
 
             switchView('loading');
 
-            // Dynamic Step-by-Step Progress Simulation
             const statusEl = document.getElementById('loading-status-text');
             const barFill = document.getElementById('loading-bar-fill');
 
