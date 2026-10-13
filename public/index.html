@@ -73,13 +73,14 @@
         animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
 
-      @keyframes glowExpand {
-        0% { clip-path: circle(0% at 90% 30%); opacity: 0.2; }
-        100% { clip-path: circle(150% at 90% 30%); opacity: 1; }
+      /* Slide in animation from the right side */
+      @keyframes slideInRight {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
       }
 
-      .menu-glow-animation {
-        animation: glowExpand 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      .menu-slide-right {
+        animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
 
       .spin-smooth {
@@ -105,14 +106,30 @@
         height: 100vh;
         pointer-events: none;
         z-index: 0;
-        transition: opacity 0.2s ease, background 0.5s ease;
+        transition: opacity 0.3s ease, background 0.5s ease;
+      }
+
+      /* Dynamic Navigation Bar styling for smooth fade-in on scroll */
+      #top-navbar {
+        transition: background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+        background-color: rgba(11, 15, 25, 0);
+        border-bottom: 1px solid rgba(255, 255, 255, 0);
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+      }
+
+      #top-navbar.scrolled {
+        background-color: rgba(11, 15, 25, 0.75);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
       }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
-    <div id="bg-glow" style="background: radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.5) 0%, transparent 65%); opacity: 0.6;"></div>
+    <div id="bg-glow" style="background: radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%); opacity: 0.6;"></div>
 
     <!-- AUTHENTICATION MODAL (LOGIN / SIGNUP) -->
     <div id="auth-gate-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/75 backdrop-blur-md px-4 overflow-y-auto py-10">
@@ -263,8 +280,8 @@
         </div>
     </div>
 
-    <!-- PERSISTENT TOP NAVIGATION BAR -->
-    <nav class="sticky top-0 z-40 w-full py-4 px-6 glass-pane border-b border-white/10">
+    <!-- PERSISTENT TOP NAVIGATION BAR WITH DYNAMIC DISSOLVE/BLUR ON SCROLL -->
+    <nav id="top-navbar" class="sticky top-0 z-40 w-full py-4 px-6">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('welcome')">
                 <svg class="w-9 h-11 text-blue-500 group-hover:scale-105 transition-transform" viewBox="0 0 24 30" fill="currentColor">
@@ -288,7 +305,6 @@
                     <button onclick="switchView('main')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Workspace</button>
                     <button onclick="switchView('account')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Account</button>
                 </div>
-                <!-- Three Menu Lines Under Which Glow Expands -->
                 <button onclick="toggleMenuDrawer()" class="p-2 text-white hover:opacity-80 transition-opacity cursor-pointer relative z-50" aria-label="Open Menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -300,10 +316,10 @@
         </div>
     </nav>
 
-    <!-- RIGHT-SIDE SLIDE-OUT DRAWER MENU WITH GLOW EXPAND ANIMATION -->
+    <!-- RIGHT-SIDE SLIDE-OUT DRAWER MENU (EXPLICITLY LOCKED TO THE RIGHT EDGE) -->
     <div id="slide-drawer" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onclick="toggleMenuDrawer()"></div>
-        <div id="drawer-panel" class="absolute right-0 top-0 bottom-0 h-full w-80 bg-[#0f172a] p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 relative overflow-hidden menu-glow-animation" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.99) 70%);">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleMenuDrawer()"></div>
+        <div id="drawer-panel" class="absolute right-0 top-0 bottom-0 h-full w-80 bg-slate-900/98 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 relative overflow-hidden menu-slide-right" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.99) 70%);">
             <div>
                 <div class="flex justify-between items-start pb-6 border-b border-white/10">
                     <div class="pr-6">
@@ -705,14 +721,23 @@
             }
         });
 
-        // Dynamic Scroll Glow Intensity
+        // Dynamic Scroll Glow & Dynamic Header Dissolve/Blur
         window.addEventListener('scroll', () => {
             const scrollTop = window.scrollY;
+            const navbar = document.getElementById('top-navbar');
+            
+            // Add frosted blur background to navbar when scrolling down past 30px
+            if (scrollTop > 30) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // Glow intensity adjustment
             const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
             const scrollFraction = maxScroll > 0 ? scrollTop / maxScroll : 0;
             const glow = document.getElementById('bg-glow');
             if (glow) {
-                // Brighter when scrolling down/middle, dimmer at extremes
                 const opacity = 0.4 + Math.sin(scrollFraction * Math.PI) * 0.4;
                 glow.style.opacity = opacity.toFixed(2);
             }
@@ -906,9 +931,9 @@
             const panel = document.getElementById('drawer-panel');
             if (drawer.classList.contains('hidden')) {
                 drawer.classList.remove('hidden');
-                panel.classList.add('menu-glow-animation');
+                panel.classList.add('menu-slide-right');
             } else {
-                panel.classList.remove('menu-glow-animation');
+                panel.classList.remove('menu-slide-right');
                 drawer.classList.add('hidden');
             }
         }
