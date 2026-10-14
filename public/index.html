@@ -97,8 +97,8 @@
       }
 
       .blur-overlay {
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         background: rgba(11, 15, 25, 0.88);
       }
 
@@ -141,7 +141,7 @@
 
     <div id="bg-glow" style="background: radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%); opacity: 0.6;"></div>
 
-    <!-- PERSISTENT ONBOARDING PROGRESS BAR (SEPARATED FROM HEADER) -->
+    <!-- PERSISTENT ONBOARDING PROGRESS BAR -->
     <div id="onboarding-progress-wrapper" class="hidden fixed top-0 left-0 right-0 z-50 bg-slate-900/98 border-b border-white/10 px-6 py-3 backdrop-blur-md animate-fade-in shadow-xl">
         <div class="max-w-3xl mx-auto flex flex-col space-y-1.5">
             <div class="flex justify-between items-center text-[11px] font-semibold uppercase tracking-wider text-slate-300">
@@ -239,7 +239,8 @@
                     <p class="text-3xl font-bold mt-3 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
                     <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
                         <li>✓ 5 summaries / month</li>
-                        <li>✓ Core Breakdown</li>
+                        <li>✓ Core Breakdown (Boxes 1–4)</li>
+                        <li class="text-amber-300 text-[11px] pt-2">⚠️ Boxes 5–8 Locked</li>
                     </ul>
                 </div>
                 <button onclick="completeOnboardingPlan('base')" class="apple-button-secondary mt-8 w-full py-3 text-xs cursor-pointer">Select Base Plan</button>
@@ -252,6 +253,7 @@
                     <ul class="text-xs apple-body space-y-2 mt-5 text-slate-200">
                         <li>✓ 30 summaries / month</li>
                         <li>✓ Full 8-Box Breakdown</li>
+                        <li>✓ Full Risk Radar & Deep Analysis</li>
                     </ul>
                 </div>
                 <button onclick="completeOnboardingPlan('pro')" class="apple-button mt-8 w-full py-3 text-xs font-bold cursor-pointer">Select Pro Plan</button>
@@ -265,13 +267,13 @@
             ✓
         </div>
         <h2 class="apple-heading text-3xl font-bold text-white">You're All Set!</h2>
-        <p class="apple-body text-sm text-slate-300">Subscription confirmed. Progress bar complete. Launching your workspace...</p>
+        <p class="apple-body text-sm text-slate-300">Subscription confirmed. Progress bar complete. Launching your home...</p>
         <div class="w-48 bg-black/50 h-2 rounded-full overflow-hidden mx-auto border border-white/10">
             <div class="bg-blue-500 h-full w-full transition-all duration-1000"></div>
         </div>
     </div>
 
-    <!-- FLOATING LONG HEADER WIDGET (HIDDEN DURING ONBOARDING/SIGNUP) -->
+    <!-- FLOATING LONG HEADER WIDGET -->
     <nav id="top-navbar" class="fixed top-4 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-5xl py-3 px-6 rounded-2xl">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('welcome')">
@@ -289,11 +291,12 @@
             <div class="flex items-center space-x-4">
                 <div id="nav-logged-out-actions" class="flex items-center space-x-3">
                     <button onclick="switchView('welcome'); scrollToSection('pricing-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block">Pricing</button>
+                    <button onclick="switchView('welcome'); scrollToSection('terms-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block">Terms</button>
                     <button onclick="switchView('welcome'); scrollToSection('faq-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block">FAQ</button>
                     <button onclick="openAuthModal('login')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Sign In</button>
                 </div>
                 <div id="nav-logged-in-actions" class="hidden items-center space-x-3">
-                    <button onclick="switchView('main')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Workspace</button>
+                    <button onclick="switchView('main')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Home</button>
                     <button onclick="switchView('account')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Account</button>
                 </div>
                 <button onclick="toggleMenuDrawer()" class="p-2 text-white hover:opacity-80 transition-opacity cursor-pointer relative z-50" aria-label="Open Menu">
@@ -307,44 +310,41 @@
         </div>
     </nav>
 
-    <!-- RIGHT-SIDE SLIDE-OUT DRAWER MENU -->
+    <!-- SLIDE-OUT DRAWER MENU (CONTEXT-AWARE: NO PERSONAL ACCOUNT DATA WHEN LOGGED OUT) -->
     <div id="slide-drawer" class="fixed inset-0 z-50 hidden flex justify-end">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleMenuDrawer()"></div>
         <div id="drawer-panel" class="relative h-full w-80 bg-slate-900/98 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 overflow-hidden menu-slide-right" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.99) 70%);">
             <div>
-                <div class="flex justify-between items-start pb-6 border-b border-white/10">
+                <div class="flex justify-between items-start pb-6 border-b border-white/10" id="drawer-header-container">
                     <div class="pr-6">
-                        <span class="font-semibold text-sm block truncate max-w-[150px] text-white" id="drawer-user-email">Guest User</span>
-                        <div class="text-xs apple-body mt-1 text-slate-300" id="drawer-usage-counter">Please sign in</div>
+                        <span class="font-semibold text-sm block text-white">Double Check</span>
+                        <div class="text-xs apple-body mt-1 text-slate-300">AI Legal Intelligence</div>
                     </div>
                     <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
                 </div>
-                <div class="mt-8 space-y-3">
-                    <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome / Home</button>
-                    <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Contract Workspace</button>
-                    <button onclick="switchView('account'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">My Account</button>
-                    <button onclick="switchView('pricing'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing & Plans</button>
-                    <button onclick="switchView('about'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">About, FAQ & How to Use</button>
-                    <button onclick="switchView('feedback'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Send Feedback</button>
-                    <button onclick="switchView('tos'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Terms of Service</button>
-                    <button onclick="switchView('privacy'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Privacy Policy</button>
+
+                <div class="mt-8 space-y-3" id="drawer-links-container">
+                    <!-- Populated dynamically via JS -->
                 </div>
             </div>
+            
             <div class="pt-6 border-t border-white/10">
-                <button id="drawer-auth-btn" onclick="openAuthModal('login'); toggleMenuDrawer();" class="apple-button w-full py-3 text-xs font-semibold">Sign In / Register</button>
+                <button id="drawer-auth-btn" onclick="openAuthModal('signup'); toggleMenuDrawer();" class="apple-button w-full py-3 text-xs font-semibold">Sign In / Register</button>
             </div>
         </div>
     </div>
 
-    <!-- WELCOME VIEW -->
+    <!-- WELCOME VIEW (COMPREHENSIVE HOMEPAGE WITH GOAL, HOW-TO, 3 PLANS, PRIVACY & TERMS) -->
     <div id="welcome-view" class="flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10 space-y-16">
+        
+        <!-- HERO SECTION -->
         <div class="space-y-6 max-w-3xl mt-6">
             <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Next-Gen Legal Intelligence</span>
             <h1 class="apple-heading text-4xl sm:text-6xl font-bold tracking-tight text-white leading-tight">
                 Understand Any Legal Contract in Seconds.
             </h1>
             <p class="apple-body text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto">
-                Double Check transforms complex legal agreements, terms of service, and contracts into plain-English summaries and instant 8-box risk breakdowns.
+                Double Check transforms complex legal agreements, terms of service, and dense contracts into plain-English summaries and instant 8-box risk breakdowns. Never sign blindly again.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                 <button onclick="openAuthModal('signup')" class="apple-button px-8 py-4 text-xs font-bold shadow-xl cursor-pointer">Get Started Free</button>
@@ -352,23 +352,163 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
-            <div class="glass-pane p-8 rounded-3xl space-y-3">
-                <h3 class="apple-heading text-lg font-bold text-white">1. Instant Analysis</h3>
-                <p class="text-xs apple-body text-slate-300 leading-relaxed">Upload PDFs, image scans, or paste contract text to extract key clauses instantly.</p>
+        <!-- WEBSITE GOAL SECTION -->
+        <div class="w-full space-y-6 pt-6">
+            <div class="glass-pane p-8 rounded-3xl text-left space-y-4 border border-white/10">
+                <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full uppercase tracking-wider">Our Mission & Goal</span>
+                <h2 class="apple-heading text-2xl font-bold text-white">Why Double Check Exists</h2>
+                <p class="text-xs sm:text-sm apple-body text-slate-300 leading-relaxed">
+                    Legal documents are deliberately written to confuse, protect corporations, and hide unfair liabilities in dense fine print. Our goal at Double Check is to level the playing field. We empower everyday individuals, freelancers, tenants, and business owners with instant neural-AI intelligence to instantly expose hidden financial traps, unfair termination rules, and onerous obligations before you ever put pen to paper or click "I Agree".
+                </p>
             </div>
-            <div class="glass-pane p-8 rounded-3xl space-y-3">
-                <h3 class="apple-heading text-lg font-bold text-white">2. Paragraph Summary</h3>
-                <p class="text-xs apple-body text-slate-300 leading-relaxed">Get a comprehensive, crystal clear plain-English overview paragraph explaining exactly what you are signing.</p>
+        </div>
+
+        <!-- HOW TO USE IT SECTION -->
+        <div id="how-to-get-started-section" class="w-full space-y-6 pt-6 text-left">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Simple 3-Step Process</span>
+                <h2 class="apple-heading text-2xl sm:text-3xl font-bold text-white">How to Use Double Check</h2>
+                <p class="apple-body text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">From signup to complete legal clarity in under 60 seconds.</p>
             </div>
-            <div class="glass-pane p-8 rounded-3xl space-y-3">
-                <h3 class="apple-heading text-lg font-bold text-white">3. 8-Box Deep Breakdown</h3>
-                <p class="text-xs apple-body text-slate-300 leading-relaxed">Examine risk radars, financial obligations, and termination rules in detail.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                <div class="glass-pane p-8 rounded-3xl space-y-3 relative">
+                    <span class="text-2xl font-bold text-blue-400 block">01</span>
+                    <h3 class="apple-heading text-base font-bold text-white">Create Your Account</h3>
+                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Sign up with your email, agree to our privacy terms, and select your preferred membership tier to activate your secure AI credits instantly.</p>
+                </div>
+
+                <div class="glass-pane p-8 rounded-3xl space-y-3 relative">
+                    <span class="text-2xl font-bold text-blue-400 block">02</span>
+                    <h3 class="apple-heading text-base font-bold text-white">Upload or Paste Document</h3>
+                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Drop your PDF file, upload an image scan of physical contract pages, or paste raw agreement text directly into your secure workspace.</p>
+                </div>
+
+                <div class="glass-pane p-8 rounded-3xl space-y-3 relative">
+                    <span class="text-2xl font-bold text-blue-400 block">03</span>
+                    <h3 class="apple-heading text-base font-bold text-white">Review & Copy Insights</h3>
+                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Read your crystal-clear paragraph overview, explore the 8-box risk breakdown, copy summaries to your clipboard, or print executive reports.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- THE 3 PLANS & WHAT THEY COME WITH -->
+        <div id="pricing-section" class="w-full space-y-8 pt-6">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Pricing & Membership Tiers</span>
+                <h2 class="apple-heading text-3xl font-bold text-white">Transparent Plans & Features</h2>
+                <p class="apple-body text-xs sm:text-sm text-slate-300 max-w-lg mx-auto">Choose the tier that matches your legal review needs. No hidden fees, cancel anytime.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                <!-- Free Trial Plan -->
+                <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded-full">No Risk</span>
+                        <h3 class="apple-heading text-xl font-bold text-white mt-3">Free Trial</h3>
+                        <p class="text-3xl font-bold mt-2 text-white">$0 <span class="text-xs font-normal apple-body">/ 30 days</span></p>
+                        <ul class="text-xs apple-body space-y-2.5 mt-6 text-slate-300">
+                            <li>✓ 3 contract summaries included</li>
+                            <li>✓ Full Paragraph Summary Overview</li>
+                            <li>✓ Complete 8-Box Breakdown Access</li>
+                            <li>✓ Instant PDF and image uploads</li>
+                            <li>✓ Clipboard copy & export tools</li>
+                        </ul>
+                    </div>
+                    <button onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
+                </div>
+
+                <!-- Base Plan -->
+                <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-700 text-slate-200 px-2.5 py-1 rounded-full">Starter</span>
+                        <h3 class="apple-heading text-xl font-bold text-white mt-3">Base Plan</h3>
+                        <p class="text-3xl font-bold mt-2 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
+                        <ul class="text-xs apple-body space-y-2.5 mt-6 text-slate-300">
+                            <li>✓ 5 summaries per month</li>
+                            <li>✓ Core Breakdown (Boxes 1–4: Finances, Deadlines, Duties)</li>
+                            <li class="text-amber-300 text-[11px] pt-1">⚠️ Boxes 5–8 Locked (Risk Radar requires Pro)</li>
+                            <li>✓ Standard email support</li>
+                            <li>✓ Secure cloud history</li>
+                        </ul>
+                    </div>
+                    <button onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base Plan</button>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between shadow-xl bg-slate-800">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-blue-500 text-white px-2.5 py-1 rounded-full">Most Popular</span>
+                        <h3 class="apple-heading text-xl font-bold text-white mt-3">Pro Plan</h3>
+                        <p class="text-3xl font-bold mt-2 text-white">$29 <span class="text-xs font-normal apple-body">/ month</span></p>
+                        <ul class="text-xs apple-body space-y-2.5 mt-6 text-slate-200">
+                            <li>✓ 30 summaries per month</li>
+                            <li>✓ Full 8-Box Breakdown Unlocked</li>
+                            <li>✓ Full Risk Radar & Deep Analysis (Liabilities, Exit Rules, IP Rights)</li>
+                            <li>✓ Plain-English Legal Glossary tile</li>
+                            <li>✓ Priority neural processing & support</li>
+                        </ul>
+                    </div>
+                    <button onclick="openAuthModal('signup')" class="apple-button mt-8 w-full py-3 text-xs font-bold cursor-pointer">Select Pro Plan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATA PRIVACY & SECURITY GUARANTEE -->
+        <div class="w-full space-y-6 pt-6 text-left">
+            <div class="glass-pane p-8 rounded-3xl space-y-4 border border-white/10">
+                <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full uppercase tracking-wider">Privacy & Confidentiality</span>
+                <h2 class="apple-heading text-2xl font-bold text-white">Your Data Security is Guaranteed</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs apple-body text-slate-300">
+                    <div class="space-y-1.5">
+                        <strong class="text-white block">🔒 End-to-End Encryption</strong>
+                        <p>All contracts, document scans, and text inputs transmitted to Double Check are encrypted in transit using bank-grade SSL/TLS protocols.</p>
+                    </div>
+                    <div class="space-y-1.5">
+                        <strong class="text-white block">🛡️ Never Sold or Shared</strong>
+                        <p>We adhere strictly to GDPR data protection guidelines. Your contract contents are processed solely to generate your summary and are never sold, monetized, or shared with third parties.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TERMS & CONDITIONS AND LEGAL DISCLAIMER SECTION -->
+        <div id="terms-section" class="w-full space-y-6 text-left pt-6 border-t border-white/10">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Legal Framework</span>
+                <h2 class="apple-heading text-2xl sm:text-3xl font-bold text-white">Terms & Conditions / Legal Notice</h2>
+                <p class="apple-body text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">Please review our complete terms before registering or purchasing a subscription.</p>
+            </div>
+
+            <div class="glass-pane p-8 rounded-3xl space-y-4 text-xs apple-body text-slate-300 leading-relaxed">
+                <p><strong>1. Informational Purpose Only:</strong> Double Check provides AI-generated contract summaries and risk analyses for informational and educational purposes only. Our platform does not constitute formal legal counsel, attorney-client privilege, or professional legal advice. Always consult a qualified attorney for critical legal matters.</p>
+                <p><strong>2. User Accounts & Billing:</strong> Users must provide accurate email credentials during registration. Subscriptions (Base and Pro tiers) are billed on a recurring monthly basis and can be managed or cancelled at any time directly through your account dashboard.</p>
+                <p><strong>3. Fair Use & Limitations:</strong> Each subscription tier includes a specific monthly summary allowance (e.g., 5 for Base, 30 for Pro). Unused summaries do not roll over to subsequent billing cycles.</p>
+                <p><strong>4. Intellectual Property:</strong> All software architecture, user interface design, and branding associated with Double Check are the exclusive property of Double Check LLC.</p>
+            </div>
+        </div>
+
+        <!-- FREQUENTLY ASKED QUESTIONS -->
+        <div id="faq-section" class="w-full space-y-6 text-left pt-6">
+            <h2 class="apple-heading text-2xl font-bold text-white text-center">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                <div class="glass-pane p-6 rounded-2xl space-y-1">
+                    <h4 class="font-bold text-white text-sm">Is my contract data kept private?</h4>
+                    <p class="text-xs apple-body text-slate-300">Yes, all documents are encrypted in transit and never stored or shared with third parties.</p>
+                </div>
+                <div class="glass-pane p-6 rounded-2xl space-y-1">
+                    <h4 class="font-bold text-white text-sm">Does this replace formal legal counsel?</h4>
+                    <p class="text-xs apple-body text-slate-300">No, Double Check provides AI-generated summaries for informational purposes and does not constitute formal legal advice.</p>
+                </div>
+                <div class="glass-pane p-6 rounded-2xl space-y-1">
+                    <h4 class="font-bold text-white text-sm">Can I cancel my monthly subscription anytime?</h4>
+                    <p class="text-xs apple-body text-slate-300">Yes, you can manage or cancel your subscription at any time directly from your account page.</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN CONTRACT WORKSPACE -->
+    <!-- MAIN CONTRACT WORKSPACE (HOME) -->
     <div id="main-view" class="hidden flex-1 flex flex-col px-6 py-10 max-w-4xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
         <h1 class="apple-heading text-3xl sm:text-5xl font-semibold tracking-tight text-white max-w-2xl mt-4">
             Summarise Any Legal Document.
@@ -402,10 +542,13 @@
     </div>
 
     <!-- LOADING STATE -->
-    <div id="loading-view" class="hidden flex-1 flex flex-col items-center justify-center px-6 max-w-xl mx-auto w-full text-center animate-fade-in py-24 relative z-10">
-        <div class="w-10 h-10 rounded-full border-2 border-white border-t-transparent spin-smooth"></div>
-        <h2 id="loading-status-text" class="apple-heading text-lg font-semibold mt-5 text-white">Reading clauses...</h2>
-        <p class="apple-body text-xs mt-1">Extracting comprehensive summary & risk breakdown...</p>
+    <div id="loading-view" class="hidden flex-1 flex flex-col items-center justify-center px-6 max-w-xl mx-auto w-full text-center animate-fade-in py-24 relative z-10 space-y-4">
+        <div class="w-12 h-12 rounded-full border-2 border-white border-t-transparent spin-smooth mx-auto"></div>
+        <h2 id="loading-status-text" class="apple-heading text-lg font-semibold text-white transition-all duration-300">Scanning contract clauses...</h2>
+        <div class="w-64 bg-black/50 h-1.5 rounded-full overflow-hidden mx-auto border border-white/10">
+            <div id="loading-bar-fill" class="bg-blue-500 h-full transition-all duration-700 ease-out" style="width: 25%;"></div>
+        </div>
+        <p class="apple-body text-xs text-slate-400">Analyzing terms with neural legal intelligence...</p>
     </div>
 
     <!-- RESULTS VIEW -->
@@ -415,8 +558,14 @@
                 <span class="text-xs font-semibold uppercase tracking-wider apple-body">Executive Report</span>
                 <h2 id="doc-title-heading" class="apple-heading text-2xl font-bold mt-1 text-white">Contract Breakdown</h2>
             </div>
-            <div>
-                <button onclick="switchView('main')" class="apple-button px-5 py-2.5 text-xs font-medium cursor-pointer">New Scan</button>
+            <div class="flex items-center space-x-3">
+                <button onclick="copyElementText('box-1-text', this)" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer flex items-center space-x-1.5">
+                    <span>Copy Summary to Clipboard</span>
+                </button>
+                <button onclick="window.print()" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer flex items-center space-x-1.5">
+                    <span>Download PDF Report</span>
+                </button>
+                <button onclick="switchView('main')" class="apple-button px-5 py-2 text-xs font-medium cursor-pointer">New Scan</button>
             </div>
         </div>
 
@@ -435,7 +584,7 @@
             <div class="glass-pane p-8 rounded-3xl border border-white/10 relative shadow-xl">
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
                     <span class="apple-heading text-xs font-bold uppercase tracking-wider text-blue-400">Simplified Plain-English Summary</span>
-                    <button onclick="copyElementText('box-1-text', this)" class="apple-button-secondary px-4 py-1.5 text-[11px] font-medium flex items-center space-x-1.5 cursor-pointer">
+                    <button onclick="copyElementText('box-1-text', this)" class="apple-button-secondary px-4 py-1.5 text-[11px] font-medium cursor-pointer">
                         <span>Copy Summary</span>
                     </button>
                 </div>
@@ -477,8 +626,9 @@
 
                 <div id="box-5-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
                     <div id="box-5-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
-                        <h4 class="font-bold text-xs text-white mb-2">Upgrade to Unlock Full Breakdown</h4>
-                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
+                        <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <h4 class="font-bold text-xs text-white mb-2">Upgrade to Pro to Unlock Risk Radar & Deep Analysis</h4>
+                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px] cursor-pointer font-semibold">Upgrade to Pro</button>
                     </div>
                     <div>
                         <div class="flex justify-between items-center mb-3">
@@ -491,7 +641,9 @@
 
                 <div id="box-6-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
                     <div id="box-6-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
-                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
+                        <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <h4 class="font-bold text-xs text-white mb-2">Upgrade to Pro to Unlock Risk Radar & Deep Analysis</h4>
+                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px] cursor-pointer font-semibold">Upgrade to Pro</button>
                     </div>
                     <div>
                         <div class="flex justify-between items-center mb-3">
@@ -504,7 +656,9 @@
 
                 <div id="box-7-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
                     <div id="box-7-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
-                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
+                        <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <h4 class="font-bold text-xs text-white mb-2">Upgrade to Pro to Unlock Risk Radar & Deep Analysis</h4>
+                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px] cursor-pointer font-semibold">Upgrade to Pro</button>
                     </div>
                     <div>
                         <div class="flex justify-between items-center mb-3">
@@ -517,7 +671,9 @@
 
                 <div id="box-8-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between md:col-span-2">
                     <div id="box-8-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
-                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px]">Upgrade Plan</button>
+                        <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <h4 class="font-bold text-xs text-white mb-2">Upgrade to Pro to Unlock Risk Radar & Deep Analysis</h4>
+                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px] cursor-pointer font-semibold">Upgrade to Pro</button>
                     </div>
                     <div>
                         <div class="flex justify-between items-center mb-3">
@@ -553,7 +709,7 @@
                 <button onclick="switchView('pricing')" class="apple-button px-6 py-3 text-xs">Change Plan</button>
             </div>
         </div>
-        <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Workspace</button>
+        <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Home</button>
     </div>
 
     <!-- PRICING VIEW -->
@@ -581,7 +737,8 @@
                     <p class="text-3xl font-bold mt-3 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
                     <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
                         <li>✓ 5 summaries / month</li>
-                        <li>✓ Core Breakdown</li>
+                        <li>✓ Core Breakdown (Boxes 1–4)</li>
+                        <li class="text-amber-300 text-[11px] pt-1">⚠️ Boxes 5–8 Locked</li>
                     </ul>
                 </div>
                 <button onclick="openPaymentForm('base')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Select Base Plan</button>
@@ -594,6 +751,7 @@
                     <ul class="text-xs apple-body space-y-2 mt-5 text-slate-200">
                         <li>✓ 30 summaries / month</li>
                         <li>✓ Full 8-Box Breakdown</li>
+                        <li>✓ Full Risk Radar & Deep Analysis</li>
                     </ul>
                 </div>
                 <button onclick="openPaymentForm('pro')" class="apple-button mt-8 w-full py-3 text-xs font-bold">Select Pro Plan</button>
@@ -606,7 +764,7 @@
         <h2 class="apple-heading text-3xl font-bold text-white">About & How to Use</h2>
         <div class="glass-pane p-8 rounded-3xl space-y-6 text-xs apple-body text-slate-300 leading-relaxed">
             <ol class="list-decimal pl-4 space-y-1.5 text-slate-200">
-                <li>Upload a PDF document, image scan, or paste legal text on the workspace.</li>
+                <li>Upload a PDF document, image scan, or paste legal text on your Home dashboard.</li>
                 <li>Click <strong>Summarise Contract</strong> to review the comprehensive plain-English paragraph summary first.</li>
                 <li>Use the toggle slider to explore detailed risk breakdowns and copy text to your clipboard anytime.</li>
             </ol>
@@ -717,7 +875,6 @@
             document.getElementById('auth-gate-modal').classList.remove('hidden');
         }
 
-        // Account Memory & Duplicate Check Handler
         function handleSignupSubmit(event) {
             event.preventDefault();
             const email = document.getElementById('signup-email').value.trim().toLowerCase();
@@ -726,19 +883,18 @@
 
             const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
             if (!pwdRegex.test(pwd)) {
-                alert("Password must be at least 8 characters long and include a capital letter, a lowercase letter, and a number.");
+                showFriendlyError("Password must be at least 8 characters long and include a capital letter, a lowercase letter, and a number.");
                 return;
             }
 
             if (!termsChecked) {
-                alert("Please accept the Terms of Service to continue.");
+                showFriendlyError("Please accept the Terms of Service to continue.");
                 return;
             }
 
-            // Check existing accounts stored in localStorage
             let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
             if (accounts[email]) {
-                alert("An account with this email already exists. Please sign in instead.");
+                showFriendlyError("An account with this email already exists. Please sign in instead.");
                 document.getElementById('signup-email').value = '';
                 document.getElementById('signup-password').value = '';
                 switchAuthTab('login');
@@ -751,8 +907,6 @@
             currentUser.summarisedCount = 0;
 
             document.getElementById('auth-gate-modal').classList.add('hidden');
-
-            // Advance to Step 3: Membership Plan Selection
             updateOnboardingProgress(3, "Step 3 of 3: Membership Plan Selection", "66%");
             switchView('onboarding-plans');
         }
@@ -760,14 +914,12 @@
         function handleLoginSubmit(event) {
             event.preventDefault();
             const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const pwd = document.getElementById('login-password').value;
             if (!email) return;
 
             let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
             if (accounts[email]) {
                 loadAccountProfile(email);
             } else {
-                // If account doesn't exist yet in local memory, initialize it
                 currentUser.email = email;
                 currentUser.plan = email === 'theo_kay@icloud.com' ? 'pro' : 'trial';
                 currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : 3;
@@ -786,8 +938,6 @@
             currentUser.contractsRemaining = plan === 'pro' ? 30 : (plan === 'base' ? 5 : 3);
             
             saveAccountProfile();
-
-            // Advance progress to 100% and show celebration animation
             updateOnboardingProgress(3, "Subscription Confirmed", "100%");
             hideOnboardingProgress();
 
@@ -862,7 +1012,7 @@
         }
 
         function triggerPasswordReset() {
-            alert(`Password reset link sent to ${currentUser.email || 'your email'}.`);
+            showFriendlyError(`Password reset link sent to ${currentUser.email || 'your email'}.`);
         }
 
         function handleSignOut() {
@@ -870,6 +1020,7 @@
             location.reload();
         }
 
+        // CONTEXT-AWARE MENU DRAWER: NO PERSONAL ACCOUNT DATA WHEN LOGGED OUT
         function updateUserUI() {
             const email = currentUser.email;
             const isLoggedIn = Boolean(email);
@@ -877,21 +1028,60 @@
             const logoutActions = document.getElementById('nav-logged-out-actions');
             const loginActions = document.getElementById('nav-logged-in-actions');
             const drawerBtn = document.getElementById('drawer-auth-btn');
+            const drawerHeader = document.getElementById('drawer-header-container');
+            const drawerLinks = document.getElementById('drawer-links-container');
 
             if (isLoggedIn) {
                 logoutActions.classList.add('hidden');
                 loginActions.classList.remove('hidden');
+                
+                drawerHeader.innerHTML = `
+                    <div class="pr-6">
+                        <span class="font-semibold text-sm block truncate max-w-[150px] text-white">${email}</span>
+                        <div class="text-xs apple-body mt-1 text-slate-300">Contracts remaining: ${currentUser.contractsRemaining}</div>
+                    </div>
+                    <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
+                `;
+
+                drawerLinks.innerHTML = `
+                    <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome / Home</button>
+                    <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Home Dashboard</button>
+                    <button onclick="switchView('account'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">My Account</button>
+                    <button onclick="switchView('pricing'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing & Plans</button>
+                    <button onclick="switchView('about'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">About & FAQ</button>
+                    <button onclick="switchView('feedback'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Send Feedback</button>
+                    <button onclick="switchView('tos'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Terms of Service</button>
+                    <button onclick="switchView('privacy'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Privacy Policy</button>
+                `;
+
                 drawerBtn.innerText = "Sign Out";
                 drawerBtn.onclick = () => { handleSignOut(); toggleMenuDrawer(); };
             } else {
                 logoutActions.classList.remove('hidden');
                 loginActions.classList.add('hidden');
+
+                // Clean header for logged-out / welcome users
+                drawerHeader.innerHTML = `
+                    <div class="pr-6">
+                        <span class="font-semibold text-sm block text-white">Double Check</span>
+                        <div class="text-xs apple-body mt-1 text-slate-300">AI Legal Intelligence</div>
+                    </div>
+                    <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
+                `;
+
+                // Strictly general information links + signup action (no personal account details)
+                drawerLinks.innerHTML = `
+                    <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome Home</button>
+                    <button onclick="switchView('welcome'); scrollToSection('pricing-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing Plans</button>
+                    <button onclick="switchView('welcome'); scrollToSection('how-to-get-started-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">How to Get Started</button>
+                    <button onclick="switchView('welcome'); scrollToSection('terms-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Terms & Conditions</button>
+                    <button onclick="switchView('welcome'); scrollToSection('faq-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">FAQ & Support</button>
+                `;
+
                 drawerBtn.innerText = "Sign In / Register";
-                drawerBtn.onclick = () => { openAuthModal('login'); toggleMenuDrawer(); };
+                drawerBtn.onclick = () => { openAuthModal('signup'); toggleMenuDrawer(); };
             }
 
-            document.getElementById('drawer-user-email').innerText = isLoggedIn ? email : "Guest User";
-            document.getElementById('drawer-usage-counter').innerText = isLoggedIn ? `Contracts remaining: ${currentUser.contractsRemaining}` : "Please sign in";
             document.getElementById('acc-email').value = isLoggedIn ? email : "";
             document.getElementById('acc-count').value = currentUser.summarisedCount + " contracts";
             document.getElementById('acc-plan-label').innerText = currentUser.plan.toUpperCase() + " Plan";
@@ -902,12 +1092,15 @@
                 currentUser.summarisedCount = accounts[currentUser.email].summarisedCount;
             }
 
-            const isFullAccess = currentUser.plan === 'pro' || currentUser.plan === 'trial';
+            const isBasePlan = currentUser.plan === 'base';
             for (let i = 5; i <= 8; i++) {
                 const lock = document.getElementById(`box-${i}-lock`);
                 if (lock) {
-                    if (isFullAccess) lock.classList.add('hidden');
-                    else lock.classList.remove('hidden');
+                    if (isBasePlan) {
+                        lock.classList.remove('hidden');
+                    } else {
+                        lock.classList.add('hidden');
+                    }
                 }
             }
         }
@@ -943,6 +1136,7 @@
             const drawer = document.getElementById('slide-drawer');
             const panel = document.getElementById('drawer-panel');
             if (drawer.classList.contains('hidden')) {
+                updateUserUI();
                 drawer.classList.remove('hidden');
                 panel.classList.add('menu-slide-right');
             } else {
@@ -981,8 +1175,12 @@
                     btnEl.classList.remove('bg-blue-600', 'text-white');
                 }, 2000);
             }).catch(err => {
-                alert("Failed to copy text: " + err);
+                showFriendlyError("Failed to copy text to clipboard. Please check browser permissions.");
             });
+        }
+
+        function showFriendlyError(message) {
+            alert("Double Check Notice: " + message);
         }
 
         async function handleLlmAnalysis() {
@@ -993,7 +1191,7 @@
 
             const text = document.getElementById('legal-text-input').value;
             if (!text || text.trim().length < 20) {
-                alert("Document text is too short or missing.");
+                showFriendlyError("Document text is too short. Please provide a complete agreement or contract text for accurate AI breakdown.");
                 return;
             }
 
@@ -1003,6 +1201,20 @@
             }
 
             switchView('loading');
+
+            const statusEl = document.getElementById('loading-status-text');
+            const barFill = document.getElementById('loading-bar-fill');
+
+            statusEl.innerText = "Scanning contract clauses...";
+            barFill.style.width = "30%";
+
+            await new Promise(r => setTimeout(r, 800));
+            statusEl.innerText = "Extracting financial terms & deadlines...";
+            barFill.style.width = "65%";
+
+            await new Promise(r => setTimeout(r, 900));
+            statusEl.innerText = "Building Risk Radar & Deep Analysis...";
+            barFill.style.width = "90%";
 
             try {
                 const response = await fetch('/api/summarise', {
@@ -1016,7 +1228,10 @@
                 });
 
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Server error');
+                if (!response.ok) throw new Error(data.error || 'Server error occurred during analysis.');
+
+                barFill.style.width = "100%";
+                await new Promise(r => setTimeout(r, 300));
 
                 const parsed = JSON.parse(data.content);
                 
@@ -1043,7 +1258,7 @@
                 switchResultsTab('paragraph');
                 switchView('results');
             } catch (err) {
-                alert('AI Error: ' + err.message);
+                showFriendlyError(err.message || "Unable to process document at this time. Please check your text format and try again.");
                 switchView('main');
             }
         }
@@ -1062,8 +1277,11 @@
 
         function submitFeedback() {
             const val = document.getElementById('feedback-text').value.trim();
-            if (!val) return alert("Please enter feedback before sending.");
-            alert("Thank you! Your feedback has been sent.");
+            if (!val) {
+                showFriendlyError("Please enter feedback before submitting.");
+                return;
+            }
+            showFriendlyError("Thank you! Your feedback has been successfully sent.");
             document.getElementById('feedback-text').value = '';
             switchView('welcome');
         }
