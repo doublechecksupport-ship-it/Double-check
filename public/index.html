@@ -63,10 +63,6 @@
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
       }
 
-      .apple-btn-primary:active {
-        transform: scale(0.98);
-      }
-
       .apple-btn-secondary {
         background-color: rgba(0, 0, 0, 0.04);
         color: #1d1d1f;
@@ -80,10 +76,6 @@
       .apple-btn-secondary:hover {
         background-color: rgba(0, 0, 0, 0.08);
         transform: scale(1.01);
-      }
-
-      .apple-btn-secondary:active {
-        transform: scale(0.98);
       }
 
       #top-navbar {
@@ -290,10 +282,10 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        let supabase = null;
+        let supabaseClient = null;
         try {
             if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-                supabase = window.supabase.createClient(
+                supabaseClient = window.supabase.createClient(
                     "https://jxdnesvlwvmdbfwjzfga.supabase.co", 
                     "sb_publishable_t31ivgTLgaQK2T6WhXKB3Q_WvMZW0zr"
                 );
@@ -305,11 +297,10 @@
         let currentUser = { id: "", email: "", plan: "trial", contractsRemaining: 3 };
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Session Check
             async function initSession() {
-                if (supabase) {
+                if (supabaseClient) {
                     try {
-                        const { data: { session } } = await supabase.auth.getSession();
+                        const { data: { session } } = await supabaseClient.auth.getSession();
                         if (session && session.user) {
                             currentUser.id = session.user.id;
                             currentUser.email = session.user.email;
@@ -326,7 +317,6 @@
             }
             initSession();
 
-            // Event Listeners for Navigation & Modals
             document.getElementById('nav-logo-btn').addEventListener('click', () => switchView('welcome'));
             document.getElementById('hero-get-started-btn').addEventListener('click', () => openAuthModal('signup'));
             document.getElementById('hero-signin-btn').addEventListener('click', () => openAuthModal('login'));
@@ -403,12 +393,12 @@
                 alert("Please accept the Terms of Service.");
                 return;
             }
-            if (!supabase) {
+            if (!supabaseClient) {
                 alert("Supabase not initialized.");
                 return;
             }
 
-            const { data, error } = await supabase.auth.signUp({ email, password: pwd });
+            const { data, error } = await supabaseClient.auth.signUp({ email, password: pwd });
             if (error) {
                 alert(error.message);
                 return;
@@ -425,7 +415,7 @@
             const email = document.getElementById('login-email').value.trim().toLowerCase();
             const pwd = document.getElementById('login-password').value;
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 currentUser.email = email;
                 closeAuthModal();
                 updateUserUI();
@@ -433,7 +423,7 @@
                 return;
             }
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password: pwd });
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pwd });
             if (error) {
                 alert(error.message);
                 return;
@@ -448,7 +438,7 @@
         }
 
         async function handleSignOut() {
-            if (supabase) await supabase.auth.signOut();
+            if (supabaseClient) await supabaseClient.auth.signOut();
             location.reload();
         }
 
@@ -499,7 +489,7 @@
             }
             switchView('loading');
             try {
-                const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token : '';
+                const token = supabaseClient ? (await supabaseClient.auth.getSession()).data.session?.access_token : '';
                 const response = await fetch('/api/summarise', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
