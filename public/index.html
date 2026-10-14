@@ -285,10 +285,10 @@
         let supabaseClient = null;
         try {
             if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-                supabaseClient = window.supabase.createClient(
-                    "https://jxdnesvlwvmdbfwjzfga.supabase.co", 
-                    "sb_publishable_t31ivg1lGaqQK2T6WhXKB3Q_WvMZW..."
-                );
+                // Ensure your actual full public API key is inserted here without trailing dots/ellipses
+                const supabaseUrl = "https://jxdnesvlwvmdbfwjzfga.supabase.co";
+                const supabaseAnonKey = "YOUR_FULL_SUPABASE_ANON_KEY"; 
+                supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
             }
         } catch (e) {
             console.warn("Supabase init notice:", e);
