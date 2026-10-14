@@ -9,13 +9,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       :root {
-        --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
         background-color: #f5f5f7;
         color: #1d1d1f;
       }
 
       body {
-        font-family: var(--apple-font);
         overflow-x: hidden;
         background: #f5f5f7;
         min-height: 100vh;
@@ -25,28 +24,18 @@
       }
 
       .apple-heading {
-        font-family: var(--apple-font);
         font-weight: 600;
         letter-spacing: -0.02em;
         color: #1d1d1f;
       }
 
       .apple-body {
-        font-family: var(--apple-font);
         color: #86868b;
-      }
-
-      .apple-glass {
-        background: rgba(255, 255, 255, 0.82);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
       }
 
       .apple-card {
         background: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.08);
         border-radius: 24px;
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
         transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
@@ -123,15 +112,15 @@
         <div class="apple-card w-full max-w-md p-8 text-left bg-white relative animate-fade-in">
             <div class="flex items-center justify-between mb-6">
                 <span class="apple-heading text-lg font-semibold">Double Check Account</span>
-                <button type="button" onclick="closeAuthModal()" class="apple-body hover:text-black cursor-pointer text-sm font-medium transition-colors">✕</button>
+                <button type="button" id="modal-close-btn" class="apple-body hover:text-black cursor-pointer text-sm font-medium transition-colors">✕</button>
             </div>
 
             <div class="flex bg-black/5 p-1 rounded-xl mb-6 text-xs font-medium">
-                <button type="button" id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-2.5 rounded-lg bg-white text-black shadow-sm transition-all cursor-pointer">Sign In</button>
-                <button type="button" id="tab-signup-btn" onclick="switchAuthTab('signup')" class="flex-1 py-2.5 rounded-lg apple-body transition-all cursor-pointer">Register</button>
+                <button type="button" id="tab-login-btn" class="flex-1 py-2.5 rounded-lg bg-white text-black shadow-sm transition-all cursor-pointer">Sign In</button>
+                <button type="button" id="tab-signup-btn" class="flex-1 py-2.5 rounded-lg apple-body transition-all cursor-pointer">Register</button>
             </div>
 
-            <form id="form-login" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+            <form id="form-login" class="space-y-4">
                 <div>
                     <label class="text-[11px] font-semibold apple-body uppercase tracking-wider">Email Address</label>
                     <input type="email" id="login-email" required placeholder="name@example.com" class="w-full mt-1.5 p-3.5 bg-black/5 border border-black/10 rounded-2xl text-sm text-[#1d1d1f] focus:outline-none focus:border-black transition-all">
@@ -141,10 +130,10 @@
                     <input type="password" id="login-password" required placeholder="••••••••" class="w-full mt-1.5 p-3.5 bg-black/5 border border-black/10 rounded-2xl text-sm text-[#1d1d1f] focus:outline-none focus:border-black transition-all">
                 </div>
                 <button type="submit" class="apple-btn-primary w-full py-3.5 text-xs font-semibold cursor-pointer mt-2">Sign In</button>
-                <button type="button" onclick="closeAuthModal()" class="w-full text-center text-xs apple-body hover:text-black pt-2 cursor-pointer transition-colors">Cancel</button>
+                <button type="button" id="login-cancel-btn" class="w-full text-center text-xs apple-body hover:text-black pt-2 cursor-pointer transition-colors">Cancel</button>
             </form>
 
-            <form id="form-signup" onsubmit="handleSignupSubmit(event)" class="space-y-4" style="display: none;">
+            <form id="form-signup" class="space-y-4" style="display: none;">
                 <div>
                     <label class="text-[11px] font-semibold apple-body uppercase tracking-wider">Email Address</label>
                     <input type="email" id="signup-email" required placeholder="name@example.com" class="w-full mt-1.5 p-3.5 bg-black/5 border border-black/10 rounded-2xl text-sm text-[#1d1d1f] focus:outline-none focus:border-black transition-all">
@@ -159,26 +148,26 @@
                     </label>
                 </div>
                 <button type="submit" class="apple-btn-primary w-full py-3.5 text-xs font-semibold cursor-pointer mt-2">Create Account</button>
-                <button type="button" onclick="closeAuthModal()" class="w-full text-center text-xs apple-body hover:text-black pt-2 cursor-pointer transition-colors">Cancel</button>
+                <button type="button" id="signup-cancel-btn" class="w-full text-center text-xs apple-body hover:text-black pt-2 cursor-pointer transition-colors">Cancel</button>
             </form>
         </div>
     </div>
 
     <!-- TOP NAVBAR -->
     <nav id="top-navbar" class="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-5xl py-3 px-6 rounded-2xl flex items-center justify-between">
-        <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('welcome')">
+        <div id="nav-logo-btn" class="flex items-center space-x-3 cursor-pointer group">
             <span class="apple-heading font-semibold text-base tracking-tight">Double Check</span>
         </div>
         <div class="flex items-center space-x-4">
             <div id="nav-logged-out-actions" class="flex items-center space-x-3">
-                <button type="button" onclick="switchView('welcome'); scrollToSection('pricing-section');" class="text-xs font-medium apple-body hover:text-black px-3 py-2 cursor-pointer transition-colors hidden sm:inline-block">Pricing</button>
-                <button type="button" onclick="switchView('welcome'); scrollToSection('terms-section');" class="text-xs font-medium apple-body hover:text-black px-3 py-2 cursor-pointer transition-colors hidden sm:inline-block">Terms</button>
-                <button type="button" onclick="openAuthModal('login')" class="apple-btn-secondary px-5 py-2.5 text-xs font-medium cursor-pointer">Sign In</button>
+                <button type="button" id="nav-pricing-btn" class="text-xs font-medium apple-body hover:text-black px-3 py-2 cursor-pointer transition-colors hidden sm:inline-block">Pricing</button>
+                <button type="button" id="nav-terms-btn" class="text-xs font-medium apple-body hover:text-black px-3 py-2 cursor-pointer transition-colors hidden sm:inline-block">Terms</button>
+                <button type="button" id="nav-signin-btn" class="apple-btn-secondary px-5 py-2.5 text-xs font-medium cursor-pointer">Sign In</button>
             </div>
             <div id="nav-logged-in-actions" class="hidden items-center space-x-3">
-                <button type="button" onclick="switchView('main')" class="apple-btn-secondary px-4 py-2 text-xs font-medium cursor-pointer">Home</button>
-                <button type="button" onclick="switchView('account')" class="apple-btn-secondary px-4 py-2 text-xs font-medium cursor-pointer">Account</button>
-                <button type="button" onclick="handleSignOut()" class="apple-btn-secondary px-4 py-2 text-xs font-medium cursor-pointer">Sign Out</button>
+                <button type="button" id="nav-home-btn" class="apple-btn-secondary px-4 py-2 text-xs font-medium cursor-pointer">Home</button>
+                <button type="button" id="nav-account-btn" class="apple-btn-secondary px-4 py-2 text-xs font-medium cursor-pointer">Account</button>
+                <button type="button" id="nav-signout-btn" class="apple-btn-secondary px-4 py-2 text-xs font-medium cursor-pointer">Sign Out</button>
             </div>
         </div>
     </nav>
@@ -194,8 +183,8 @@
                 Transform complex legal agreements into crystal-clear plain-English summaries and instant risk breakdowns. Never sign blindly again.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <button type="button" onclick="openAuthModal('signup')" class="apple-btn-primary px-8 py-4 text-xs font-semibold shadow-md cursor-pointer">Get Started Free</button>
-                <button type="button" onclick="openAuthModal('login')" class="apple-btn-secondary px-8 py-4 text-xs font-semibold cursor-pointer">Sign In</button>
+                <button type="button" id="hero-get-started-btn" class="apple-btn-primary px-8 py-4 text-xs font-semibold shadow-md cursor-pointer">Get Started Free</button>
+                <button type="button" id="hero-signin-btn" class="apple-btn-secondary px-8 py-4 text-xs font-semibold cursor-pointer">Sign In</button>
             </div>
         </div>
 
@@ -216,7 +205,7 @@
                             <li class="flex items-center">✓ Complete 8-Box Breakdown Access</li>
                         </ul>
                     </div>
-                    <button type="button" onclick="openAuthModal('signup')" class="apple-btn-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
+                    <button type="button" class="pricing-signup-btn apple-btn-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
                 </div>
 
                 <div class="apple-card p-8 flex flex-col justify-between">
@@ -229,7 +218,7 @@
                             <li class="flex items-center">✓ Core Breakdown (Boxes 1–4)</li>
                         </ul>
                     </div>
-                    <button type="button" onclick="openAuthModal('signup')" class="apple-btn-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base Plan</button>
+                    <button type="button" class="pricing-signup-btn apple-btn-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base Plan</button>
                 </div>
 
                 <div class="apple-card p-8 border-2 border-[#1d1d1f] flex flex-col justify-between bg-white shadow-lg">
@@ -243,7 +232,7 @@
                             <li class="flex items-center">✓ Full Risk Radar & Deep Analysis</li>
                         </ul>
                     </div>
-                    <button type="button" onclick="openAuthModal('signup')" class="apple-btn-primary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Pro Plan</button>
+                    <button type="button" class="pricing-signup-btn apple-btn-primary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Pro Plan</button>
                 </div>
             </div>
         </div>
@@ -261,7 +250,7 @@
         <div class="apple-card mt-8 p-6 max-w-xl w-full text-left shadow-sm">
             <textarea id="legal-text-input" rows="7" placeholder="Paste agreement or contract terms here..." class="w-full bg-transparent text-xs sm:text-sm focus:outline-none resize-none text-[#1d1d1f] placeholder:text-[#86868b] font-normal"></textarea>
         </div>
-        <button type="button" onclick="handleLlmAnalysis()" class="apple-btn-primary mt-6 px-8 py-4 text-xs font-semibold w-full max-w-xl shadow-md cursor-pointer">Summarise Contract</button>
+        <button type="button" id="summarise-btn" class="apple-btn-primary mt-6 px-8 py-4 text-xs font-semibold w-full max-w-xl shadow-md cursor-pointer">Summarise Contract</button>
     </div>
 
     <!-- LOADING VIEW -->
@@ -274,7 +263,7 @@
     <div id="results-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full animate-fade-in text-left relative z-10 space-y-6">
         <div class="flex justify-between items-center border-b border-black/10 pb-4">
             <h2 id="doc-title-heading" class="apple-heading text-2xl font-semibold tracking-tight">Contract Breakdown</h2>
-            <button type="button" onclick="switchView('main')" class="apple-btn-primary px-5 py-2 text-xs font-semibold cursor-pointer">New Scan</button>
+            <button type="button" id="new-scan-btn" class="apple-btn-primary px-5 py-2 text-xs font-semibold cursor-pointer">New Scan</button>
         </div>
         <div class="apple-card p-8 space-y-4">
             <h3 class="text-xs font-semibold uppercase tracking-wider apple-body">Executive Summary</h3>
@@ -291,7 +280,7 @@
                 <input type="text" id="acc-email" readonly class="w-full mt-2 p-3.5 bg-black/5 border border-black/10 rounded-2xl text-sm text-[#1d1d1f] font-medium">
             </div>
         </div>
-        <button type="button" onclick="switchView('main')" class="apple-btn-secondary py-3 px-6 text-xs font-semibold w-36 cursor-pointer">← Back Home</button>
+        <button type="button" id="back-home-btn" class="apple-btn-secondary py-3 px-6 text-xs font-semibold w-36 cursor-pointer">← Back Home</button>
     </div>
 
     <!-- FOOTER -->
@@ -315,23 +304,63 @@
 
         let currentUser = { id: "", email: "", plan: "trial", contractsRemaining: 3 };
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            if (supabase) {
-                try {
-                    const { data: { session } } = await supabase.auth.getSession();
-                    if (session && session.user) {
-                        currentUser.id = session.user.id;
-                        currentUser.email = session.user.email;
-                        updateUserUI();
-                        switchView('main');
-                        return;
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Session Check
+            async function initSession() {
+                if (supabase) {
+                    try {
+                        const { data: { session } } = await supabase.auth.getSession();
+                        if (session && session.user) {
+                            currentUser.id = session.user.id;
+                            currentUser.email = session.user.email;
+                            updateUserUI();
+                            switchView('main');
+                            return;
+                        }
+                    } catch (err) {
+                        console.warn("Session check notice:", err);
                     }
-                } catch (err) {
-                    console.warn("Session check notice:", err);
                 }
+                updateUserUI();
+                switchView('welcome');
             }
-            updateUserUI();
-            switchView('welcome');
+            initSession();
+
+            // Event Listeners for Navigation & Modals
+            document.getElementById('nav-logo-btn').addEventListener('click', () => switchView('welcome'));
+            document.getElementById('hero-get-started-btn').addEventListener('click', () => openAuthModal('signup'));
+            document.getElementById('hero-signin-btn').addEventListener('click', () => openAuthModal('login'));
+            document.getElementById('nav-signin-btn').addEventListener('click', () => openAuthModal('login'));
+            document.getElementById('nav-home-btn').addEventListener('click', () => switchView('main'));
+            document.getElementById('nav-account-btn').addEventListener('click', () => switchView('account'));
+            document.getElementById('nav-signout-btn').addEventListener('click', handleSignOut);
+            
+            document.getElementById('nav-pricing-btn').addEventListener('click', () => {
+                switchView('welcome');
+                setTimeout(() => scrollToSection('pricing-section'), 50);
+            });
+            document.getElementById('nav-terms-btn').addEventListener('click', () => {
+                switchView('welcome');
+                setTimeout(() => scrollToSection('terms-section'), 50);
+            });
+
+            document.querySelectorAll('.pricing-signup-btn').forEach(btn => {
+                btn.addEventListener('click', () => openAuthModal('signup'));
+            });
+
+            document.getElementById('modal-close-btn').addEventListener('click', closeAuthModal);
+            document.getElementById('login-cancel-btn').addEventListener('click', closeAuthModal);
+            document.getElementById('signup-cancel-btn').addEventListener('click', closeAuthModal);
+
+            document.getElementById('tab-login-btn').addEventListener('click', () => switchAuthTab('login'));
+            document.getElementById('tab-signup-btn').addEventListener('click', () => switchAuthTab('signup'));
+
+            document.getElementById('form-login').addEventListener('submit', handleLoginSubmit);
+            document.getElementById('form-signup').addEventListener('submit', handleSignupSubmit);
+
+            document.getElementById('summarise-btn').addEventListener('click', handleLlmAnalysis);
+            document.getElementById('new-scan-btn').addEventListener('click', () => switchView('main'));
+            document.getElementById('back-home-btn').addEventListener('click', () => switchView('main'));
         });
 
         function switchAuthTab(tab) {
@@ -341,15 +370,15 @@
             const signupForm = document.getElementById('form-signup');
 
             if (tab === 'login') {
-                if (loginBtn) loginBtn.className = "flex-1 py-2.5 rounded-lg bg-white text-black shadow-sm transition-all cursor-pointer font-medium";
-                if (signupBtn) signupBtn.className = "flex-1 py-2.5 rounded-lg apple-body transition-all cursor-pointer font-medium";
-                if (loginForm) loginForm.style.display = 'block';
-                if (signupForm) signupForm.style.display = 'none';
+                loginBtn.className = "flex-1 py-2.5 rounded-lg bg-white text-black shadow-sm transition-all cursor-pointer font-medium";
+                signupBtn.className = "flex-1 py-2.5 rounded-lg apple-body transition-all cursor-pointer font-medium";
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
             } else {
-                if (signupBtn) signupBtn.className = "flex-1 py-2.5 rounded-lg bg-white text-black shadow-sm transition-all cursor-pointer font-medium";
-                if (loginBtn) loginBtn.className = "flex-1 py-2.5 rounded-lg apple-body transition-all cursor-pointer font-medium";
-                if (signupForm) signupForm.style.display = 'block';
-                if (loginForm) loginForm.style.display = 'none';
+                signupBtn.className = "flex-1 py-2.5 rounded-lg bg-white text-black shadow-sm transition-all cursor-pointer font-medium";
+                loginBtn.className = "flex-1 py-2.5 rounded-lg apple-body transition-all cursor-pointer font-medium";
+                signupForm.style.display = 'block';
+                loginForm.style.display = 'none';
             }
         }
 
@@ -366,15 +395,9 @@
 
         async function handleSignupSubmit(event) {
             event.preventDefault();
-            const emailInput = document.getElementById('signup-email');
-            const pwdInput = document.getElementById('signup-password');
-            const tosInput = document.getElementById('signup-tos');
-
-            if (!emailInput || !pwdInput || !tosInput) return;
-
-            const email = emailInput.value.trim().toLowerCase();
-            const pwd = pwdInput.value;
-            const terms = tosInput.checked;
+            const email = document.getElementById('signup-email').value.trim().toLowerCase();
+            const pwd = document.getElementById('signup-password').value;
+            const terms = document.getElementById('signup-tos').checked;
 
             if (!terms) {
                 alert("Please accept the Terms of Service.");
@@ -399,13 +422,8 @@
 
         async function handleLoginSubmit(event) {
             event.preventDefault();
-            const emailInput = document.getElementById('login-email');
-            const pwdInput = document.getElementById('login-password');
-
-            if (!emailInput || !pwdInput) return;
-
-            const email = emailInput.value.trim().toLowerCase();
-            const pwd = pwdInput.value;
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const pwd = document.getElementById('login-password').value;
 
             if (!supabase) {
                 currentUser.email = email;
@@ -454,7 +472,6 @@
             const target = document.getElementById(viewName + '-view');
             if (target) {
                 target.classList.remove('hidden');
-                // Force restart animation
                 target.classList.remove('animate-fade-in');
                 void target.offsetWidth;
                 target.classList.add('animate-fade-in');
