@@ -50,8 +50,6 @@
         border-radius: 980px;
         cursor: pointer;
         transition: all 0.25s ease;
-        position: relative;
-        z-index: 20;
       }
 
       .apple-button:hover {
@@ -66,8 +64,6 @@
         border-radius: 980px;
         cursor: pointer;
         transition: all 0.25s ease;
-        position: relative;
-        z-index: 20;
       }
 
       .apple-button-secondary:hover {
@@ -98,7 +94,7 @@
     <div id="bg-glow" style="background: radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%); opacity: 0.6;"></div>
 
     <!-- AUTHENTICATION MODAL -->
-    <div id="auth-gate-modal" style="display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); padding: 16px;">
+    <div id="auth-gate-modal" style="display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); padding: 16px;">
         <div class="glass-pane w-full max-w-md p-8 rounded-3xl shadow-2xl border border-white/10 text-left bg-slate-900/95 relative z-10">
             <div class="flex items-center space-x-3 mb-6">
                 <span class="apple-heading text-xl font-bold text-white">Double Check Account</span>
@@ -319,15 +315,15 @@
             const signupForm = document.getElementById('form-signup');
 
             if (tab === 'login') {
-                loginBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all cursor-pointer";
-                signupBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all cursor-pointer";
-                loginForm.style.display = 'block';
-                signupForm.style.display = 'none';
+                if (loginBtn) loginBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all cursor-pointer";
+                if (signupBtn) signupBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all cursor-pointer";
+                if (loginForm) loginForm.style.display = 'block';
+                if (signupForm) signupForm.style.display = 'none';
             } else {
-                signupBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all cursor-pointer";
-                loginBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all cursor-pointer";
-                signupForm.style.display = 'block';
-                loginForm.style.display = 'none';
+                if (signupBtn) signupBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all cursor-pointer";
+                if (loginBtn) loginBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all cursor-pointer";
+                if (signupForm) signupForm.style.display = 'block';
+                if (loginForm) loginForm.style.display = 'none';
             }
         }
 
@@ -344,9 +340,15 @@
 
         async function handleSignupSubmit(event) {
             event.preventDefault();
-            const email = document.getElementById('signup-email').value.trim().toLowerCase();
-            const pwd = document.getElementById('signup-password').value;
-            const terms = document.getElementById('signup-tos').checked;
+            const emailInput = document.getElementById('signup-email');
+            const pwdInput = document.getElementById('signup-password');
+            const tosInput = document.getElementById('signup-tos');
+
+            if (!emailInput || !pwdInput || !tosInput) return;
+
+            const email = emailInput.value.trim().toLowerCase();
+            const pwd = pwdInput.value;
+            const terms = tosInput.checked;
 
             if (!terms) {
                 alert("Please accept the Terms of Service.");
@@ -371,8 +373,13 @@
 
         async function handleLoginSubmit(event) {
             event.preventDefault();
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const pwd = document.getElementById('login-password').value;
+            const emailInput = document.getElementById('login-email');
+            const pwdInput = document.getElementById('login-password');
+
+            if (!emailInput || !pwdInput) return;
+
+            const email = emailInput.value.trim().toLowerCase();
+            const pwd = pwdInput.value;
 
             if (!supabase) {
                 alert("Supabase not initialized.");
@@ -429,7 +436,10 @@
                 openAuthModal('login');
                 return;
             }
-            const text = document.getElementById('legal-text-input').value;
+            const textInput = document.getElementById('legal-text-input');
+            if (!textInput) return;
+
+            const text = textInput.value;
             if (!text || text.trim().length < 20) {
                 alert("Please provide a complete contract text.");
                 return;
