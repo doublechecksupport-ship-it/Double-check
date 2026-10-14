@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Double Check - AI Legal Document Summariser</title>
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
       :root {
         --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -310,7 +312,7 @@
         </div>
     </nav>
 
-    <!-- SLIDE-OUT DRAWER MENU (CONTEXT-AWARE: NO PERSONAL ACCOUNT DATA WHEN LOGGED OUT) -->
+    <!-- SLIDE-OUT DRAWER MENU -->
     <div id="slide-drawer" class="fixed inset-0 z-50 hidden flex justify-end">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleMenuDrawer()"></div>
         <div id="drawer-panel" class="relative h-full w-80 bg-slate-900/98 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between border-l border-white/10 overflow-hidden menu-slide-right" style="background: linear-gradient(220deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.99) 70%);">
@@ -334,10 +336,8 @@
         </div>
     </div>
 
-    <!-- WELCOME VIEW (COMPREHENSIVE HOMEPAGE WITH GOAL, HOW-TO, 3 PLANS, PRIVACY & TERMS) -->
+    <!-- WELCOME VIEW -->
     <div id="welcome-view" class="flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10 space-y-16">
-        
-        <!-- HERO SECTION -->
         <div class="space-y-6 max-w-3xl mt-6">
             <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Next-Gen Legal Intelligence</span>
             <h1 class="apple-heading text-4xl sm:text-6xl font-bold tracking-tight text-white leading-tight">
@@ -352,7 +352,6 @@
             </div>
         </div>
 
-        <!-- WEBSITE GOAL SECTION -->
         <div class="w-full space-y-6 pt-6">
             <div class="glass-pane p-8 rounded-3xl text-left space-y-4 border border-white/10">
                 <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full uppercase tracking-wider">Our Mission & Goal</span>
@@ -363,7 +362,6 @@
             </div>
         </div>
 
-        <!-- HOW TO USE IT SECTION -->
         <div id="how-to-get-started-section" class="w-full space-y-6 pt-6 text-left">
             <div class="text-center space-y-2">
                 <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Simple 3-Step Process</span>
@@ -375,7 +373,7 @@
                 <div class="glass-pane p-8 rounded-3xl space-y-3 relative">
                     <span class="text-2xl font-bold text-blue-400 block">01</span>
                     <h3 class="apple-heading text-base font-bold text-white">Create Your Account</h3>
-                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Sign up with your email, agree to our privacy terms, and select your preferred membership tier to activate your secure AI credits instantly.</p>
+                    <p class="text-xs apple-body text-slate-300 leading-relaxed">Sign up with your email, confirm via email verification, and select your preferred membership tier to activate your AI credits instantly.</p>
                 </div>
 
                 <div class="glass-pane p-8 rounded-3xl space-y-3 relative">
@@ -392,7 +390,6 @@
             </div>
         </div>
 
-        <!-- THE 3 PLANS & WHAT THEY COME WITH -->
         <div id="pricing-section" class="w-full space-y-8 pt-6">
             <div class="text-center space-y-2">
                 <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Pricing & Membership Tiers</span>
@@ -401,7 +398,6 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-                <!-- Free Trial Plan -->
                 <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
                     <div>
                         <span class="text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded-full">No Risk</span>
@@ -418,7 +414,6 @@
                     <button onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
                 </div>
 
-                <!-- Base Plan -->
                 <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
                     <div>
                         <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-700 text-slate-200 px-2.5 py-1 rounded-full">Starter</span>
@@ -426,7 +421,7 @@
                         <p class="text-3xl font-bold mt-2 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
                         <ul class="text-xs apple-body space-y-2.5 mt-6 text-slate-300">
                             <li>✓ 5 summaries per month</li>
-                            <li>✓ Core Breakdown (Boxes 1–4: Finances, Deadlines, Duties)</li>
+                            <li>✓ Core Breakdown (Boxes 1–4)</li>
                             <li class="text-amber-300 text-[11px] pt-1">⚠️ Boxes 5–8 Locked (Risk Radar requires Pro)</li>
                             <li>✓ Standard email support</li>
                             <li>✓ Secure cloud history</li>
@@ -435,7 +430,6 @@
                     <button onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base Plan</button>
                 </div>
 
-                <!-- Pro Plan -->
                 <div class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between shadow-xl bg-slate-800">
                     <div>
                         <span class="text-[10px] font-bold uppercase tracking-wider bg-blue-500 text-white px-2.5 py-1 rounded-full">Most Popular</span>
@@ -444,7 +438,7 @@
                         <ul class="text-xs apple-body space-y-2.5 mt-6 text-slate-200">
                             <li>✓ 30 summaries per month</li>
                             <li>✓ Full 8-Box Breakdown Unlocked</li>
-                            <li>✓ Full Risk Radar & Deep Analysis (Liabilities, Exit Rules, IP Rights)</li>
+                            <li>✓ Full Risk Radar & Deep Analysis</li>
                             <li>✓ Plain-English Legal Glossary tile</li>
                             <li>✓ Priority neural processing & support</li>
                         </ul>
@@ -454,7 +448,6 @@
             </div>
         </div>
 
-        <!-- DATA PRIVACY & SECURITY GUARANTEE -->
         <div class="w-full space-y-6 pt-6 text-left">
             <div class="glass-pane p-8 rounded-3xl space-y-4 border border-white/10">
                 <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full uppercase tracking-wider">Privacy & Confidentiality</span>
@@ -472,7 +465,6 @@
             </div>
         </div>
 
-        <!-- TERMS & CONDITIONS AND LEGAL DISCLAIMER SECTION -->
         <div id="terms-section" class="w-full space-y-6 text-left pt-6 border-t border-white/10">
             <div class="text-center space-y-2">
                 <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3.5 py-1.5 rounded-full uppercase tracking-wider">Legal Framework</span>
@@ -488,7 +480,6 @@
             </div>
         </div>
 
-        <!-- FREQUENTLY ASKED QUESTIONS -->
         <div id="faq-section" class="w-full space-y-6 text-left pt-6">
             <h2 class="apple-heading text-2xl font-bold text-white text-center">Frequently Asked Questions</h2>
             <div class="space-y-4">
@@ -508,7 +499,7 @@
         </div>
     </div>
 
-    <!-- MAIN CONTRACT WORKSPACE (HOME) -->
+    <!-- MAIN CONTRACT WORKSPACE -->
     <div id="main-view" class="hidden flex-1 flex flex-col px-6 py-10 max-w-4xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
         <h1 class="apple-heading text-3xl sm:text-5xl font-semibold tracking-tight text-white max-w-2xl mt-4">
             Summarise Any Legal Document.
@@ -806,20 +797,27 @@
         <div class="mt-1">© 2026 Double Check LLC. All rights reserved.</div>
     </footer>
 
-    <!-- SCRIPT ENGINE -->
+    <!-- SCRIPT ENGINE INTEGRATED WITH SUPABASE -->
     <script>
+        // Supabase Client Initialization
+        const SUPABASE_URL = "https://jxdnesvlwvmdbfwjzfga.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_t31ivgTLgaQK2T6WhXKB3Q_WvMZW0zr";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         let currentUser = {
+            id: "",
             email: "",
             plan: "trial",
             contractsRemaining: 3,
             summarisedCount: 0,
-            onboardingStep: 0
+            onboardingStep: 0,
+            sessionToken: ""
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedEmail = localStorage.getItem('dc_email');
-            if (savedEmail) {
-                loadAccountProfile(savedEmail);
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user) {
+                await loadUserProfile(session.user);
                 updateUserUI();
                 switchView('main');
             } else {
@@ -875,7 +873,7 @@
             document.getElementById('auth-gate-modal').classList.remove('hidden');
         }
 
-        function handleSignupSubmit(event) {
+        async function handleSignupSubmit(event) {
             event.preventDefault();
             const email = document.getElementById('signup-email').value.trim().toLowerCase();
             const pwd = document.getElementById('signup-password').value;
@@ -892,52 +890,77 @@
                 return;
             }
 
-            let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
-            if (accounts[email]) {
-                showFriendlyError("An account with this email already exists. Please sign in instead.");
-                document.getElementById('signup-email').value = '';
-                document.getElementById('signup-password').value = '';
-                switchAuthTab('login');
+            // Real Supabase Signup with Email Verification
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: pwd
+            });
+
+            if (error) {
+                showFriendlyError(error.message);
                 return;
             }
 
-            currentUser.email = email;
-            currentUser.plan = email === 'theo_kay@icloud.com' ? 'pro' : 'trial';
-            currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : 3;
-            currentUser.summarisedCount = 0;
-
-            document.getElementById('auth-gate-modal').classList.add('hidden');
-            updateOnboardingProgress(3, "Step 3 of 3: Membership Plan Selection", "66%");
-            switchView('onboarding-plans');
+            if (data && data.user) {
+                document.getElementById('auth-gate-modal').classList.add('hidden');
+                alert("Account created successfully! Please check your email inbox for the verification link before signing in.");
+                switchAuthTab('login');
+                hideOnboardingProgress();
+                showTopHeader();
+            }
         }
 
-        function handleLoginSubmit(event) {
+        async function handleLoginSubmit(event) {
             event.preventDefault();
             const email = document.getElementById('login-email').value.trim().toLowerCase();
-            if (!email) return;
+            const pwd = document.getElementById('login-password').value;
 
-            let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
-            if (accounts[email]) {
-                loadAccountProfile(email);
-            } else {
-                currentUser.email = email;
-                currentUser.plan = email === 'theo_kay@icloud.com' ? 'pro' : 'trial';
-                currentUser.contractsRemaining = currentUser.plan === 'pro' ? 30 : 3;
-                currentUser.summarisedCount = 0;
-                saveAccountProfile();
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: pwd
+            });
+
+            if (error) {
+                showFriendlyError(error.message);
+                return;
             }
 
-            document.getElementById('auth-gate-modal').classList.add('hidden');
-            hideOnboardingProgress();
-            showTopHeader();
-            saveAndBoot();
+            if (data && data.user) {
+                await loadUserProfile(data.user);
+                document.getElementById('auth-gate-modal').classList.add('hidden');
+                hideOnboardingProgress();
+                showTopHeader();
+                updateUserUI();
+                switchView('main');
+            }
         }
 
-        function completeOnboardingPlan(plan) {
+        async function loadUserProfile(user) {
+            currentUser.id = user.id;
+            currentUser.email = user.email;
+            
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            if (data) {
+                currentUser.plan = data.plan || 'trial';
+                currentUser.contractsRemaining = data.contracts_remaining ?? 3;
+                currentUser.summarisedCount = data.summarised_count ?? 0;
+            }
+        }
+
+        async function completeOnboardingPlan(plan) {
             currentUser.plan = plan;
             currentUser.contractsRemaining = plan === 'pro' ? 30 : (plan === 'base' ? 5 : 3);
             
-            saveAccountProfile();
+            await supabase
+                .from('profiles')
+                .update({ plan: currentUser.plan, contracts_remaining: currentUser.contractsRemaining })
+                .eq('id', currentUser.id);
+
             updateOnboardingProgress(3, "Subscription Confirmed", "100%");
             hideOnboardingProgress();
 
@@ -945,34 +968,18 @@
 
             setTimeout(() => {
                 showTopHeader();
-                saveAndBoot();
+                updateUserUI();
+                switchView('main');
             }, 2000);
         }
 
-        function saveAccountProfile() {
-            let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
-            accounts[currentUser.email] = {
-                email: currentUser.email,
-                plan: currentUser.plan,
-                contractsRemaining: currentUser.contractsRemaining,
-                summarisedCount: currentUser.summarisedCount
-            };
-            localStorage.setItem('dc_accounts', JSON.stringify(accounts));
+        async function handleSignOut() {
+            await supabase.auth.signOut();
+            location.reload();
         }
 
-        function loadAccountProfile(email) {
-            let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
-            if (accounts[email]) {
-                currentUser.email = accounts[email].email;
-                currentUser.plan = accounts[email].plan;
-                currentUser.contractsRemaining = accounts[email].contractsRemaining;
-                currentUser.summarisedCount = accounts[email].summarisedCount;
-            } else {
-                currentUser.email = email;
-                currentUser.plan = 'trial';
-                currentUser.contractsRemaining = 3;
-                currentUser.summarisedCount = 0;
-            }
+        function triggerPasswordReset() {
+            showFriendlyError("Password reset instructions have been sent to your email.");
         }
 
         function updateOnboardingProgress(stepNum, labelText, percentText) {
@@ -1003,24 +1010,6 @@
             document.getElementById('app-body').classList.remove('onboarding-active');
         }
 
-        function saveAndBoot() {
-            localStorage.setItem('dc_email', currentUser.email);
-            saveAccountProfile();
-
-            updateUserUI();
-            switchView('main');
-        }
-
-        function triggerPasswordReset() {
-            showFriendlyError(`Password reset link sent to ${currentUser.email || 'your email'}.`);
-        }
-
-        function handleSignOut() {
-            localStorage.removeItem('dc_email');
-            location.reload();
-        }
-
-        // CONTEXT-AWARE MENU DRAWER: NO PERSONAL ACCOUNT DATA WHEN LOGGED OUT
         function updateUserUI() {
             const email = currentUser.email;
             const isLoggedIn = Boolean(email);
@@ -1060,7 +1049,6 @@
                 logoutActions.classList.remove('hidden');
                 loginActions.classList.add('hidden');
 
-                // Clean header for logged-out / welcome users
                 drawerHeader.innerHTML = `
                     <div class="pr-6">
                         <span class="font-semibold text-sm block text-white">Double Check</span>
@@ -1069,7 +1057,6 @@
                     <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
                 `;
 
-                // Strictly general information links + signup action (no personal account details)
                 drawerLinks.innerHTML = `
                     <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome Home</button>
                     <button onclick="switchView('welcome'); scrollToSection('pricing-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing Plans</button>
@@ -1085,12 +1072,6 @@
             document.getElementById('acc-email').value = isLoggedIn ? email : "";
             document.getElementById('acc-count').value = currentUser.summarisedCount + " contracts";
             document.getElementById('acc-plan-label').innerText = currentUser.plan.toUpperCase() + " Plan";
-
-            let accounts = JSON.parse(localStorage.getItem('dc_accounts') || '{}');
-            if (accounts[currentUser.email]) {
-                currentUser.contractsRemaining = accounts[currentUser.email].contractsRemaining;
-                currentUser.summarisedCount = accounts[currentUser.email].summarisedCount;
-            }
 
             const isBasePlan = currentUser.plan === 'base';
             for (let i = 5; i <= 8; i++) {
@@ -1217,12 +1198,18 @@
             barFill.style.width = "90%";
 
             try {
+                const { data: { session } } = await supabase.auth.getSession();
+                const token = session ? session.access_token : '';
+
                 const response = await fetch('/api/summarise', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: JSON.stringify({
                         text,
-                        userEmail: currentUser.email,
+                        userId: currentUser.id,
                         userPlan: currentUser.plan
                     })
                 });
@@ -1252,7 +1239,25 @@
                     currentUser.contractsRemaining--;
                 }
                 currentUser.summarisedCount++;
-                saveAccountProfile();
+
+                // Update database profile
+                await supabase
+                    .from('profiles')
+                    .update({ 
+                        contracts_remaining: currentUser.contractsRemaining,
+                        summarised_count: currentUser.summarisedCount 
+                    })
+                    .eq('id', currentUser.id);
+
+                // Save summary to database
+                await supabase
+                    .from('summaries')
+                    .insert({
+                        user_id: currentUser.id,
+                        doc_title: parsed.docTitle || "Contract Summary",
+                        summary_content: parsed
+                    });
+
                 updateUserUI();
 
                 switchResultsTab('paragraph');
