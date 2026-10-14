@@ -145,7 +145,7 @@
             <div id="nav-logged-out-actions" class="flex items-center space-x-3">
                 <button type="button" onclick="switchView('welcome'); scrollToSection('pricing-section');" class="text-xs apple-body hover:text-white cursor-pointer hidden sm:inline-block">Pricing</button>
                 <button type="button" onclick="switchView('welcome'); scrollToSection('terms-section');" class="text-xs apple-body hover:text-white cursor-pointer hidden sm:inline-block">Terms</button>
-                <button type="button" onclick="openAuthModal('login')" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer">Sign In</button>
+                <button type="button" onclick="alert('Sign In clicked!'); openAuthModal('login');" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer">Sign In</button>
             </div>
             <div id="nav-logged-in-actions" class="hidden items-center space-x-3">
                 <button type="button" onclick="switchView('main')" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer">Home</button>
@@ -166,8 +166,8 @@
                 Transform complex legal agreements into plain-English summaries and instant 8-box risk breakdowns. Never sign blindly again.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <button type="button" onclick="openAuthModal('signup')" class="apple-button px-8 py-4 text-xs font-bold shadow-xl cursor-pointer">Get Started Free</button>
-                <button type="button" onclick="openAuthModal('login')" class="apple-button-secondary px-8 py-4 text-xs font-semibold cursor-pointer">Sign In</button>
+                <button type="button" onclick="alert('Get Started clicked!'); openAuthModal('signup');" class="apple-button px-8 py-4 text-xs font-bold shadow-xl cursor-pointer">Get Started Free</button>
+                <button type="button" onclick="alert('Sign In clicked!'); openAuthModal('login');" class="apple-button-secondary px-8 py-4 text-xs font-semibold cursor-pointer">Sign In</button>
             </div>
         </div>
 
@@ -186,7 +186,7 @@
                             <li>✓ Full Paragraph Summary Overview</li>
                         </ul>
                     </div>
-                    <button type="button" onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
+                    <button type="button" onclick="alert('Start Free Trial clicked!'); openAuthModal('signup');" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
                 </div>
                 <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
                     <div>
@@ -197,7 +197,7 @@
                             <li>✓ Core Breakdown (Boxes 1–4)</li>
                         </ul>
                     </div>
-                    <button type="button" onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base</button>
+                    <button type="button" onclick="alert('Select Base clicked!'); openAuthModal('signup');" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base</button>
                 </div>
                 <div class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between bg-slate-800">
                     <div>
@@ -208,7 +208,7 @@
                             <li>✓ Full 8-Box Risk Radar</li>
                         </ul>
                     </div>
-                    <button type="button" onclick="openAuthModal('signup')" class="apple-button mt-8 w-full py-3 text-xs font-bold cursor-pointer">Select Pro</button>
+                    <button type="button" onclick="alert('Select Pro clicked!'); openAuthModal('signup');" class="apple-button mt-8 w-full py-3 text-xs font-bold cursor-pointer">Select Pro</button>
                 </div>
             </div>
         </div>
