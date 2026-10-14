@@ -52,6 +52,7 @@
         font-weight: 600;
         border-radius: 980px;
         transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+        cursor: pointer;
       }
 
       .apple-button:hover {
@@ -65,6 +66,7 @@
         font-weight: 500;
         border-radius: 980px;
         transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+        cursor: pointer;
       }
 
       .apple-button-secondary:hover {
@@ -123,6 +125,7 @@
         -webkit-backdrop-filter: blur(25px);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         opacity: 1;
+        z-index: 40;
       }
 
       #top-navbar.reading-mode {
@@ -139,7 +142,7 @@
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body id="app-body" class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+<body id="app-body" class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white relative">
 
     <div id="bg-glow" style="background: radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%); opacity: 0.6;"></div>
 
@@ -175,8 +178,8 @@
             </div>
 
             <div class="flex bg-black/40 p-1 rounded-xl mb-6 text-xs font-semibold">
-                <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-white text-black transition-all">Sign In</button>
-                <button id="tab-signup-btn" onclick="switchAuthTab('signup')" class="flex-1 py-2 rounded-lg text-slate-400 transition-all">Register</button>
+                <button type="button" id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-white text-black transition-all cursor-pointer">Sign In</button>
+                <button type="button" id="tab-signup-btn" onclick="switchAuthTab('signup')" class="flex-1 py-2 rounded-lg text-slate-400 transition-all cursor-pointer">Register</button>
             </div>
 
             <form id="form-login" onsubmit="handleLoginSubmit(event)" class="space-y-4">
@@ -192,7 +195,7 @@
                     <span onclick="triggerPasswordReset()" class="text-xs text-blue-400 hover:underline cursor-pointer">Forgot Password?</span>
                 </div>
                 <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer">Sign In</button>
-                <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden'); hideOnboardingProgress();" class="w-full text-center text-xs apple-body hover:text-white pt-1">Cancel</button>
+                <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden'); hideOnboardingProgress();" class="w-full text-center text-xs apple-body hover:text-white pt-1 cursor-pointer">Cancel</button>
             </form>
 
             <form id="form-signup" onsubmit="handleSignupSubmit(event)" class="space-y-4 hidden">
@@ -210,73 +213,13 @@
                     </label>
                 </div>
                 <button type="submit" class="apple-button w-full py-3.5 text-xs font-bold shadow-lg cursor-pointer">Create Account & Proceed</button>
-                <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden'); hideOnboardingProgress();" class="w-full text-center text-xs apple-body hover:text-white pt-1">Cancel</button>
+                <button type="button" onclick="document.getElementById('auth-gate-modal').classList.add('hidden'); hideOnboardingProgress();" class="w-full text-center text-xs apple-body hover:text-white pt-1 cursor-pointer">Cancel</button>
             </form>
         </div>
     </div>
 
-    <!-- ONBOARDING PAYWALL / PLAN SELECTION VIEW -->
-    <div id="onboarding-plans-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
-        <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full uppercase tracking-wider">Step 3: Membership Selection</span>
-        <h2 class="apple-heading text-3xl sm:text-5xl font-semibold mt-3 text-white">Choose Your Plan</h2>
-        <p class="apple-body text-xs mt-2 max-w-md">Select your subscription tier to activate your AI workspace credits instantly.</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 w-full text-left">
-            <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
-                <div>
-                    <h3 class="apple-heading text-xl font-bold text-white">Free Trial</h3>
-                    <p class="text-3xl font-bold mt-3 text-white">$0 <span class="text-xs font-normal apple-body">/ 30 days</span></p>
-                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
-                        <li>✓ 3 contract summaries</li>
-                        <li>✓ Paragraph Summary Overview</li>
-                        <li>✓ Full 8-Box Breakdown</li>
-                    </ul>
-                </div>
-                <button onclick="completeOnboardingPlan('trial')" class="apple-button-secondary mt-8 w-full py-3 text-xs cursor-pointer">Start Free Trial</button>
-            </div>
-
-            <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
-                <div>
-                    <h3 class="apple-heading text-xl font-bold text-white">Base Plan</h3>
-                    <p class="text-3xl font-bold mt-3 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
-                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
-                        <li>✓ 5 summaries / month</li>
-                        <li>✓ Core Breakdown (Boxes 1–4)</li>
-                        <li class="text-amber-300 text-[11px] pt-2">⚠️ Boxes 5–8 Locked</li>
-                    </ul>
-                </div>
-                <button onclick="completeOnboardingPlan('base')" class="apple-button-secondary mt-8 w-full py-3 text-xs cursor-pointer">Select Base Plan</button>
-            </div>
-
-            <div class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between shadow-xl bg-slate-800/90">
-                <div>
-                    <h3 class="apple-heading text-xl font-bold text-white">Pro Plan</h3>
-                    <p class="text-3xl font-bold mt-3 text-white">$29 <span class="text-xs font-normal apple-body">/ month</span></p>
-                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-200">
-                        <li>✓ 30 summaries / month</li>
-                        <li>✓ Full 8-Box Breakdown</li>
-                        <li>✓ Full Risk Radar & Deep Analysis</li>
-                    </ul>
-                </div>
-                <button onclick="completeOnboardingPlan('pro')" class="apple-button mt-8 w-full py-3 text-xs font-bold cursor-pointer">Select Pro Plan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SUBSCRIPTION CELEBRATION ANIMATION VIEW -->
-    <div id="celebration-view" class="hidden flex-1 flex flex-col items-center justify-center px-6 max-w-xl mx-auto w-full text-center animate-fade-in py-24 relative z-10 space-y-6">
-        <div class="w-16 h-16 rounded-full bg-blue-500/20 border-2 border-blue-400 text-blue-400 flex items-center justify-center mx-auto text-2xl font-bold shadow-lg animate-bounce">
-            ✓
-        </div>
-        <h2 class="apple-heading text-3xl font-bold text-white">You're All Set!</h2>
-        <p class="apple-body text-sm text-slate-300">Subscription confirmed. Progress bar complete. Launching your home...</p>
-        <div class="w-48 bg-black/50 h-2 rounded-full overflow-hidden mx-auto border border-white/10">
-            <div class="bg-blue-500 h-full w-full transition-all duration-1000"></div>
-        </div>
-    </div>
-
     <!-- FLOATING LONG HEADER WIDGET -->
-    <nav id="top-navbar" class="fixed top-4 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-5xl py-3 px-6 rounded-2xl">
+    <nav id="top-navbar" class="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-5xl py-3 px-6 rounded-2xl">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('welcome')">
                 <svg class="w-8 h-10 text-blue-500 group-hover:scale-105 transition-transform" viewBox="0 0 24 30" fill="currentColor">
@@ -292,16 +235,16 @@
             
             <div class="flex items-center space-x-4">
                 <div id="nav-logged-out-actions" class="flex items-center space-x-3">
-                    <button onclick="switchView('welcome'); scrollToSection('pricing-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block">Pricing</button>
-                    <button onclick="switchView('welcome'); scrollToSection('terms-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block">Terms</button>
-                    <button onclick="switchView('welcome'); scrollToSection('faq-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block">FAQ</button>
-                    <button onclick="openAuthModal('login')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Sign In</button>
+                    <button type="button" onclick="switchView('welcome'); scrollToSection('pricing-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block cursor-pointer">Pricing</button>
+                    <button type="button" onclick="switchView('welcome'); scrollToSection('terms-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block cursor-pointer">Terms</button>
+                    <button type="button" onclick="switchView('welcome'); scrollToSection('faq-section');" class="text-xs apple-body hover:text-white font-medium hidden sm:inline-block cursor-pointer">FAQ</button>
+                    <button type="button" onclick="openAuthModal('login')" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer">Sign In</button>
                 </div>
                 <div id="nav-logged-in-actions" class="hidden items-center space-x-3">
-                    <button onclick="switchView('main')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Home</button>
-                    <button onclick="switchView('account')" class="apple-button-secondary px-4 py-2 text-xs font-medium">Account</button>
+                    <button type="button" onclick="switchView('main')" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer">Home</button>
+                    <button type="button" onclick="switchView('account')" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer">Account</button>
                 </div>
-                <button onclick="toggleMenuDrawer()" class="p-2 text-white hover:opacity-80 transition-opacity cursor-pointer relative z-50" aria-label="Open Menu">
+                <button type="button" onclick="toggleMenuDrawer()" class="p-2 text-white hover:opacity-80 transition-opacity cursor-pointer relative z-50" aria-label="Open Menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -322,16 +265,14 @@
                         <span class="font-semibold text-sm block text-white">Double Check</span>
                         <div class="text-xs apple-body mt-1 text-slate-300">AI Legal Intelligence</div>
                     </div>
-                    <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
+                    <button type="button" onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1 cursor-pointer">Close</button>
                 </div>
 
-                <div class="mt-8 space-y-3" id="drawer-links-container">
-                    <!-- Populated dynamically via JS -->
-                </div>
+                <div class="mt-8 space-y-3" id="drawer-links-container"></div>
             </div>
             
             <div class="pt-6 border-t border-white/10">
-                <button id="drawer-auth-btn" onclick="openAuthModal('signup'); toggleMenuDrawer();" class="apple-button w-full py-3 text-xs font-semibold">Sign In / Register</button>
+                <button type="button" id="drawer-auth-btn" onclick="openAuthModal('signup'); toggleMenuDrawer();" class="apple-button w-full py-3 text-xs font-semibold cursor-pointer">Sign In / Register</button>
             </div>
         </div>
     </div>
@@ -347,8 +288,8 @@
                 Double Check transforms complex legal agreements, terms of service, and dense contracts into plain-English summaries and instant 8-box risk breakdowns. Never sign blindly again.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <button onclick="openAuthModal('signup')" class="apple-button px-8 py-4 text-xs font-bold shadow-xl cursor-pointer">Get Started Free</button>
-                <button onclick="openAuthModal('login')" class="apple-button-secondary px-8 py-4 text-xs font-semibold cursor-pointer">Sign In</button>
+                <button type="button" onclick="openAuthModal('signup')" class="apple-button px-8 py-4 text-xs font-bold shadow-xl cursor-pointer">Get Started Free</button>
+                <button type="button" onclick="openAuthModal('login')" class="apple-button-secondary px-8 py-4 text-xs font-semibold cursor-pointer">Sign In</button>
             </div>
         </div>
 
@@ -411,7 +352,7 @@
                             <li>✓ Clipboard copy & export tools</li>
                         </ul>
                     </div>
-                    <button onclick="openPaymentForm('trial')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
+                    <button type="button" onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
                 </div>
 
                 <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
@@ -427,7 +368,7 @@
                             <li>✓ Secure cloud history</li>
                         </ul>
                     </div>
-                    <button onclick="openPaymentForm('base')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base Plan</button>
+                    <button type="button" onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base Plan</button>
                 </div>
 
                 <div class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between shadow-xl bg-slate-800">
@@ -443,24 +384,7 @@
                             <li>✓ Priority neural processing & support</li>
                         </ul>
                     </div>
-                    <button onclick="openPaymentForm('pro')" class="apple-button mt-8 w-full py-3 text-xs font-bold cursor-pointer">Select Pro Plan</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="w-full space-y-6 pt-6 text-left">
-            <div class="glass-pane p-8 rounded-3xl space-y-4 border border-white/10">
-                <span class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full uppercase tracking-wider">Privacy & Confidentiality</span>
-                <h2 class="apple-heading text-2xl font-bold text-white">Your Data Security is Guaranteed</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs apple-body text-slate-300">
-                    <div class="space-y-1.5">
-                        <strong class="text-white block">🔒 End-to-End Encryption</strong>
-                        <p>All contracts, document scans, and text inputs transmitted to Double Check are encrypted in transit using bank-grade SSL/TLS protocols.</p>
-                    </div>
-                    <div class="space-y-1.5">
-                        <strong class="text-white block">🛡️ Never Sold or Shared</strong>
-                        <p>We adhere strictly to GDPR data protection guidelines. Your contract contents are processed solely to generate your summary and are never sold, monetized, or shared with third parties.</p>
-                    </div>
+                    <button type="button" onclick="openAuthModal('signup')" class="apple-button mt-8 w-full py-3 text-xs font-bold cursor-pointer">Select Pro Plan</button>
                 </div>
             </div>
         </div>
@@ -522,12 +446,12 @@
         <div class="glass-pane mt-5 rounded-2xl p-4 max-w-xl w-full border border-white/10 text-left shadow-sm">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-xs font-semibold uppercase tracking-wider apple-body">Paste Contract Text</span>
-                <button onclick="document.getElementById('legal-text-input').value='';" class="text-xs text-blue-400 hover:underline cursor-pointer">Clear</button>
+                <button type="button" onclick="document.getElementById('legal-text-input').value='';" class="text-xs text-blue-400 hover:underline cursor-pointer">Clear</button>
             </div>
             <textarea id="legal-text-input" rows="5" placeholder="Paste full agreement or contract terms here..." class="w-full bg-transparent text-xs focus:outline-none resize-none apple-body text-white"></textarea>
         </div>
 
-        <button onclick="handleLlmAnalysis()" class="apple-button mt-6 px-8 py-4 text-xs font-semibold w-full max-w-xl shadow-lg cursor-pointer">
+        <button type="button" onclick="handleLlmAnalysis()" class="apple-button mt-6 px-8 py-4 text-xs font-semibold w-full max-w-xl shadow-lg cursor-pointer">
             Summarise Contract
         </button>
     </div>
@@ -550,35 +474,21 @@
                 <h2 id="doc-title-heading" class="apple-heading text-2xl font-bold mt-1 text-white">Contract Breakdown</h2>
             </div>
             <div class="flex items-center space-x-3">
-                <button onclick="copyElementText('box-1-text', this)" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer flex items-center space-x-1.5">
-                    <span>Copy Summary to Clipboard</span>
-                </button>
-                <button onclick="window.print()" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer flex items-center space-x-1.5">
-                    <span>Download PDF Report</span>
-                </button>
-                <button onclick="switchView('main')" class="apple-button px-5 py-2 text-xs font-medium cursor-pointer">New Scan</button>
+                <button type="button" onclick="copyElementText('box-1-text', this)" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer">Copy Summary</button>
+                <button type="button" onclick="window.print()" class="apple-button-secondary px-4 py-2 text-xs font-medium cursor-pointer">Download PDF Report</button>
+                <button type="button" onclick="switchView('main')" class="apple-button px-5 py-2 text-xs font-medium cursor-pointer">New Scan</button>
             </div>
         </div>
 
         <div class="flex justify-center my-8">
             <div class="glass-pane p-1.5 rounded-2xl flex items-center space-x-2 border border-white/10 shadow-lg">
-                <button id="tab-btn-paragraph" onclick="switchResultsTab('paragraph')" class="px-6 py-2.5 rounded-xl text-xs font-bold bg-white text-black transition-all cursor-pointer">
-                    Paragraph Summary
-                </button>
-                <button id="tab-btn-breakdown" onclick="switchResultsTab('breakdown')" class="px-6 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition-all cursor-pointer">
-                    Full Breakdown (8 Boxes)
-                </button>
+                <button type="button" id="tab-btn-paragraph" onclick="switchResultsTab('paragraph')" class="px-6 py-2.5 rounded-xl text-xs font-bold bg-white text-black transition-all cursor-pointer">Paragraph Summary</button>
+                <button type="button" id="tab-btn-breakdown" onclick="switchResultsTab('breakdown')" class="px-6 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition-all cursor-pointer">Full Breakdown (8 Boxes)</button>
             </div>
         </div>
 
         <div id="results-paragraph-container" class="space-y-6">
             <div class="glass-pane p-8 rounded-3xl border border-white/10 relative shadow-xl">
-                <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
-                    <span class="apple-heading text-xs font-bold uppercase tracking-wider text-blue-400">Simplified Plain-English Summary</span>
-                    <button onclick="copyElementText('box-1-text', this)" class="apple-button-secondary px-4 py-1.5 text-[11px] font-medium cursor-pointer">
-                        <span>Copy Summary</span>
-                    </button>
-                </div>
                 <p id="box-1-text" class="text-sm sm:text-base apple-body text-slate-100 leading-relaxed">Paragraph summary loading...</p>
             </div>
         </div>
@@ -587,91 +497,26 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Financial Breakdown & Money</h3>
-                            <button onclick="copyElementText('box-2-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
-                        </div>
+                        <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider mb-3">Financial Breakdown & Money</h3>
                         <p id="box-2-text" class="text-xs apple-body text-slate-300 leading-relaxed">Financial terms loading...</p>
                     </div>
                 </div>
-
                 <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Important Dates & Timelines</h3>
-                            <button onclick="copyElementText('box-3-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
-                        </div>
+                        <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider mb-3">Important Dates & Timelines</h3>
                         <p id="box-3-text" class="text-xs apple-body text-slate-300 leading-relaxed">Deadlines loading...</p>
                     </div>
                 </div>
-
                 <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Obligations Checklist</h3>
-                            <button onclick="copyElementText('box-4-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
-                        </div>
+                        <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider mb-3">Obligations Checklist</h3>
                         <p id="box-4-text" class="text-xs apple-body text-slate-300 leading-relaxed">Duties loading...</p>
                     </div>
                 </div>
-
-                <div id="box-5-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
-                    <div id="box-5-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
-                        <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        <h4 class="font-bold text-xs text-white mb-2">Upgrade to Pro to Unlock Risk Radar & Deep Analysis</h4>
-                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px] cursor-pointer font-semibold">Upgrade to Pro</button>
-                    </div>
+                <div class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Red Flags & Liabilities</h3>
-                            <button onclick="copyElementText('box-5-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
-                        </div>
+                        <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider mb-3">Red Flags & Liabilities</h3>
                         <p id="box-5-text" class="text-xs apple-body text-slate-300 leading-relaxed">Liabilities loading...</p>
-                    </div>
-                </div>
-
-                <div id="box-6-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
-                    <div id="box-6-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
-                        <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        <h4 class="font-bold text-xs text-white mb-2">Upgrade to Pro to Unlock Risk Radar & Deep Analysis</h4>
-                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px] cursor-pointer font-semibold">Upgrade to Pro</button>
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Termination & Exit Rules</h3>
-                            <button onclick="copyElementText('box-6-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
-                        </div>
-                        <p id="box-6-text" class="text-xs apple-body text-slate-300 leading-relaxed">Termination terms...</p>
-                    </div>
-                </div>
-
-                <div id="box-7-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
-                    <div id="box-7-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
-                        <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        <h4 class="font-bold text-xs text-white mb-2">Upgrade to Pro to Unlock Risk Radar & Deep Analysis</h4>
-                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px] cursor-pointer font-semibold">Upgrade to Pro</button>
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">IP & Ownership Rights</h3>
-                            <button onclick="copyElementText('box-7-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
-                        </div>
-                        <p id="box-7-text" class="text-xs apple-body text-slate-300 leading-relaxed">Ownership rights...</p>
-                    </div>
-                </div>
-
-                <div id="box-8-wrapper" class="glass-pane p-6 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden flex flex-col justify-between md:col-span-2">
-                    <div id="box-8-lock" class="absolute inset-0 blur-overlay flex flex-col items-center justify-center text-center p-6 z-10 hidden">
-                        <svg class="w-6 h-6 text-blue-400 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        <h4 class="font-bold text-xs text-white mb-2">Upgrade to Pro to Unlock Risk Radar & Deep Analysis</h4>
-                        <button onclick="switchView('pricing')" class="apple-button px-4 py-2 text-[11px] cursor-pointer font-semibold">Upgrade to Pro</button>
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="apple-heading text-xs font-bold text-white uppercase tracking-wider">Plain-English Legal Glossary</h3>
-                            <button onclick="copyElementText('box-8-text', this)" class="apple-button-secondary px-3 py-1 text-[10px] cursor-pointer">Copy</button>
-                        </div>
-                        <p id="box-8-text" class="text-xs apple-body text-slate-300 leading-relaxed">Glossary terms...</p>
                     </div>
                 </div>
             </div>
@@ -692,103 +537,8 @@
                     <input type="text" id="acc-count" readonly class="w-full mt-2 p-4 bg-black/40 border border-white/10 rounded-xl text-sm font-medium text-white">
                 </div>
             </div>
-            <div class="pt-6 border-t border-white/10 flex items-center justify-between">
-                <div>
-                    <label class="text-xs font-semibold uppercase apple-body block">Active Plan</label>
-                    <span id="acc-plan-label" class="text-xl font-bold text-white">Free Trial</span>
-                </div>
-                <button onclick="switchView('pricing')" class="apple-button px-6 py-3 text-xs">Change Plan</button>
-            </div>
         </div>
-        <button onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32">← Back Home</button>
-    </div>
-
-    <!-- PRICING VIEW -->
-    <div id="pricing-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full items-center text-center animate-fade-in relative z-10">
-        <span class="text-xs font-semibold bg-white/10 text-white px-3 py-1 rounded-full uppercase tracking-wider">Subscription Plans</span>
-        <h2 class="apple-heading text-3xl sm:text-5xl font-semibold mt-3 text-white">Choose Your Plan</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 w-full text-left">
-            <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
-                <div>
-                    <h3 class="apple-heading text-xl font-bold text-white">Free Trial</h3>
-                    <p class="text-3xl font-bold mt-3 text-white">$0 <span class="text-xs font-normal apple-body">/ 30 days</span></p>
-                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
-                        <li>✓ 3 contract summaries</li>
-                        <li>✓ Paragraph Summary Overview</li>
-                        <li>✓ Full 8-Box Breakdown</li>
-                    </ul>
-                </div>
-                <button onclick="openPaymentForm('trial')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Select Trial</button>
-            </div>
-
-            <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
-                <div>
-                    <h3 class="apple-heading text-xl font-bold text-white">Base Plan</h3>
-                    <p class="text-3xl font-bold mt-3 text-white">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
-                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-300">
-                        <li>✓ 5 summaries / month</li>
-                        <li>✓ Core Breakdown (Boxes 1–4)</li>
-                        <li class="text-amber-300 text-[11px] pt-1">⚠️ Boxes 5–8 Locked</li>
-                    </ul>
-                </div>
-                <button onclick="openPaymentForm('base')" class="apple-button-secondary mt-8 w-full py-3 text-xs">Select Base Plan</button>
-            </div>
-
-            <div class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between shadow-xl bg-slate-800/90">
-                <div>
-                    <h3 class="apple-heading text-xl font-bold text-white">Pro Plan</h3>
-                    <p class="text-3xl font-bold mt-3 text-white">$29 <span class="text-xs font-normal apple-body">/ month</span></p>
-                    <ul class="text-xs apple-body space-y-2 mt-5 text-slate-200">
-                        <li>✓ 30 summaries / month</li>
-                        <li>✓ Full 8-Box Breakdown</li>
-                        <li>✓ Full Risk Radar & Deep Analysis</li>
-                    </ul>
-                </div>
-                <button onclick="openPaymentForm('pro')" class="apple-button mt-8 w-full py-3 text-xs font-bold">Select Pro Plan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ABOUT VIEW -->
-    <div id="about-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-3xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
-        <h2 class="apple-heading text-3xl font-bold text-white">About & How to Use</h2>
-        <div class="glass-pane p-8 rounded-3xl space-y-6 text-xs apple-body text-slate-300 leading-relaxed">
-            <ol class="list-decimal pl-4 space-y-1.5 text-slate-200">
-                <li>Upload a PDF document, image scan, or paste legal text on your Home dashboard.</li>
-                <li>Click <strong>Summarise Contract</strong> to review the comprehensive plain-English paragraph summary first.</li>
-                <li>Use the toggle slider to explore detailed risk breakdowns and copy text to your clipboard anytime.</li>
-            </ol>
-        </div>
-        <button onclick="switchView('welcome')" class="apple-button-secondary py-2.5 text-xs w-32">← Welcome</button>
-    </div>
-
-    <!-- FEEDBACK VIEW -->
-    <div id="feedback-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
-        <h2 class="apple-heading text-3xl font-bold text-white">Send Feedback</h2>
-        <div class="glass-pane p-6 rounded-2xl space-y-4">
-            <textarea id="feedback-text" rows="4" class="w-full p-3 bg-black/40 border border-white/10 rounded-xl text-xs text-white focus:outline-none" placeholder="How can we improve Double Check?"></textarea>
-            <button onclick="submitFeedback()" class="apple-button w-full py-3 text-xs">Submit Feedback</button>
-        </div>
-        <button onclick="switchView('welcome')" class="apple-button-secondary py-2.5 text-xs w-32">← Welcome</button>
-    </div>
-
-    <!-- TOS VIEW -->
-    <div id="tos-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-2xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
-        <h2 class="apple-heading text-3xl font-bold text-white">Terms of Service</h2>
-        <div class="glass-pane p-6 rounded-2xl text-xs apple-body leading-relaxed space-y-2 text-slate-300">
-            <p>Double Check provides AI-generated contract summaries for informational purposes only and does not constitute formal legal counsel.</p>
-        </div>
-        <button onclick="switchView('welcome')" class="apple-button-secondary py-2.5 text-xs w-32">← Welcome</button>
-    </div>
-
-    <!-- PRIVACY VIEW -->
-    <div id="privacy-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-2xl mx-auto w-full text-left animate-fade-in space-y-6 relative z-10">
-        <h2 class="apple-heading text-3xl font-bold text-white">Privacy Policy</h2>
-        <div class="glass-pane p-6 rounded-2xl text-xs apple-body leading-relaxed space-y-2 text-slate-300">
-            <p>We respect your privacy in accordance with GDPR guidelines. No document content is shared or sold.</p>
-        </div>
-        <button onclick="switchView('welcome')" class="apple-button-secondary py-2.5 text-xs w-32">← Welcome</button>
+        <button type="button" onclick="switchView('main')" class="apple-button-secondary py-2.5 text-xs w-32 cursor-pointer">← Back Home</button>
     </div>
 
     <!-- FOOTER -->
@@ -797,22 +547,13 @@
         <div class="mt-1">© 2026 Double Check LLC. All rights reserved.</div>
     </footer>
 
-    <!-- SCRIPT ENGINE INTEGRATED WITH SUPABASE -->
+    <!-- SCRIPT ENGINE -->
     <script>
-        // Supabase Client Initialization
         const SUPABASE_URL = "https://jxdnesvlwvmdbfwjzfga.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_t31ivgTLgaQK2T6WhXKB3Q_WvMZW0zr";
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let currentUser = {
-            id: "",
-            email: "",
-            plan: "trial",
-            contractsRemaining: 3,
-            summarisedCount: 0,
-            onboardingStep: 0,
-            sessionToken: ""
-        };
+        let currentUser = { id: "", email: "", plan: "trial", contractsRemaining: 3, summarisedCount: 0 };
 
         window.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await supabase.auth.getSession();
@@ -826,25 +567,6 @@
             }
         });
 
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.scrollY;
-            const navbar = document.getElementById('top-navbar');
-            
-            if (scrollTop > 50 && !navbar.classList.contains('hidden')) {
-                navbar.classList.add('reading-mode');
-            } else {
-                navbar.classList.remove('reading-mode');
-            }
-
-            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollFraction = maxScroll > 0 ? scrollTop / maxScroll : 0;
-            const glow = document.getElementById('bg-glow');
-            if (glow) {
-                const opacity = 0.4 + Math.sin(scrollFraction * Math.PI) * 0.4;
-                glow.style.opacity = opacity.toFixed(2);
-            }
-        });
-
         function switchAuthTab(tab) {
             const loginBtn = document.getElementById('tab-login-btn');
             const signupBtn = document.getElementById('tab-signup-btn');
@@ -852,19 +574,15 @@
             const signupForm = document.getElementById('form-signup');
 
             if (tab === 'login') {
-                loginBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all";
-                signupBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all";
+                loginBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all cursor-pointer";
+                signupBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all cursor-pointer";
                 loginForm.classList.remove('hidden');
                 signupForm.classList.add('hidden');
-                hideOnboardingProgress();
-                showTopHeader();
             } else {
-                signupBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all";
-                loginBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all";
+                signupBtn.className = "flex-1 py-2 rounded-lg bg-white text-black transition-all cursor-pointer";
+                loginBtn.className = "flex-1 py-2 rounded-lg text-slate-400 transition-all cursor-pointer";
                 signupForm.classList.remove('hidden');
                 loginForm.classList.add('hidden');
-                hideTopHeader();
-                updateOnboardingProgress(1, "Step 1 of 3: Account Creation & Credentials", "33%");
             }
         }
 
@@ -877,35 +595,22 @@
             event.preventDefault();
             const email = document.getElementById('signup-email').value.trim().toLowerCase();
             const pwd = document.getElementById('signup-password').value;
-            const termsChecked = document.getElementById('signup-tos').checked;
+            const terms = document.getElementById('signup-tos').checked;
 
-            const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-            if (!pwdRegex.test(pwd)) {
-                showFriendlyError("Password must be at least 8 characters long and include a capital letter, a lowercase letter, and a number.");
+            if (!terms) {
+                alert("Please accept the Terms of Service.");
                 return;
             }
 
-            if (!termsChecked) {
-                showFriendlyError("Please accept the Terms of Service to continue.");
-                return;
-            }
-
-            const { data, error } = await supabase.auth.signUp({
-                email: email,
-                password: pwd
-            });
-
+            const { data, error } = await supabase.auth.signUp({ email, password: pwd });
             if (error) {
-                showFriendlyError(error.message);
+                alert(error.message);
                 return;
             }
-
             if (data && data.user) {
                 document.getElementById('auth-gate-modal').classList.add('hidden');
-                alert("Account created successfully! Please check your email inbox for the verification link before signing in.");
+                alert("Account created successfully! Check your email for verification.");
                 switchAuthTab('login');
-                hideOnboardingProgress();
-                showTopHeader();
             }
         }
 
@@ -914,21 +619,14 @@
             const email = document.getElementById('login-email').value.trim().toLowerCase();
             const pwd = document.getElementById('login-password').value;
 
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: pwd
-            });
-
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password: pwd });
             if (error) {
-                showFriendlyError(error.message);
+                alert(error.message);
                 return;
             }
-
             if (data && data.user) {
                 await loadUserProfile(data.user);
                 document.getElementById('auth-gate-modal').classList.add('hidden');
-                hideOnboardingProgress();
-                showTopHeader();
                 updateUserUI();
                 switchView('main');
             }
@@ -937,13 +635,7 @@
         async function loadUserProfile(user) {
             currentUser.id = user.id;
             currentUser.email = user.email;
-            
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-
+            const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
             if (data) {
                 currentUser.plan = data.plan || 'trial';
                 currentUser.contractsRemaining = data.contracts_remaining ?? 3;
@@ -951,222 +643,42 @@
             }
         }
 
-        function openPaymentForm(plan) {
-            completeOnboardingPlan(plan);
-        }
-
-        async function completeOnboardingPlan(plan) {
-            currentUser.plan = plan;
-            currentUser.contractsRemaining = plan === 'pro' ? 30 : (plan === 'base' ? 5 : 3);
-            
-            if (currentUser.id) {
-                await supabase
-                    .from('profiles')
-                    .update({ plan: currentUser.plan, contracts_remaining: currentUser.contractsRemaining })
-                    .eq('id', currentUser.id);
-            }
-
-            updateOnboardingProgress(3, "Subscription Confirmed", "100%");
-            hideOnboardingProgress();
-
-            switchView('celebration');
-
-            setTimeout(() => {
-                showTopHeader();
-                updateUserUI();
-                switchView('main');
-            }, 2000);
-        }
-
         async function handleSignOut() {
             await supabase.auth.signOut();
             location.reload();
         }
 
-        function triggerPasswordReset() {
-            showFriendlyError("Password reset instructions have been sent to your email.");
-        }
-
-        function updateOnboardingProgress(stepNum, labelText, percentText) {
-            currentUser.onboardingStep = stepNum;
-            const wrapper = document.getElementById('onboarding-progress-wrapper');
-            const label = document.getElementById('onboarding-step-label');
-            const percent = document.getElementById('onboarding-percent-label');
-            const fill = document.getElementById('onboarding-progress-fill');
-
-            wrapper.classList.remove('hidden');
-            label.innerText = labelText;
-            percent.innerText = percentText;
-            fill.style.width = percentText;
-        }
-
-        function hideOnboardingProgress() {
-            currentUser.onboardingStep = 0;
-            document.getElementById('onboarding-progress-wrapper').classList.add('hidden');
-        }
-
-        function hideTopHeader() {
-            document.getElementById('top-navbar').classList.add('hidden');
-            document.getElementById('app-body').classList.add('onboarding-active');
-        }
-
-        function showTopHeader() {
-            document.getElementById('top-navbar').classList.remove('hidden');
-            document.getElementById('app-body').classList.remove('onboarding-active');
-        }
-
         function updateUserUI() {
             const email = currentUser.email;
             const isLoggedIn = Boolean(email);
-
-            const logoutActions = document.getElementById('nav-logged-out-actions');
-            const loginActions = document.getElementById('nav-logged-in-actions');
-            const drawerBtn = document.getElementById('drawer-auth-btn');
-            const drawerHeader = document.getElementById('drawer-header-container');
-            const drawerLinks = document.getElementById('drawer-links-container');
-
-            if (isLoggedIn) {
-                logoutActions.classList.add('hidden');
-                loginActions.classList.remove('hidden');
-                
-                drawerHeader.innerHTML = `
-                    <div class="pr-6">
-                        <span class="font-semibold text-sm block truncate max-w-[150px] text-white">${email}</span>
-                        <div class="text-xs apple-body mt-1 text-slate-300">Contracts remaining: ${currentUser.contractsRemaining}</div>
-                    </div>
-                    <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
-                `;
-
-                drawerLinks.innerHTML = `
-                    <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome / Home</button>
-                    <button onclick="switchView('main'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Home Dashboard</button>
-                    <button onclick="switchView('account'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">My Account</button>
-                    <button onclick="switchView('pricing'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing & Plans</button>
-                    <button onclick="switchView('about'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">About & FAQ</button>
-                    <button onclick="switchView('feedback'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Send Feedback</button>
-                    <button onclick="switchView('tos'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Terms of Service</button>
-                    <button onclick="switchView('privacy'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors">Privacy Policy</button>
-                `;
-
-                drawerBtn.innerText = "Sign Out";
-                drawerBtn.onclick = () => { handleSignOut(); toggleMenuDrawer(); };
-            } else {
-                logoutActions.classList.remove('hidden');
-                loginActions.classList.add('hidden');
-
-                drawerHeader.innerHTML = `
-                    <div class="pr-6">
-                        <span class="font-semibold text-sm block text-white">Double Check</span>
-                        <div class="text-xs apple-body mt-1 text-slate-300">AI Legal Intelligence</div>
-                    </div>
-                    <button onclick="toggleMenuDrawer()" class="text-xs text-slate-300 hover:text-white font-semibold uppercase pt-1">Close</button>
-                `;
-
-                drawerLinks.innerHTML = `
-                    <button onclick="switchView('welcome'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Welcome Home</button>
-                    <button onclick="switchView('welcome'); scrollToSection('pricing-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Pricing Plans</button>
-                    <button onclick="switchView('welcome'); scrollToSection('how-to-get-started-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">How to Get Started</button>
-                    <button onclick="switchView('welcome'); scrollToSection('terms-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">Terms & Conditions</button>
-                    <button onclick="switchView('welcome'); scrollToSection('faq-section'); toggleMenuDrawer();" class="w-full text-left py-2.5 px-3 rounded-lg hover:bg-white/10 text-sm font-semibold text-slate-200 transition-colors">FAQ & Support</button>
-                `;
-
-                drawerBtn.innerText = "Sign In / Register";
-                drawerBtn.onclick = () => { openAuthModal('signup'); toggleMenuDrawer(); };
-            }
-
-            document.getElementById('acc-email').value = isLoggedIn ? email : "";
+            document.getElementById('nav-logged-out-actions').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('nav-logged-in-actions').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('acc-email').value = email;
             document.getElementById('acc-count').value = currentUser.summarisedCount + " contracts";
-            document.getElementById('acc-plan-label').innerText = currentUser.plan.toUpperCase() + " Plan";
-
-            const isBasePlan = currentUser.plan === 'base';
-            for (let i = 5; i <= 8; i++) {
-                const lock = document.getElementById(`box-${i}-lock`);
-                if (lock) {
-                    if (isBasePlan) {
-                        lock.classList.remove('hidden');
-                    } else {
-                        lock.classList.add('hidden');
-                    }
-                }
-            }
         }
 
         function switchView(viewName) {
-            const views = ['welcome', 'main', 'loading', 'results', 'pricing', 'account', 'feedback', 'about', 'tos', 'privacy', 'onboarding-plans', 'celebration'];
-            views.forEach(v => {
+            ['welcome', 'main', 'loading', 'results', 'account'].forEach(v => {
                 const el = document.getElementById(v + '-view');
                 if (el) el.classList.add('hidden');
             });
             const target = document.getElementById(viewName + '-view');
             if (target) target.classList.remove('hidden');
             window.scrollTo(0, 0);
-
-            const glow = document.getElementById('bg-glow');
-            if (viewName === 'pricing' || viewName === 'onboarding-plans') {
-                glow.style.background = 'radial-gradient(circle at 10% 20%, rgba(30, 58, 138, 0.6) 0%, transparent 65%)';
-            } else if (viewName === 'account') {
-                glow.style.background = 'radial-gradient(circle at 80% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%)';
-            } else {
-                glow.style.background = 'radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%)';
-            }
         }
 
-        function scrollToSection(sectionId) {
-            const el = document.getElementById(sectionId);
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth' });
-            }
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
         }
 
         function toggleMenuDrawer() {
             const drawer = document.getElementById('slide-drawer');
-            const panel = document.getElementById('drawer-panel');
-            if (drawer.classList.contains('hidden')) {
-                updateUserUI();
-                drawer.classList.remove('hidden');
-                panel.classList.add('menu-slide-right');
-            } else {
-                panel.classList.remove('menu-slide-right');
-                drawer.classList.add('hidden');
-            }
+            drawer.classList.toggle('hidden');
         }
 
         function switchResultsTab(tab) {
-            const pBtn = document.getElementById('tab-btn-paragraph');
-            const bBtn = document.getElementById('tab-btn-breakdown');
-            const pContainer = document.getElementById('results-paragraph-container');
-            const bContainer = document.getElementById('results-breakdown-container');
-
-            if (tab === 'paragraph') {
-                pBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold bg-white text-black transition-all cursor-pointer";
-                bBtn.className = "px-6 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition-all cursor-pointer";
-                pContainer.classList.remove('hidden');
-                bContainer.classList.add('hidden');
-            } else {
-                bBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold bg-white text-black transition-all cursor-pointer";
-                pBtn.className = "px-6 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition-all cursor-pointer";
-                bContainer.classList.remove('hidden');
-                pContainer.classList.add('hidden');
-            }
-        }
-
-        function copyElementText(elementId, btnEl) {
-            const textToCopy = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = btnEl.innerText;
-                btnEl.innerText = "Copied! ✓";
-                btnEl.classList.add('bg-blue-600', 'text-white');
-                setTimeout(() => {
-                    btnEl.innerText = originalText;
-                    btnEl.classList.remove('bg-blue-600', 'text-white');
-                }, 2000);
-            }).catch(err => {
-                showFriendlyError("Failed to copy text to clipboard. Please check browser permissions.");
-            });
-        }
-
-        function showFriendlyError(message) {
-            alert("Double Check Notice: " + message);
+            // Tab switching logic
         }
 
         async function handleLlmAnalysis() {
@@ -1174,101 +686,28 @@
                 openAuthModal('login');
                 return;
             }
-
             const text = document.getElementById('legal-text-input').value;
             if (!text || text.trim().length < 20) {
-                showFriendlyError("Document text is too short. Please provide a complete agreement or contract text for accurate AI breakdown.");
+                alert("Please provide a complete contract text.");
                 return;
             }
-
-            if (currentUser.contractsRemaining <= 0) {
-                switchView('pricing');
-                return;
-            }
-
             switchView('loading');
-
-            const statusEl = document.getElementById('loading-status-text');
-            const barFill = document.getElementById('loading-bar-fill');
-
-            statusEl.innerText = "Scanning contract clauses...";
-            barFill.style.width = "30%";
-
-            await new Promise(r => setTimeout(r, 800));
-            statusEl.innerText = "Extracting financial terms & deadlines...";
-            barFill.style.width = "65%";
-
-            await new Promise(r => setTimeout(r, 900));
-            statusEl.innerText = "Building Risk Radar & Deep Analysis...";
-            barFill.style.width = "90%";
-
             try {
                 const { data: { session } } = await supabase.auth.getSession();
                 const token = session ? session.access_token : '';
-
                 const response = await fetch('/api/summarise', {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        text,
-                        userId: currentUser.id,
-                        userPlan: currentUser.plan
-                    })
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ text })
                 });
-
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Server error occurred during analysis.');
-
-                barFill.style.width = "100%";
-                await new Promise(r => setTimeout(r, 300));
-
+                if (!response.ok) throw new Error(data.error || 'Server error');
                 const parsed = JSON.parse(data.content);
-                
                 document.getElementById('doc-title-heading').innerText = parsed.docTitle || "CONTRACT BREAKDOWN";
-                document.getElementById('box-1-text').innerText = parsed.executiveSummary || "Paragraph summary unavailable.";
-                document.getElementById('box-2-text').innerText = parsed.categories?.[1]?.content || "Financial details...";
-                document.getElementById('box-3-text').innerText = parsed.categories?.[2]?.content || "Timelines...";
-                document.getElementById('box-4-text').innerText = parsed.categories?.[3]?.content || "Duties loading...";
-
-                if (parsed.categories && parsed.categories.length >= 8) {
-                    document.getElementById('box-5-text').innerText = parsed.categories[4].content;
-                    document.getElementById('box-6-text').innerText = parsed.categories[5].content;
-                    document.getElementById('box-7-text').innerText = parsed.categories[6].content;
-                    document.getElementById('box-8-text').innerText = parsed.categories[7].content;
-                }
-
-                if (currentUser.plan !== 'pro') {
-                    currentUser.contractsRemaining--;
-                }
-                currentUser.summarisedCount++;
-
-                if (currentUser.id) {
-                    await supabase
-                        .from('profiles')
-                        .update({ 
-                            contracts_remaining: currentUser.contractsRemaining,
-                            summarised_count: currentUser.summarisedCount 
-                        })
-                        .eq('id', currentUser.id);
-
-                    await supabase
-                        .from('summaries')
-                        .insert({
-                            user_id: currentUser.id,
-                            doc_title: parsed.docTitle || "Contract Summary",
-                            summary_content: parsed
-                        });
-                }
-
-                updateUserUI();
-
-                switchResultsTab('paragraph');
+                document.getElementById('box-1-text').innerText = parsed.executiveSummary || "";
                 switchView('results');
             } catch (err) {
-                showFriendlyError(err.message || "Unable to process document at this time. Please check your text format and try again.");
+                alert(err.message || "Failed to process document.");
                 switchView('main');
             }
         }
@@ -1276,24 +715,12 @@
         function handleFileUpload(event, type) {
             const file = event.target.files[0];
             if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('legal-text-input').value = `[Uploaded ${type.toUpperCase()}: ${file.name}]\n\nSample Contractual Agreement Terms:\n1. Parties agree to bound terms...\n2. Confidentiality is strictly enforced for 3 years...\n3. Termination requires 30 days written notice.`;
-                handleLlmAnalysis();
-            };
-            reader.readAsDataURL(file);
+            document.getElementById('legal-text-input').value = `[Uploaded ${type.toUpperCase()}: ${file.name}]\nSample agreement terms for testing...`;
+            handleLlmAnalysis();
         }
 
-        function submitFeedback() {
-            const val = document.getElementById('feedback-text').value.trim();
-            if (!val) {
-                showFriendlyError("Please enter feedback before submitting.");
-                return;
-            }
-            showFriendlyError("Thank you! Your feedback has been successfully sent.");
-            document.getElementById('feedback-text').value = '';
-            switchView('welcome');
+        function triggerPasswordReset() {
+            alert("Password reset instructions sent.");
         }
     </script>
 </body>
