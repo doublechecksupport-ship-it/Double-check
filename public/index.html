@@ -411,7 +411,7 @@
                             <li>✓ Clipboard copy & export tools</li>
                         </ul>
                     </div>
-                    <button onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
+                    <button onclick="openPaymentForm('trial')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
                 </div>
 
                 <div class="glass-pane p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-sm">
@@ -427,7 +427,7 @@
                             <li>✓ Secure cloud history</li>
                         </ul>
                     </div>
-                    <button onclick="openAuthModal('signup')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base Plan</button>
+                    <button onclick="openPaymentForm('base')" class="apple-button-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base Plan</button>
                 </div>
 
                 <div class="glass-pane p-8 rounded-3xl border-2 border-white flex flex-col justify-between shadow-xl bg-slate-800">
@@ -443,7 +443,7 @@
                             <li>✓ Priority neural processing & support</li>
                         </ul>
                     </div>
-                    <button onclick="openAuthModal('signup')" class="apple-button mt-8 w-full py-3 text-xs font-bold cursor-pointer">Select Pro Plan</button>
+                    <button onclick="openPaymentForm('pro')" class="apple-button mt-8 w-full py-3 text-xs font-bold cursor-pointer">Select Pro Plan</button>
                 </div>
             </div>
         </div>
@@ -890,7 +890,6 @@
                 return;
             }
 
-            // Real Supabase Signup with Email Verification
             const { data, error } = await supabase.auth.signUp({
                 email: email,
                 password: pwd
@@ -952,14 +951,20 @@
             }
         }
 
+        function openPaymentForm(plan) {
+            completeOnboardingPlan(plan);
+        }
+
         async function completeOnboardingPlan(plan) {
             currentUser.plan = plan;
             currentUser.contractsRemaining = plan === 'pro' ? 30 : (plan === 'base' ? 5 : 3);
             
-            await supabase
-                .from('profiles')
-                .update({ plan: currentUser.plan, contracts_remaining: currentUser.contractsRemaining })
-                .eq('id', currentUser.id);
+            if (currentUser.id) {
+                await supabase
+                    .from('profiles')
+                    .update({ plan: currentUser.plan, contracts_remaining: currentUser.contractsRemaining })
+                    .eq('id', currentUser.id);
+            }
 
             updateOnboardingProgress(3, "Subscription Confirmed", "100%");
             hideOnboardingProgress();
@@ -1240,23 +1245,23 @@
                 }
                 currentUser.summarisedCount++;
 
-                // Update database profile
-                await supabase
-                    .from('profiles')
-                    .update({ 
-                        contracts_remaining: currentUser.contractsRemaining,
-                        summarised_count: currentUser.summarisedCount 
-                    })
-                    .eq('id', currentUser.id);
+                if (currentUser.id) {
+                    await supabase
+                        .from('profiles')
+                        .update({ 
+                            contracts_remaining: currentUser.contractsRemaining,
+                            summarised_count: currentUser.summarisedCount 
+                        })
+                        .eq('id', currentUser.id);
 
-                // Save summary to database
-                await supabase
-                    .from('summaries')
-                    .insert({
-                        user_id: currentUser.id,
-                        doc_title: parsed.docTitle || "Contract Summary",
-                        summary_content: parsed
-                    });
+                    await supabase
+                        .from('summaries')
+                        .insert({
+                            user_id: currentUser.id,
+                            doc_title: parsed.docTitle || "Contract Summary",
+                            summary_content: parsed
+                        });
+                }
 
                 updateUserUI();
 
