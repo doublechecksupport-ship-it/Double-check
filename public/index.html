@@ -94,7 +94,7 @@
     <div id="bg-glow" style="background: radial-gradient(circle at 50% 20%, rgba(30, 58, 138, 0.55) 0%, transparent 65%); opacity: 0.6;"></div>
 
     <!-- AUTHENTICATION MODAL -->
-    <div id="auth-gate-modal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center bg-black/75 backdrop-blur-md px-4 py-10">
+    <div id="auth-gate-modal" style="display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); padding: 16px;">
         <div class="glass-pane w-full max-w-md p-8 rounded-3xl shadow-2xl border border-white/10 text-left bg-slate-900/95 relative z-10">
             <div class="flex items-center space-x-3 mb-6">
                 <span class="apple-heading text-xl font-bold text-white">Double Check Account</span>
@@ -330,12 +330,12 @@
         function openAuthModal(tab) {
             switchAuthTab(tab || 'login');
             const modal = document.getElementById('auth-gate-modal');
-            modal.style.display = 'flex';
+            if (modal) modal.style.display = 'flex';
         }
 
         function closeAuthModal() {
             const modal = document.getElementById('auth-gate-modal');
-            modal.style.display = 'none';
+            if (modal) modal.style.display = 'none';
         }
 
         async function handleSignupSubmit(event) {
@@ -396,9 +396,13 @@
 
         function updateUserUI() {
             const isLoggedIn = Boolean(currentUser.email);
-            document.getElementById('nav-logged-out-actions').classList.toggle('hidden', isLoggedIn);
-            document.getElementById('nav-logged-in-actions').classList.toggle('hidden', !isLoggedIn);
-            document.getElementById('acc-email').value = currentUser.email || "";
+            const logoutActions = document.getElementById('nav-logged-out-actions');
+            const loginActions = document.getElementById('nav-logged-in-actions');
+            const accEmail = document.getElementById('acc-email');
+
+            if (logoutActions) logoutActions.classList.toggle('hidden', isLoggedIn);
+            if (loginActions) loginActions.classList.toggle('hidden', !isLoggedIn);
+            if (accEmail) accEmail.value = currentUser.email || "";
         }
 
         function switchView(viewName) {
