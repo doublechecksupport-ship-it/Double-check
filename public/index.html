@@ -1,510 +1,553 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Double Check - AI Legal Document Summariser</title>
-    <!-- Supabase JS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      :root {
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        background-color: #f5f5f7;
-        color: #1d1d1f;
-      }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Double Check - AI Legal Document Summariser</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background-color: #fbfbfd;
+      color: #1d1d1f;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
 
-      body {
-        overflow-x: hidden;
-        background: #f5f5f7;
-        min-height: 100vh;
-        scroll-behavior: smooth;
-        padding-top: 110px;
-        -webkit-font-smoothing: antialiased;
-      }
+    .apple-heading {
+      font-weight: 600;
+      letter-spacing: -0.015em;
+    }
 
-      .apple-heading {
-        font-weight: 600;
-        letter-spacing: -0.02em;
-        color: #1d1d1f;
-      }
+    .apple-body {
+      color: #86868b;
+    }
 
-      .apple-body {
-        color: #86868b;
-      }
+    .apple-card {
+      background: #ffffff;
+      border-radius: 1.25rem;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
 
-      .apple-card {
-        background: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: 24px;
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
-        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-      }
+    .apple-btn-primary {
+      background: #1d1d1f;
+      color: #ffffff;
+      border-radius: 980px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .apple-btn-primary:hover {
+      background: #000000;
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
 
-      .apple-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
-      }
+    .apple-btn-secondary {
+      background: rgba(0, 0, 0, 0.05);
+      color: #1d1d1f;
+      border-radius: 980px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .apple-btn-secondary:hover {
+      background: rgba(0, 0, 0, 0.08);
+      transform: scale(1.01);
+    }
 
-      .apple-btn-primary {
-        background-color: #1d1d1f;
-        color: #ffffff;
-        font-weight: 500;
-        border-radius: 980px;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-        border: none;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-      }
+    .top-navbar {
+      backdrop-filter: blur(20px);
+      background-color: rgba(251, 251, 253, 0.8);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      position: sticky;
+      top: 0;
+      z-index: 99;
+    }
 
-      .apple-btn-primary:hover {
-        background-color: #000000;
-        transform: scale(1.01);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-      .apple-btn-secondary {
-        background-color: rgba(0, 0, 0, 0.04);
-        color: #1d1d1f;
-        font-weight: 500;
-        border-radius: 980px;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-        border: 1px solid rgba(0, 0, 0, 0.08);
-      }
+    .animate-fade-in {
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
 
-      .apple-btn-secondary:hover {
-        background-color: rgba(0, 0, 0, 0.08);
-        transform: scale(1.01);
-      }
+    /* RESPONSIVE MOBILE FIXES */
+    header, nav, .nav-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-      #top-navbar {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-        z-index: 50;
-      }
+    textarea, input {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
 
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(8px); }
-        to { opacity: 1; transform: translateY(0); }
+    @media (max-width: 640px) {
+      .main-container, main {
+        padding: 1.5rem 1rem;
       }
-
-      .animate-fade-in {
-        animation: fadeIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      h1 {
+        font-size: 2rem !important;
+        line-height: 1.25 !important;
       }
-    </style>
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-black selection:text-white relative">
+<body class="w-screen flex flex-col min-h-screen font-sans antialiased selecting-none selection:bg-black selection:text-white relative">
 
-    <!-- AUTHENTICATION MODAL -->
-    <div id="auth-gate-modal" style="display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(16px); padding: 20px;">
-        <div class="apple-card w-full max-w-md p-8 text-left bg-white relative animate-fade-in">
-            <div class="flex items-center justify-between mb-6">
-                <span class="apple-heading text-lg font-semibold">Double Check Account</span>
-                <button type="button" id="modal-close-btn" class="apple-body hover:text-black cursor-pointer text-sm font-medium transition-colors">✕</button>
-            </div>
+  <!-- AUTHENTICATION MODAL -->
+  <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden animate-fade-in">
+    <div class="apple-card w-full max-w-md p-8 relative flex flex-col gap-6 m-4">
+      <div class="flex justify-between items-center border-b border-black/5 pb-4">
+        <h3 class="text-xl apple-heading">Double Check Account</h3>
+        <button type="button" id="modal-close-btn" class="text-gray-400 hover:text-black font-medium text-lg px-2">✕</button>
+      </div>
 
-            <div class="flex bg-black/5 p-1 rounded-xl mb-6 text-xs font-medium">
-                <button type="button" id="tab-login-btn" class="flex-1 py-2.5 rounded-lg bg-white text-black shadow-sm transition-all cursor-pointer">Sign In</button>
-                <button type="button" id="tab-signup-btn" class="flex-1 py-2.5 rounded-lg apple-body transition-all cursor-pointer">Register</button>
-            </div>
+      <div class="flex bg-gray-100/80 p-1 rounded-xl">
+        <button type="button" id="tab-login" class="flex-1 py-2 rounded-lg font-medium text-sm transition-all text-black shadow-sm bg-white">Sign In</button>
+        <button type="button" id="tab-signup" class="flex-1 py-2 rounded-lg font-medium text-sm transition-all text-gray-500 hover:text-black">Register</button>
+      </div>
 
-            <form id="form-login" class="space-y-4">
-                <div>
-                    <label class="text-[11px] font-semibold apple-body uppercase tracking-wider">Email Address</label>
-                    <input type="email" id="login-email" required placeholder="name@example.com" class="w-full mt-1.5 p-3.5 bg-black/5 border border-black/10 rounded-2xl text-sm text-[#1d1d1f] focus:outline-none focus:border-black transition-all">
-                </div>
-                <div>
-                    <label class="text-[11px] font-semibold apple-body uppercase tracking-wider">Password</label>
-                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full mt-1.5 p-3.5 bg-black/5 border border-black/10 rounded-2xl text-sm text-[#1d1d1f] focus:outline-none focus:border-black transition-all">
-                </div>
-                <button type="submit" class="apple-btn-primary w-full py-3.5 text-xs font-semibold cursor-pointer mt-2">Sign In</button>
-                <button type="button" id="login-cancel-btn" class="w-full text-center text-xs apple-body hover:text-black pt-2 cursor-pointer transition-colors">Cancel</button>
-            </form>
-
-            <form id="form-signup" class="space-y-4" style="display: none;">
-                <div>
-                    <label class="text-[11px] font-semibold apple-body uppercase tracking-wider">Email Address</label>
-                    <input type="email" id="signup-email" required placeholder="name@example.com" class="w-full mt-1.5 p-3.5 bg-black/5 border border-black/10 rounded-2xl text-sm text-[#1d1d1f] focus:outline-none focus:border-black transition-all">
-                </div>
-                <div>
-                    <label class="text-[11px] font-semibold apple-body uppercase tracking-wider">Password (8+ chars)</label>
-                    <input type="password" id="signup-password" required placeholder="••••••••" class="w-full mt-1.5 p-3.5 bg-black/5 border border-black/10 rounded-2xl text-sm text-[#1d1d1f] focus:outline-none focus:border-black transition-all">
-                </div>
-                <div class="pt-1">
-                    <label class="flex items-center text-xs apple-body cursor-pointer">
-                        <input type="checkbox" id="signup-tos" required class="mr-2.5 h-4 w-4 rounded accent-black"> I agree to Terms & Privacy Policy
-                    </label>
-                </div>
-                <button type="submit" class="apple-btn-primary w-full py-3.5 text-xs font-semibold cursor-pointer mt-2">Create Account</button>
-                <button type="button" id="signup-cancel-btn" class="w-full text-center text-xs apple-body hover:text-black pt-2 cursor-pointer transition-colors">Cancel</button>
-            </form>
+      <!-- SIGN IN FORM -->
+      <form id="form-login" class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Email Address</label>
+          <input type="email" id="login-email" required placeholder="name@example.com" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
         </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Password</label>
+          <input type="password" id="login-password" required placeholder="••••••••" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+        </div>
+        <button type="submit" class="apple-btn-primary w-full py-3.5 mt-2 text-sm font-medium">Sign In</button>
+        <button type="button" id="login-cancel-btn" class="text-xs text-gray-400 hover:text-black text-center mt-1">Cancel</button>
+      </form>
+
+      <!-- SIGN UP FORM -->
+      <form id="form-signup" class="flex flex-col gap-4" style="display: none;">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Email Address</label>
+          <input type="email" id="signup-email" required placeholder="name@example.com" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Password (6+ Chars)</label>
+          <input type="password" id="signup-password" required placeholder="••••••••" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+        </div>
+        <div class="flex items-center gap-2 mt-1">
+          <input type="checkbox" id="terms-checkbox" required class="rounded border-gray-300">
+          <label for="terms-checkbox" class="text-xs text-gray-500">I agree to Terms & Privacy Policy</label>
+        </div>
+        <button type="submit" class="apple-btn-primary w-full py-3.5 mt-2 text-sm font-medium">Create Account</button>
+        <button type="button" id="signup-cancel-btn" class="text-xs text-gray-400 hover:text-black text-center mt-1">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOP NAVBAR -->
+  <nav class="top-navbar px-6 py-4 flex justify-between items-center w-full">
+    <div id="nav-logo" class="flex items-center gap-2 cursor-pointer">
+      <span class="apple-heading text-lg tracking-tight font-semibold">Double Check</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div id="nav-logged-out" class="flex items-center gap-3">
+        <button type="button" id="nav-pricing-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Pricing</button>
+        <button type="button" id="nav-terms-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Terms</button>
+        <button type="button" id="nav-signin-btn" class="apple-btn-secondary px-4 py-2 text-sm font-medium">Sign In</button>
+      </div>
+      <div id="nav-logged-in" class="hidden items-center gap-3">
+        <button type="button" id="nav-home-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Home</button>
+        <button type="button" id="nav-account-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Account</button>
+        <button type="button" id="nav-signout-btn" class="apple-btn-secondary px-4 py-2 text-sm font-medium">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- WELCOME VIEW -->
+  <div id="view-welcome" class="main-container flex flex-col flex-1 max-w-4xl w-full mx-auto px-6 py-16 items-center text-center justify-center gap-8 animate-fade-in">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/5 text-xs font-semibold uppercase tracking-wider text-gray-600">
+      Next-Gen Legal Intelligence
+    </div>
+    <h1 class="text-4xl md:text-6xl apple-heading tracking-tight max-w-2xl leading-[1.15]">
+      Understand Any Legal Contract in Seconds.
+    </h1>
+    <p class="apple-body text-base md:text-xl max-w-xl font-normal leading-relaxed">
+      Transform complex legal agreements into crystal-clear plain-English summaries and instant risk breakdowns. Never sign blindly again.
+    </p>
+    <div class="flex items-center gap-4 mt-2">
+      <button type="button" id="hero-get-started-btn" class="apple-btn-primary px-8 py-4 text-base font-medium shadow-md">Get Started Free</button>
+      <button type="button" id="hero-signin-btn" class="apple-btn-secondary px-8 py-4 text-base font-medium">Sign In</button>
+    </div>
+  </div>
+
+  <!-- PRICING SECTION -->
+  <div id="pricing-section" class="w-full max-w-5xl space-y-8 px-6 py-12 mx-auto">
+    <div class="text-center space-y-2">
+      <h2 class="text-2xl apple-heading text-1d1d1f tracking-tight">Transparent Plans & Features</h2>
     </div>
 
-    <!-- TOP NAVBAR -->
-    <nav id="top-navbar" class="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-5xl py-3 px-6 rounded-2xl flex items-center justify-between">
-        <div id="nav-logo-btn" class="flex items-center space-x-3 cursor-pointer group">
-            <span class="apple-heading font-semibold text-base tracking-tight">Double Check</span>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Starter Card -->
+      <div class="apple-card p-8 flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Free / Starter</div>
+          <h3 class="text-3xl apple-heading text-1d1d1f">Free <span class="text-base text-gray-400 font-normal">/ mo</span></h3>
+          <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">For casual users needing quick legal sanity checks.</p>
+          <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
+            <li class="flex items-center gap-2">✓ <strong>1 document summary per month</strong> (up to 5 pages)</li>
+            <li class="flex items-center gap-2">✓ Full Paragraph Summary Overview</li>
+            <li class="flex items-center gap-2">✓ Complete Red-Flag Breakdown Access</li>
+          </ul>
         </div>
-        <div class="flex items-center space-x-4">
-            <div id="nav-logged-out-actions" class="flex items-center space-x-3">
-                <button type="button" id="nav-pricing-btn" class="text-xs font-medium apple-body hover:text-black px-3 py-2 cursor-pointer transition-colors hidden sm:inline-block">Pricing</button>
-                <button type="button" id="nav-terms-btn" class="text-xs font-medium apple-body hover:text-black px-3 py-2 cursor-pointer transition-colors hidden sm:inline-block">Terms</button>
-                <button type="button" id="nav-signin-btn" class="apple-btn-secondary px-5 py-2.5 text-xs font-medium cursor-pointer">Sign In</button>
-            </div>
-            <div id="nav-logged-in-actions" class="hidden items-center space-x-3">
-                <button type="button" id="nav-home-btn" class="apple-btn-secondary px-4 py-2 text-xs font-medium cursor-pointer">Home</button>
-                <button type="button" id="nav-account-btn" class="apple-btn-secondary px-4 py-2 text-xs font-medium cursor-pointer">Account</button>
-                <button type="button" id="nav-signout-btn" class="apple-btn-secondary px-4 py-2 text-xs font-medium cursor-pointer">Sign Out</button>
-            </div>
+        <button type="button" class="pricing-signup-btn apple-btn-secondary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Start Free Trial</button>
+      </div>
+
+      <!-- Pro Card -->
+      <div class="apple-card p-8 flex flex-col justify-between border-black/20 shadow-lg relative">
+        <div class="space-y-4">
+          <div class="inline-block px-3 py-1 bg-black text-white rounded-full text-xs font-semibold uppercase tracking-wider">Pro Tier</div>
+          <h3 class="text-3xl apple-heading text-1d1d1f">£29 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
+          <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Designed for freelancers, tenants, and sole traders.</p>
+          <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
+            <li class="flex items-center gap-2">✓ <strong>Unlimited contract summaries</strong> per month</li>
+            <li class="flex items-center gap-2">✓ Full Risk Rating & High-Risk Alerts</li>
+            <li class="flex items-center gap-2">✓ Full Risk Header & Deep Analysis</li>
+          </ul>
         </div>
-    </nav>
+        <button type="button" class="pricing-signup-btn apple-btn-primary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Upgrade to Pro</button>
+      </div>
 
-    <!-- WELCOME VIEW -->
-    <div id="welcome-view" class="flex-1 flex flex-col px-6 py-16 max-w-5xl mx-auto w-full items-center text-center space-y-20 relative z-10 animate-fade-in">
-        <div class="space-y-6 max-w-3xl mt-4">
-            <span class="inline-block text-[11px] font-semibold bg-black/5 text-[#1d1d1f] px-4 py-1.5 rounded-full uppercase tracking-widest border border-black/5">Next-Gen Legal Intelligence</span>
-            <h1 class="apple-heading text-4xl sm:text-6xl font-semibold tracking-tight leading-[1.08]">
-                Understand Any Legal Contract in Seconds.
-            </h1>
-            <p class="apple-body text-base sm:text-lg leading-relaxed max-w-2xl mx-auto font-normal">
-                Transform complex legal agreements into crystal-clear plain-English summaries and instant risk breakdowns. Never sign blindly again.
-            </p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <button type="button" id="hero-get-started-btn" class="apple-btn-primary px-8 py-4 text-xs font-semibold shadow-md cursor-pointer">Get Started Free</button>
-                <button type="button" id="hero-signin-btn" class="apple-btn-secondary px-8 py-4 text-xs font-semibold cursor-pointer">Sign In</button>
-            </div>
+      <!-- Business Card -->
+      <div class="apple-card p-8 flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Business / Team</div>
+          <h3 class="text-3xl apple-heading text-1d1d1f">£199 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
+          <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Tailored for agencies, sales teams, and high-volume operations.</p>
+          <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
+            <li class="flex items-center gap-2">✓ 5 team seats included</li>
+            <li class="flex items-center gap-2">✓ Custom playbooks & integrations</li>
+            <li class="flex items-center gap-2">✓ Full Risk Header & Breakdown Unlocked</li>
+          </ul>
         </div>
+        <button type="button" class="pricing-signup-btn apple-btn-secondary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Get Started</button>
+      </div>
+    </div>
+  </div>
 
-        <!-- PRICING SECTION -->
-        <div id="pricing-section" class="w-full space-y-10 pt-4">
-            <div class="text-center space-y-2">
-                <h2 class="apple-heading text-2xl sm:text-3xl font-semibold tracking-tight">Transparent Plans & Features</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-                <div class="apple-card p-8 flex flex-col justify-between">
-                    <div>
-                        <span class="text-[10px] font-semibold uppercase tracking-wider bg-black/5 text-[#86868b] px-3 py-1 rounded-full">No Risk</span>
-                        <h3 class="apple-heading text-xl font-semibold mt-4">Free Trial</h3>
-                        <p class="text-3xl font-semibold mt-2 text-[#1d1d1f]">$0 <span class="text-xs font-normal apple-body">/ 30 days</span></p>
-                        <ul class="text-xs apple-body space-y-3 mt-6">
-                            <li class="flex items-center">✓ 3 contract summaries included</li>
-                            <li class="flex items-center">✓ Full Paragraph Summary Overview</li>
-                            <li class="flex items-center">✓ Complete 8-Box Breakdown Access</li>
-                        </ul>
-                    </div>
-                    <button type="button" class="pricing-signup-btn apple-btn-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Start Free Trial</button>
-                </div>
+  <!-- DISCLAIMER -->
+  <div class="w-full max-w-5xl mx-auto px-6 pt-2 pb-12 border-t border-black/5">
+    <p class="text-xs text-gray-400 leading-relaxed text-center">
+      Disclaimer: Double Check provides AI-generated contract summaries for informational purposes only and does not substitute professional legal advice.
+    </p>
+  </div>
 
-                <div class="apple-card p-8 flex flex-col justify-between">
-                    <div>
-                        <span class="text-[10px] font-semibold uppercase tracking-wider bg-black/5 text-[#86868b] px-3 py-1 rounded-full">Starter</span>
-                        <h3 class="apple-heading text-xl font-semibold mt-4">Base Plan</h3>
-                        <p class="text-3xl font-semibold mt-2 text-[#1d1d1f]">$12 <span class="text-xs font-normal apple-body">/ month</span></p>
-                        <ul class="text-xs apple-body space-y-3 mt-6">
-                            <li class="flex items-center">✓ 5 summaries per month</li>
-                            <li class="flex items-center">✓ Core Breakdown (Boxes 1–4)</li>
-                        </ul>
-                    </div>
-                    <button type="button" class="pricing-signup-btn apple-btn-secondary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Base Plan</button>
-                </div>
-
-                <div class="apple-card p-8 border-2 border-[#1d1d1f] flex flex-col justify-between bg-white shadow-lg">
-                    <div>
-                        <span class="text-[10px] font-semibold uppercase tracking-wider bg-[#1d1d1f] text-white px-3 py-1 rounded-full">Most Popular</span>
-                        <h3 class="apple-heading text-xl font-semibold mt-4">Pro Plan</h3>
-                        <p class="text-3xl font-semibold mt-2 text-[#1d1d1f]">$29 <span class="text-xs font-normal apple-body">/ month</span></p>
-                        <ul class="text-xs text-[#1d1d1f] space-y-3 mt-6 font-medium">
-                            <li class="flex items-center">✓ 30 summaries per month</li>
-                            <li class="flex items-center">✓ Full 8-Box Breakdown Unlocked</li>
-                            <li class="flex items-center">✓ Full Risk Radar & Deep Analysis</li>
-                        </ul>
-                    </div>
-                    <button type="button" class="pricing-signup-btn apple-btn-primary mt-8 w-full py-3 text-xs font-semibold cursor-pointer">Select Pro Plan</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="terms-section" class="w-full space-y-4 text-left pt-12 border-t border-black/10">
-            <h2 class="apple-heading text-lg font-semibold">Terms & Conditions</h2>
-            <p class="text-xs apple-body leading-relaxed">Double Check provides AI-generated contract summaries for informational purposes only and does not constitute formal legal counsel.</p>
-        </div>
+  <!-- MAIN WORKSPACE -->
+  <div id="view-workspace" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col gap-8 animate-fade-in">
+    <div class="flex flex-col gap-2">
+      <h2 class="text-3xl apple-heading tracking-tight">Summarise Any Legal Document.</h2>
+      <p class="apple-body text-sm">Paste your contract text below for an instant, professional AI breakdown.</p>
     </div>
 
-    <!-- MAIN WORKSPACE -->
-    <div id="main-view" class="hidden flex-1 flex flex-col px-6 py-16 max-w-4xl mx-auto w-full items-center text-center relative z-10 animate-fade-in">
-        <h1 class="apple-heading text-3xl sm:text-5xl font-semibold tracking-tight">Summarise Any Legal Document.</h1>
-        <p class="apple-body text-xs sm:text-sm mt-3 font-normal">Paste your contract text below for an instant, professional AI breakdown.</p>
-        <div class="apple-card mt-8 p-6 max-w-xl w-full text-left shadow-sm">
-            <textarea id="legal-text-input" rows="7" placeholder="Paste agreement or contract terms here..." class="w-full bg-transparent text-xs sm:text-sm focus:outline-none resize-none text-[#1d1d1f] placeholder:text-[#86868b] font-normal"></textarea>
-        </div>
-        <button type="button" id="summarise-btn" class="apple-btn-primary mt-6 px-8 py-4 text-xs font-semibold w-full max-w-xl shadow-md cursor-pointer">Summarise Contract</button>
+    <div class="apple-card p-6 flex flex-col gap-4">
+      <textarea id="legal-text-input" rows="10" placeholder="Paste agreement or contract terms here..." class="w-full p-4 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/30 text-sm leading-relaxed resize-y"></textarea>
+      <button id="summarise-btn" class="apple-btn-primary w-full py-4 text-center text-sm font-medium shadow-md">Summarise Contract</button>
+    </div>
+  </div>
+
+  <!-- LOADING VIEW -->
+  <div id="view-loading" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-20 flex-col items-center justify-center gap-6 animate-fade-in">
+    <div class="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+    <p class="apple-heading text-sm text-gray-600 font-medium tracking-wide">Analyzing contract clauses with AI...</p>
+  </div>
+
+  <!-- RESULTS VIEW -->
+  <div id="view-results" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col gap-6 animate-fade-in text-left">
+    <div class="flex justify-between items-center border-b border-black/5 pb-4">
+      <h2 id="doc-title-heading" class="text-xl apple-heading tracking-tight">Executive Summary</h2>
+      <button id="back-to-workspace-btn" class="apple-btn-secondary px-4 py-2 text-xs font-medium">← Analyze Another</button>
     </div>
 
-    <!-- LOADING VIEW -->
-    <div id="loading-view" class="hidden flex-1 flex flex-col items-center justify-center px-6 max-w-xl mx-auto w-full text-center py-24 relative z-10 space-y-6 animate-fade-in">
-        <div class="w-10 h-10 rounded-full border-2 border-[#1d1d1f] border-t-transparent animate-spin mx-auto"></div>
-        <h2 class="apple-heading text-lg font-semibold tracking-tight">Analyzing contract clauses with AI...</h2>
+    <div class="apple-card p-8 flex flex-col gap-6">
+      <div class="flex flex-col gap-2">
+        <h4 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider apple-body">Executive Summary</h4>
+        <p id="summary-text" class="text-sm text-gray-700 font-normal leading-relaxed text-left"></p>
+      </div>
     </div>
+  </div>
 
-    <!-- RESULTS VIEW -->
-    <div id="results-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-5xl mx-auto w-full animate-fade-in text-left relative z-10 space-y-6">
-        <div class="flex justify-between items-center border-b border-black/10 pb-4">
-            <h2 id="doc-title-heading" class="apple-heading text-2xl font-semibold tracking-tight">Contract Breakdown</h2>
-            <button type="button" id="new-scan-btn" class="apple-btn-primary px-5 py-2 text-xs font-semibold cursor-pointer">New Scan</button>
-        </div>
-        <div class="apple-card p-8 space-y-4">
-            <h3 class="text-xs font-semibold uppercase tracking-wider apple-body">Executive Summary</h3>
-            <p id="box-1-text" class="text-sm sm:text-base text-[#1d1d1f] leading-relaxed font-normal">Summary loading...</p>
-        </div>
+  <!-- ACCOUNT VIEW -->
+  <div id="view-account" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col text-left relative leading-10 space-y-6 space-x-0 animate-fade-in">
+    <h2 class="text-3xl apple-heading tracking-tight">My Account</h2>
+    <div class="apple-card p-8 flex flex-col gap-6 max-w-md">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-semibold text-gray-400 tracking-wider">Registered Email</label>
+        <p id="account-user-email" class="text-base font-medium text-gray-800 border-b border-black/10 pb-2 text-left"></p>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-semibold text-gray-400 tracking-wider">Current Plan</label>
+        <p id="account-plan-badge" class="text-sm font-semibold text-black">Starter Free Trial</p>
+      </div>
+
+      <button type="button" id="back-home-btn" class="apple-btn-secondary px-4 py-3 text-center text-xs font-semibold w-full cursor-pointer">← Back Home</button>
     </div>
+  </div>
 
-    <!-- ACCOUNT VIEW -->
-    <div id="account-view" class="hidden flex-1 flex flex-col px-6 py-12 max-w-4xl mx-auto w-full text-left relative z-10 space-y-6 animate-fade-in">
-        <h2 class="apple-heading text-3xl font-semibold tracking-tight">My Account</h2>
-        <div class="apple-card p-8 space-y-4">
-            <div>
-                <label class="text-xs uppercase apple-body font-semibold tracking-wider">Registered Email</label>
-                <input type="text" id="acc-email" readonly class="w-full mt-2 p-3.5 bg-black/5 border border-black/10 rounded-2xl text-sm text-[#1d1d1f] font-medium">
-            </div>
-        </div>
-        <button type="button" id="back-home-btn" class="apple-btn-secondary py-3 px-6 text-xs font-semibold w-36 cursor-pointer">← Back Home</button>
-    </div>
+  <!-- FOOTER -->
+  <footer class="w-full py border-t border-black/5 text-center text-xs text-gray-400 border-border-black/10 px-6 px-4 selection:bg-20 font-medium">
+    © 2026 Double Check LLC. All rights reserved.
+  </footer>
 
-    <!-- FOOTER -->
-    <footer class="mt-auto py-10 text-center text-xs apple-body border-t border-black/10 px-6 relative z-10 font-medium">
-        © 2026 Double Check LLC. All rights reserved.
-    </footer>
+  <!-- SCRIPT ENGINE -->
+  <script>
+    let supabaseClient = null;
 
-    <!-- SCRIPT ENGINE -->
-    <script>
-        let supabaseClient = null;
+    try {
+      if (typeof window.supabase !== "undefined" && window.supabase.createClient) {
+        supabaseClient = window.supabase.createClient(
+          "https://doublechecksupport-ship-it.supabase.co",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZWYiOiJkb3VibGVjaGVja3N1cHBvcnQtc2hpcC1pdCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzYwOTY3NDgyLCJleHAiOjIwNzY1NDM0ODJ9.6eWvY9PZ24r3Nn_O_z5Yt0W7a3B8c9V1x2Z4m5N6p7Q"
+        );
+      }
+    } catch (e) {
+      console.log("Supabase init notice:", e);
+    }
+
+    let currentUser = null;
+    let currentPlan = { plan: "free", trial: true, contractsRemaining: 1 };
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (supabaseClient) {
         try {
-            if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-                supabaseClient = window.supabase.createClient(
-                    "https://jxdnesvlwvmdbfwjzfga.supabase.co", 
-                    "sb_publishable_t3ivgTlGaqQK2T6WhXKB3Q_WvMZW0zr"                );
-            }
-        } catch (e) {
-            console.warn("Supabase init notice:", e);
+          const { data: { session } } = await supabaseClient.auth.getSession();
+          if (session?.user) {
+            currentUser = session.user;
+            updateAccountUI(currentUser);
+            switchView('workspace');
+          }
+        } catch (err) {
+          console.err("Session check error:", err);
         }
+      }
 
-        let currentUser = { id: "", email: "", plan: "trial", contractsRemaining: 3 };
+      updateAccountUI(null);
 
-        document.addEventListener('DOMContentLoaded', () => {
-            async function initSession() {
-                if (supabaseClient) {
-                    try {
-                        const { data: { session } } = await supabaseClient.auth.getSession();
-                        if (session && session.user) {
-                            currentUser.id = session.user.id;
-                            currentUser.email = session.user.email;
-                            updateUserUI();
-                            switchView('main');
-                            return;
-                        }
-                    } catch (err) {
-                        console.warn("Session check notice:", err);
-                    }
-                }
-                updateUserUI();
-                switchView('welcome');
-            }
-            initSession();
+      document.getElementById('nav-logo')?.addEventListener('click', () => switchView('welcome'));
+      document.getElementById('nav-signin-btn')?.addEventListener('click', () => openAuthModal('login'));
+      document.getElementById('hero-signin-btn')?.addEventListener('click', () => openAuthModal('login'));
+      document.getElementById('hero-get-started-btn')?.addEventListener('click', () => openAuthModal('signup'));
+      document.getElementById('nav-home-btn')?.addEventListener('click', () => switchView('workspace'));
+      document.getElementById('nav-account-btn')?.addEventListener('click', () => switchView('account'));
+      document.getElementById('nav-signout-btn')?.addEventListener('click', handleSignOut);
+      document.getElementById('back-home-btn')?.addEventListener('click', () => switchView('workspace'));
+      document.getElementById('back-to-workspace-btn')?.addEventListener('click', () => switchView('workspace'));
 
-            document.getElementById('nav-logo-btn').addEventListener('click', () => switchView('welcome'));
-            document.getElementById('hero-get-started-btn').addEventListener('click', () => openAuthModal('signup'));
-            document.getElementById('hero-signin-btn').addEventListener('click', () => openAuthModal('login'));
-            document.getElementById('nav-signin-btn').addEventListener('click', () => openAuthModal('login'));
-            document.getElementById('nav-home-btn').addEventListener('click', () => switchView('main'));
-            document.getElementById('nav-account-btn').addEventListener('click', () => switchView('account'));
-            document.getElementById('nav-signout-btn').addEventListener('click', handleSignOut);
-            
-            document.getElementById('nav-pricing-btn').addEventListener('click', () => {
-                switchView('welcome');
-                setTimeout(() => scrollToSection('pricing-section'), 50);
-            });
-            document.getElementById('nav-terms-btn').addEventListener('click', () => {
-                switchView('welcome');
-                setTimeout(() => scrollToSection('terms-section'), 50);
-            });
+      document.querySelectorAll('.pricing-signup-btn').forEach(btn => {
+        btn.addEventListener('click', () => openAuthModal('signup'));
+      });
 
-            document.querySelectorAll('.pricing-signup-btn').forEach(btn => {
-                btn.addEventListener('click', () => openAuthModal('signup'));
-            });
+      document.getElementById('modal-close-btn')?.addEventListener('click', closeAuthModal);
+      document.getElementById('login-cancel-btn')?.addEventListener('click', closeAuthModal);
+      document.getElementById('signup-cancel-btn')?.addEventListener('click', closeAuthModal);
 
-            document.getElementById('modal-close-btn').addEventListener('click', closeAuthModal);
-            document.getElementById('login-cancel-btn').addEventListener('click', closeAuthModal);
-            document.getElementById('signup-cancel-btn').addEventListener('click', closeAuthModal);
+      document.getElementById('tab-login')?.addEventListener('click', () => switchAuthTab('login'));
+      document.getElementById('tab-signup')?.addEventListener('click', () => switchAuthTab('signup'));
 
-            document.getElementById('tab-login-btn').addEventListener('click', () => switchAuthTab('login'));
-            document.getElementById('tab-signup-btn').addEventListener('click', () => switchAuthTab('signup'));
+      document.getElementById('form-login')?.addEventListener('submit', handleLoginSubmit);
+      document.getElementById('form-signup')?.addEventListener('submit', handleSignUpSubmit);
+      document.getElementById('summarise-btn')?.addEventListener('click', handleSummarise);
+    });
 
-            document.getElementById('form-login').addEventListener('submit', handleLoginSubmit);
-            document.getElementById('form-signup').addEventListener('submit', handleSignupSubmit);
+    function switchAuthTab(tab) {
+      const tabLogin = document.getElementById('tab-login');
+      const tabSignup = document.getElementById('tab-signup');
+      const formLogin = document.getElementById('form-login');
+      const formSignup = document.getElementById('form-signup');
 
-            document.getElementById('summarise-btn').addEventListener('click', handleLlmAnalysis);
-            document.getElementById('new-scan-btn').addEventListener('click', () => switchView('main'));
-            document.getElementById('back-home-btn').addEventListener('click', () => switchView('main'));
+      if (tab === 'login') {
+        tabLogin.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-black shadow-sm bg-white";
+        tabSignup.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-gray-500 hover:text-black";
+        formLogin.style.display = 'flex';
+        formSignup.style.display = 'none';
+      } else {
+        tabSignup.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-black shadow-sm bg-white";
+        tabLogin.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-gray-500 hover:text-black";
+        formSignup.style.display = 'flex';
+        formLogin.style.display = 'none';
+      }
+    }
+
+    function openAuthModal(tab = 'login') {
+      switchAuthTab(tab);
+      document.getElementById('auth-modal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.add('hidden');
+    }
+
+    async function handleSignUpSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('signup-email').value.trim().toLowerCase();
+      const password = document.getElementById('signup-password').value;
+      const terms = document.getElementById('terms-checkbox').checked;
+
+      if (!terms) {
+        alert('Please accept the Terms of Service.');
+        return;
+      }
+
+      if (!supabaseClient) {
+        alert('Supabase not initialized.');
+        return;
+      }
+
+      const { data, error } = await supabaseClient.auth.signUp({ email, password });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      // Check if account already exists
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        alert("An account with this email already exists! Please switch to Sign In.");
+        switchAuthTab('login');
+        return;
+      }
+
+      alert("Account created successfully! Check your email for verification.");
+      closeAuthModal();
+      switchAuthTab('login');
+    }
+
+    async function handleLoginSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const password = document.getElementById('login-password').value;
+
+      if (!supabaseClient) {
+        alert('Supabase not initialized.');
+        return;
+      }
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      currentUser = data.user;
+      updateAccountUI(currentUser);
+      closeAuthModal();
+      switchView('workspace');
+    }
+
+    async function handleSignOut() {
+      if (supabaseClient) {
+        await supabaseClient.auth.signOut();
+      }
+      currentUser = null;
+      updateAccountUI(null);
+      switchView('welcome');
+    }
+
+    function updateAccountUI(user) {
+      const loggedOutActions = document.getElementById('nav-logged-out');
+      const loggedInActions = document.getElementById('nav-logged-in');
+      const accountEmail = document.getElementById('account-user-email');
+
+      if (user) {
+        if (loggedOutActions) loggedOutActions.classList.add('hidden');
+        if (loggedInActions) loggedInActions.classList.remove('hidden');
+        if (loggedInActions) loggedInActions.classList.add('flex');
+        if (accountEmail) accountEmail.textContent = user.email || '';
+      } else {
+        if (loggedOutActions) loggedOutActions.classList.remove('hidden');
+        if (loggedInActions) loggedInActions.classList.add('hidden');
+        if (loggedInActions) loggedInActions.classList.remove('flex');
+        if (accountEmail) accountEmail.textContent = '';
+      }
+    }
+
+    function switchView(viewName) {
+      const views = ['welcome', 'workspace', 'loading', 'results', 'account'];
+      views.forEach(v => {
+        const target = document.getElementById(`view-${v}`);
+        if (target) {
+          if (v === viewName) {
+            target.classList.remove('hidden');
+            target.classList.add('animate-fade-in');
+            target.classList.add('flex');
+          } else {
+            target.classList.add('hidden');
+            target.classList.remove('flex');
+          }
+        }
+      });
+      window.scrollTo(0, 0);
+    }
+
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    async function handleSummarise() {
+      const input = document.getElementById('legal-text-input');
+      const text = input ? input.value.trim() : '';
+
+      if (text.length < 20) {
+        alert('Please provide a complete contract text.');
+        return;
+      }
+
+      switchView('loading');
+
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const token = session?.access_token || '';
+
+        const res = await fetch('/api/summarise', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ text })
         });
 
-        function switchAuthTab(tab) {
-            const loginBtn = document.getElementById('tab-login-btn');
-            const signupBtn = document.getElementById('tab-signup-btn');
-            const loginForm = document.getElementById('form-login');
-            const signupForm = document.getElementById('form-signup');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Server error');
 
-            if (tab === 'login') {
-                loginBtn.className = "flex-1 py-2.5 rounded-lg bg-white text-black shadow-sm transition-all cursor-pointer font-medium";
-                signupBtn.className = "flex-1 py-2.5 rounded-lg apple-body transition-all cursor-pointer font-medium";
-                loginForm.style.display = 'block';
-                signupForm.style.display = 'none';
-            } else {
-                signupBtn.className = "flex-1 py-2.5 rounded-lg bg-white text-black shadow-sm transition-all cursor-pointer font-medium";
-                loginBtn.className = "flex-1 py-2.5 rounded-lg apple-body transition-all cursor-pointer font-medium";
-                signupForm.style.display = 'block';
-                loginForm.style.display = 'none';
-            }
-        }
+        const docTitle = document.getElementById('doc-title-heading');
+        const summaryText = document.getElementById('summary-text');
 
-        function openAuthModal(tab) {
-            switchAuthTab(tab || 'login');
-            const modal = document.getElementById('auth-gate-modal');
-            if (modal) modal.style.display = 'flex';
-        }
+        if (docTitle) docTitle.textContent = data.parsed?.title || "CONTRACT BREAKDOWN";
+        if (summaryText) summaryText.textContent = data.parsed?.executiveSummary || data.summary || "No summary returned.";
 
-        function closeAuthModal() {
-            const modal = document.getElementById('auth-gate-modal');
-            if (modal) modal.style.display = 'none';
-        }
-
-        async function handleSignupSubmit(event) {
-            event.preventDefault();
-            const email = document.getElementById('signup-email').value.trim().toLowerCase();
-            const pwd = document.getElementById('signup-password').value;
-            const terms = document.getElementById('signup-tos').checked;
-
-            if (!terms) {
-                alert("Please accept the Terms of Service.");
-                return;
-            }
-            if (!supabaseClient) {
-                alert("Supabase not initialized.");
-                return;
-            }
-
-            const { data, error } = await supabaseClient.auth.signUp({ email, password: pwd });
-            if (error) {
-                alert(error.message);
-                return;
-            }
-            if (data && data.user) {
-                closeAuthModal();
-                alert("Account created successfully! Check your email for verification.");
-                switchAuthTab('login');
-            }
-        }
-
-        async function handleLoginSubmit(event) {
-            event.preventDefault();
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const pwd = document.getElementById('login-password').value;
-
-            if (!supabaseClient) {
-                currentUser.email = email;
-                closeAuthModal();
-                updateUserUI();
-                switchView('main');
-                return;
-            }
-
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pwd });
-            if (error) {
-                alert(error.message);
-                return;
-            }
-            if (data && data.user) {
-                currentUser.id = data.user.id;
-                currentUser.email = data.user.email;
-                closeAuthModal();
-                updateUserUI();
-                switchView('main');
-            }
-        }
-
-        async function handleSignOut() {
-            if (supabaseClient) await supabaseClient.auth.signOut();
-            location.reload();
-        }
-
-        function updateUserUI() {
-            const isLoggedIn = Boolean(currentUser.email);
-            const logoutActions = document.getElementById('nav-logged-out-actions');
-            const loginActions = document.getElementById('nav-logged-in-actions');
-            const accEmail = document.getElementById('acc-email');
-
-            if (logoutActions) logoutActions.classList.toggle('hidden', isLoggedIn);
-            if (loginActions) loginActions.classList.toggle('hidden', !isLoggedIn);
-            if (accEmail) accEmail.value = currentUser.email || "";
-        }
-
-        function switchView(viewName) {
-            ['welcome', 'main', 'loading', 'results', 'account'].forEach(v => {
-                const el = document.getElementById(v + '-view');
-                if (el) el.classList.add('hidden');
-            });
-        
-            const target = document.getElementById(viewName + '-view');
-            if (target) {
-                target.classList.remove('hidden');
-                target.classList.remove('animate-fade-in');
-                void target.offsetWidth;
-                target.classList.add('animate-fade-in');
-            }
-            window.scrollTo(0, 0);
-        }
-
-        function scrollToSection(id) {
-            const el = document.getElementById(id);
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        async function handleLlmAnalysis() {
-            if (!currentUser.email) {
-                openAuthModal('login');
-                return;
-            }
-            const textInput = document.getElementById('legal-text-input');
-            if (!textInput) return;
-
-            const text = textInput.value;
-            if (!text || text.trim().length < 20) {
-                alert("Please provide a complete contract text.");
-                return;
-            }
-            switchView('loading');
-            try {
-                const token = supabaseClient ? (await supabaseClient.auth.getSession()).data.session?.access_token : '';
-                const response = await fetch('/api/summarise', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ text })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Server error');
-                const parsed = JSON.parse(data.content);
-                document.getElementById('doc-title-heading').innerText = parsed.docTitle || "CONTRACT BREAKDOWN";
-                document.getElementById('box-1-text').innerText = parsed.executiveSummary || "";
-                switchView('results');
-            } catch (err) {
-                alert(err.message || "Failed to process document.");
-                switchView('main');
-            }
-        }
-    </script>
+        switchView('results');
+      } catch (err) {
+        alert(err.message || "Failed to process document.");
+        switchView('workspace');
+      }
+    }
+  </script>
 </body>
 </html>
