@@ -96,6 +96,9 @@
         <button type="button" id="tab-signup" class="flex-1 py-2 rounded-lg font-medium text-sm transition-all text-gray-500 hover:text-black">Register</button>
       </div>
 
+      <!-- INLINE STATUS MESSAGE BANNER -->
+      <div id="modal-msg-banner" class="hidden p-3 rounded-xl text-xs font-medium text-center transition-all"></div>
+
       <!-- SIGN IN FORM -->
       <form id="form-login" class="flex flex-col gap-4">
         <div class="flex flex-col gap-1.5">
@@ -106,7 +109,9 @@
           <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Password</label>
           <input type="password" id="login-password" required placeholder="••••••••" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
         </div>
-        <button type="submit" class="apple-btn-primary w-full py-3.5 mt-2 text-sm font-medium">Sign In</button>
+        <button type="submit" id="login-submit-btn" class="apple-btn-primary w-full py-3.5 mt-2 text-sm font-medium flex justify-center items-center gap-2">
+          <span>Sign In</span>
+        </button>
         <button type="button" id="login-cancel-btn" class="text-xs text-gray-400 hover:text-black text-center mt-1">Cancel</button>
       </form>
 
@@ -124,7 +129,9 @@
           <input type="checkbox" id="terms-checkbox" required class="rounded border-gray-300">
           <label for="terms-checkbox" class="text-xs text-gray-500">I agree to Terms & Privacy Policy</label>
         </div>
-        <button type="submit" class="apple-btn-primary w-full py-3.5 mt-2 text-sm font-medium">Create Account</button>
+        <button type="submit" id="signup-submit-btn" class="apple-btn-primary w-full py-3.5 mt-2 text-sm font-medium flex justify-center items-center gap-2">
+          <span>Create Account</span>
+        </button>
         <button type="button" id="signup-cancel-btn" class="text-xs text-gray-400 hover:text-black text-center mt-1">Cancel</button>
       </form>
     </div>
@@ -180,9 +187,9 @@
           <h3 class="text-3xl apple-heading text-1d1d1f">Free <span class="text-base text-gray-400 font-normal">/ mo</span></h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">For casual users needing quick legal sanity checks.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ <strong>1 document summary per month</strong> (up to 5 pages)[cite: 6]</li>
-            <li class="flex items-center gap-2">✓ Full Paragraph Summary Overview[cite: 6]</li>
-            <li class="flex items-center gap-2">✓ Complete Red-Flag Breakdown Access[cite: 6]</li>
+            <li class="flex items-center gap-2">✓ <strong>1 document summary per month</strong> (up to 5 pages)</li>
+            <li class="flex items-center gap-2">✓ Full Paragraph Summary Overview</li>
+            <li class="flex items-center gap-2">✓ Complete Red-Flag Breakdown Access</li>
           </ul>
         </div>
         <button type="button" class="pricing-signup-btn apple-btn-secondary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Start Free Trial</button>
@@ -192,10 +199,10 @@
       <div class="apple-card p-8 flex flex-col justify-between border-black/20 shadow-lg relative">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-black text-white rounded-full text-xs font-semibold uppercase tracking-wider">Pro Tier</div>
-          <h3 class="text-3xl apple-heading text-1d1d1f">£29 <span class="text-base text-gray-400 font-normal">/ month</span>[cite: 6]</h3>
+          <h3 class="text-3xl apple-heading text-1d1d1f">£29 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Designed for freelancers, tenants, and sole traders.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ <strong>Unlimited contract summaries</strong> per month[cite: 6]</li>
+            <li class="flex items-center gap-2">✓ <strong>Unlimited contract summaries</strong> per month</li>
             <li class="flex items-center gap-2">✓ Full Risk Rating & High-Risk Alerts</li>
             <li class="flex items-center gap-2">✓ Full Risk Header & Deep Analysis</li>
           </ul>
@@ -207,11 +214,11 @@
       <div class="apple-card p-8 flex flex-col justify-between">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Business / Team</div>
-          <h3 class="text-3xl apple-heading text-1d1d1f">£199 <span class="text-base text-gray-400 font-normal">/ month</span>[cite: 6]</h3>
+          <h3 class="text-3xl apple-heading text-1d1d1f">£199 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Tailored for agencies, sales teams, and high-volume operations.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ 5 team seats included[cite: 6]</li>
-            <li class="flex items-center gap-2">✓ Custom playbooks & integrations[cite: 6]</li>
+            <li class="flex items-center gap-2">✓ 5 team seats included</li>
+            <li class="flex items-center gap-2">✓ Custom playbooks & integrations</li>
             <li class="flex items-center gap-2">✓ Full Risk Header & Breakdown Unlocked</li>
           </ul>
         </div>
@@ -281,7 +288,7 @@
 
   <!-- FOOTER -->
   <footer class="w-full py border-t border-black/5 text-center text-xs text-gray-400 border-border-black/10 px-6 px-4 selection:bg-20 font-medium">
-    © 2026 Double Check LLC. All rights reserved.[cite: 6]
+    © 2026 Double Check LLC. All rights reserved.
   </footer>
 
   <!-- SCRIPT ENGINE -->
@@ -300,7 +307,6 @@
     }
 
     let currentUser = null;
-    let currentPlan = { plan: "free", trial: true, contractsRemaining: 1 };
 
     document.addEventListener("DOMContentLoaded", async () => {
       if (supabaseClient) {
@@ -344,7 +350,38 @@
       document.getElementById('summarise-btn')?.addEventListener('click', handleSummarise);
     });
 
+    function showModalMsg(msg, isError = true) {
+      const banner = document.getElementById('modal-msg-banner');
+      if (!banner) return;
+      banner.textContent = msg;
+      banner.className = `p-3 rounded-xl text-xs font-medium text-center transition-all ${
+        isError ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+      }`;
+      banner.classList.remove('hidden');
+    }
+
+    function clearModalMsg() {
+      const banner = document.getElementById('modal-msg-banner');
+      if (banner) {
+        banner.textContent = '';
+        banner.classList.add('hidden');
+      }
+    }
+
+    function setBtnLoading(btnId, isLoading, originalText) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      if (isLoading) {
+        btn.disabled = true;
+        btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Processing...</span>`;
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = `<span>${originalText}</span>`;
+      }
+    }
+
     function switchAuthTab(tab) {
+      clearModalMsg();
       const tabLogin = document.getElementById('tab-login');
       const tabSignup = document.getElementById('tab-signup');
       const formLogin = document.getElementById('form-login');
@@ -364,70 +401,98 @@
     }
 
     function openAuthModal(tab = 'login') {
+      clearModalMsg();
       switchAuthTab(tab);
       document.getElementById('auth-modal').classList.remove('hidden');
     }
 
     function closeAuthModal() {
+      clearModalMsg();
       document.getElementById('auth-modal').classList.add('hidden');
     }
 
     async function handleSignUpSubmit(event) {
       event.preventDefault();
+      clearModalMsg();
+
       const email = document.getElementById('signup-email').value.trim().toLowerCase();
       const password = document.getElementById('signup-password').value;
       const terms = document.getElementById('terms-checkbox').checked;
 
       if (!terms) {
-        alert('Please accept the Terms of Service.');
+        showModalMsg('Please accept the Terms of Service.', true);
         return;
       }
 
       if (!supabaseClient) {
-        alert('Supabase not initialized.');
+        showModalMsg('Supabase not initialized.', true);
         return;
       }
 
-      const { data, error } = await supabaseClient.auth.signUp({ email, password });
+      setBtnLoading('signup-submit-btn', true, 'Create Account');
 
-      if (error) {
-        alert(error.message);
-        return;
+      try {
+        const { data, error } = await supabaseClient.auth.signUp({ email, password });
+
+        if (error) {
+          showModalMsg(error.message, true);
+          setBtnLoading('signup-submit-btn', false, 'Create Account');
+          return;
+        }
+
+        // Detect existing user
+        if (data.user && data.user.identities && data.user.identities.length === 0) {
+          showModalMsg("An account with this email already exists! Please switch to Sign In.", true);
+          setBtnLoading('signup-submit-btn', false, 'Create Account');
+          return;
+        }
+
+        showModalMsg("Account created! Check your email for verification.", false);
+        setBtnLoading('signup-submit-btn', false, 'Create Account');
+        setTimeout(() => {
+          closeAuthModal();
+          switchAuthTab('login');
+        }, 2000);
+
+      } catch (err) {
+        showModalMsg(err.message || 'Registration failed.', true);
+        setBtnLoading('signup-submit-btn', false, 'Create Account');
       }
-
-      // Check if account already exists
-      if (data.user && data.user.identities && data.user.identities.length === 0) {
-        alert("An account with this email already exists! Please switch to Sign In.");
-        switchAuthTab('login');
-        return;
-      }
-
-      alert("Account created successfully! Check your email for verification.");
-      closeAuthModal();
-      switchAuthTab('login');
     }
 
     async function handleLoginSubmit(event) {
       event.preventDefault();
+      clearModalMsg();
+
       const email = document.getElementById('login-email').value.trim().toLowerCase();
       const password = document.getElementById('login-password').value;
 
       if (!supabaseClient) {
-        alert('Supabase not initialized.');
+        showModalMsg('Supabase not initialized.', true);
         return;
       }
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      setBtnLoading('login-submit-btn', true, 'Sign In');
 
-      if (error) {
-        alert(error.message);
-        return;
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+        if (error) {
+          showModalMsg(error.message, true);
+          setBtnLoading('login-submit-btn', false, 'Sign In');
+          return;
+        }
+
+        currentUser = data.user;
+        updateAccountUI(currentUser);
+        setBtnLoading('login-submit-btn', false, 'Sign In');
+        closeAuthModal();
+        switchView('workspace');
+
+      } catch (err) {
+        showModalMsg(err.message || 'Login failed.', true);
+        setBtnLoading('login-submit-btn', false, 'Sign In');
       }
-
-      currentUser = data.user;
-      updateAccountUI(currentUser);
-      closeAuthModal();
-      switchView('workspace');
     }
 
     async function handleSignOut() {
