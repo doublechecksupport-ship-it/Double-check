@@ -140,6 +140,21 @@
     </div>
   </div>
 
+  <!-- RESET PASSWORD VIEW -->
+  <div id="view-reset-password" class="hidden flex-1 max-w-md w-full mx-auto px-6 py-16 flex-col gap-6 animate-fade-in">
+    <div class="apple-card p-8 flex flex-col gap-4">
+      <h3 class="text-xl apple-heading">Set New Password</h3>
+      <p class="text-xs text-gray-500">Enter your new password below to update your account.</p>
+      <form id="form-update-password" class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">New Password</label>
+          <input type="password" id="new-password" required placeholder="••••••••" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+        </div>
+        <button type="submit" id="update-password-btn" class="apple-btn-primary w-full py-3.5 text-sm font-medium">Update Password</button>
+      </form>
+    </div>
+  </div>
+
   <!-- TOP NAVBAR -->
   <nav class="top-navbar px-6 py-4 flex justify-between items-center w-full">
     <div id="nav-logo" class="flex items-center gap-2 cursor-pointer">
@@ -190,9 +205,9 @@
           <h3 class="text-3xl apple-heading text-1d1d1f">Free <span class="text-base text-gray-400 font-normal">/ mo</span></h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">For casual users needing quick legal sanity checks.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ <strong>1 document summary per month</strong> (up to 5 pages)[cite: 6]</li>
-            <li class="flex items-center gap-2">✓ Full Paragraph Summary Overview[cite: 6]</li>
-            <li class="flex items-center gap-2">✓ Complete Red-Flag Breakdown Access[cite: 6]</li>
+            <li class="flex items-center gap-2">✓ <strong>1 document summary per month</strong> (up to 5 pages)</li>
+            <li class="flex items-center gap-2">✓ Full Paragraph Summary Overview</li>
+            <li class="flex items-center gap-2">✓ Complete Red-Flag Breakdown Access</li>
           </ul>
         </div>
         <button type="button" class="pricing-signup-btn apple-btn-secondary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Start Free Trial</button>
@@ -202,10 +217,10 @@
       <div class="apple-card p-8 flex flex-col justify-between border-black/20 shadow-lg relative">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-black text-white rounded-full text-xs font-semibold uppercase tracking-wider">Pro Tier</div>
-          <h3 class="text-3xl apple-heading text-1d1d1f">£29 <span class="text-base text-gray-400 font-normal">/ month</span>[cite: 6]</h3>
+          <h3 class="text-3xl apple-heading text-1d1d1f">£29 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Designed for freelancers, tenants, and sole traders.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ <strong>Unlimited contract summaries</strong> per month[cite: 6]</li>
+            <li class="flex items-center gap-2">✓ <strong>Unlimited contract summaries</strong> per month</li>
             <li class="flex items-center gap-2">✓ Full Risk Rating & High-Risk Alerts</li>
             <li class="flex items-center gap-2">✓ Full Risk Header & Deep Analysis</li>
           </ul>
@@ -217,11 +232,11 @@
       <div class="apple-card p-8 flex flex-col justify-between">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Business / Team</div>
-          <h3 class="text-3xl apple-heading text-1d1d1f">£199 <span class="text-base text-gray-400 font-normal">/ month</span>[cite: 6]</h3>
+          <h3 class="text-3xl apple-heading text-1d1d1f">£199 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Tailored for agencies, sales teams, and high-volume operations.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ 5 team seats included[cite: 6]</li>
-            <li class="flex items-center gap-2">✓ Custom playbooks & integrations[cite: 6]</li>
+            <li class="flex items-center gap-2">✓ 5 team seats included</li>
+            <li class="flex items-center gap-2">✓ Custom playbooks & integrations</li>
             <li class="flex items-center gap-2">✓ Full Risk Header & Breakdown Unlocked</li>
           </ul>
         </div>
@@ -291,7 +306,7 @@
 
   <!-- FOOTER -->
   <footer class="w-full py border-t border-black/5 text-center text-xs text-gray-400 border-border-black/10 px-6 px-4 selection:bg-20 font-medium">
-    © 2026 Double Check LLC. All rights reserved.[cite: 6]
+    © 2026 Double Check LLC. All rights reserved.
   </footer>
 
   <!-- SCRIPT ENGINE -->
@@ -323,6 +338,13 @@
         } catch (err) {
           console.error("Session check error:", err);
         }
+
+        // Listen for Password Reset token links in URL
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+          if (event === 'PASSWORD_RECOVERY') {
+            switchView('reset-password');
+          }
+        });
       }
 
       updateAccountUI(null);
@@ -351,6 +373,7 @@
       document.getElementById('form-login')?.addEventListener('submit', handleLoginSubmit);
       document.getElementById('form-signup')?.addEventListener('submit', handleSignUpSubmit);
       document.getElementById('forgot-password-btn')?.addEventListener('click', handleForgotPassword);
+      document.getElementById('form-update-password')?.addEventListener('submit', handleUpdatePassword);
       document.getElementById('summarise-btn')?.addEventListener('click', handleSummarise);
     });
 
@@ -416,11 +439,12 @@
     }
 
     async function handleForgotPassword() {
+      clearModalMsg();
       const emailInput = document.getElementById('login-email');
       const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
 
       if (!email) {
-        showModalMsg('Please enter your email address above first, then click "Forgot password?".', true);
+        showModalMsg('Please type your email address above first, then click "Forgot password?".', true);
         return;
       }
 
@@ -431,17 +455,34 @@
 
       try {
         const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.origin,
+          redirectTo: window.location.href,
         });
 
         if (error) {
-          showModalMsg(error.message, true);
+          showModalMsg('Password reset failed. Please check the email address and try again.', true);
           return;
         }
 
-        showModalMsg('Password reset email sent! Check your inbox for the link.', false);
+        showModalMsg('Password reset email sent! Please check your inbox.', false);
       } catch (err) {
-        showModalMsg('Could not send reset email. Please try again.', true);
+        showModalMsg('Password reset failed. Please check the email address and try again.', true);
+      }
+    }
+
+    async function handleUpdatePassword(event) {
+      event.preventDefault();
+      const newPassword = document.getElementById('new-password').value;
+
+      try {
+        const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+        if (error) {
+          alert('Failed to update password: ' + error.message);
+          return;
+        }
+        alert('Password updated successfully! Redirecting to workspace...');
+        switchView('workspace');
+      } catch (err) {
+        alert('Failed to update password. Please try again.');
       }
     }
 
@@ -556,7 +597,7 @@
     }
 
     function switchView(viewName) {
-      const views = ['welcome', 'workspace', 'loading', 'results', 'account'];
+      const views = ['welcome', 'workspace', 'loading', 'results', 'account', 'reset-password'];
       views.forEach(v => {
         const target = document.getElementById(`view-${v}`);
         if (target) {
