@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Double Check - AI Legal Document Summariser</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -79,33 +78,6 @@
     .animate-fade-in {
       animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-
-    /* RESPONSIVE MOBILE FIXES */
-    header, nav, .nav-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 1.25rem;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    textarea, input {
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 1rem;
-    }
-
-    @media (max-width: 640px) {
-      .main-container, main {
-        padding: 1.5rem 1rem;
-      }
-      h1 {
-        font-size: 2rem !important;
-        line-height: 1.25 !important;
-      }
-    }
   </style>
 </head>
 <body class="w-screen flex flex-col min-h-screen font-sans antialiased selecting-none selection:bg-black selection:text-white relative">
@@ -177,7 +149,7 @@
   </nav>
 
   <!-- WELCOME VIEW -->
-  <div id="view-welcome" class="main-container flex flex-col flex-1 max-w-4xl w-full mx-auto px-6 py-16 items-center text-center justify-center gap-8 animate-fade-in">
+  <div id="view-welcome" class="flex-1 max-w-4xl w-full mx-auto px-6 py-16 flex flex-col items-center text-center justify-center gap-8 animate-fade-in">
     <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/5 text-xs font-semibold uppercase tracking-wider text-gray-600">
       Next-Gen Legal Intelligence
     </div>
@@ -207,9 +179,9 @@
           <h3 class="text-3xl apple-heading text-1d1d1f">Free <span class="text-base text-gray-400 font-normal">/ mo</span></h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">For casual users needing quick legal sanity checks.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ <strong>1 document summary per month</strong> (up to 5 pages)</li>
-            <li class="flex items-center gap-2">✓ Full Paragraph Summary Overview</li>
-            <li class="flex items-center gap-2">✓ Complete Red-Flag Breakdown Access</li>
+            <li class="flex items-center gap-2">✓ <strong>1 document summary per month</strong> (up to 5 pages)[cite: 6]</li>
+            <li class="flex items-center gap-2">✓ Full Paragraph Summary Overview[cite: 6]</li>
+            <li class="flex items-center gap-2">✓ Complete Red-Flag Breakdown Access[cite: 6]</li>
           </ul>
         </div>
         <button type="button" class="pricing-signup-btn apple-btn-secondary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Start Free Trial</button>
@@ -219,10 +191,10 @@
       <div class="apple-card p-8 flex flex-col justify-between border-black/20 shadow-lg relative">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-black text-white rounded-full text-xs font-semibold uppercase tracking-wider">Pro Tier</div>
-          <h3 class="text-3xl apple-heading text-1d1d1f">£29 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
+          <h3 class="text-3xl apple-heading text-1d1d1f">£29 <span class="text-base text-gray-400 font-normal">/ month</span>[cite: 6]</h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Designed for freelancers, tenants, and sole traders.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ <strong>Unlimited contract summaries</strong> per month</li>
+            <li class="flex items-center gap-2">✓ <strong>Unlimited contract summaries</strong> per month[cite: 6]</li>
             <li class="flex items-center gap-2">✓ Full Risk Rating & High-Risk Alerts</li>
             <li class="flex items-center gap-2">✓ Full Risk Header & Deep Analysis</li>
           </ul>
@@ -234,11 +206,11 @@
       <div class="apple-card p-8 flex flex-col justify-between">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Business / Team</div>
-          <h3 class="text-3xl apple-heading text-1d1d1f">£199 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
+          <h3 class="text-3xl apple-heading text-1d1d1f">£199 <span class="text-base text-gray-400 font-normal">/ month</span>[cite: 6]</h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Tailored for agencies, sales teams, and high-volume operations.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ 5 team seats included</li>
-            <li class="flex items-center gap-2">✓ Custom playbooks & integrations</li>
+            <li class="flex items-center gap-2">✓ 5 team seats included[cite: 6]</li>
+            <li class="flex items-center gap-2">✓ Custom playbooks & integrations[cite: 6]</li>
             <li class="flex items-center gap-2">✓ Full Risk Header & Breakdown Unlocked</li>
           </ul>
         </div>
@@ -308,7 +280,7 @@
 
   <!-- FOOTER -->
   <footer class="w-full py border-t border-black/5 text-center text-xs text-gray-400 border-border-black/10 px-6 px-4 selection:bg-20 font-medium">
-    © 2026 Double Check LLC. All rights reserved.
+    © 2026 Double Check LLC. All rights reserved.[cite: 6]
   </footer>
 
   <!-- SCRIPT ENGINE -->
