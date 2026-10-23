@@ -435,14 +435,14 @@
         const { data, error } = await supabaseClient.auth.signUp({ email, password });
 
         if (error) {
-          showModalMsg(error.message, true);
+          showModalMsg("Account already exists! Please go to Sign In.", true);
           setBtnLoading('signup-submit-btn', false, 'Create Account');
           return;
         }
 
-        // Detect existing user
+        // Detect existing user identity
         if (data.user && data.user.identities && data.user.identities.length === 0) {
-          showModalMsg("An account with this email already exists! Please switch to Sign In.", true);
+          showModalMsg("Account already exists! Please go to Sign In.", true);
           setBtnLoading('signup-submit-btn', false, 'Create Account');
           return;
         }
@@ -455,7 +455,7 @@
         }, 2000);
 
       } catch (err) {
-        showModalMsg(err.message || 'Registration failed.', true);
+        showModalMsg("Account already exists! Please go to Sign In.", true);
         setBtnLoading('signup-submit-btn', false, 'Create Account');
       }
     }
