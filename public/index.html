@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Double Check - AI Legal Document Summariser</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -84,8 +83,8 @@
 <body class="w-screen flex flex-col min-h-screen font-sans antialiased selecting-none selection:bg-black selection:text-white relative">
 
   <!-- AUTHENTICATION MODAL -->
-  <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden animate-fade-in px-4">
-    <div class="apple-card w-full max-w-md p-6 sm:p-8 relative flex flex-col gap-6 m-4">
+  <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden animate-fade-in">
+    <div class="apple-card w-full max-w-md p-8 relative flex flex-col gap-6 m-4">
       <div class="flex justify-between items-center border-b border-black/5 pb-4">
         <h3 class="text-xl apple-heading">Double Check Account</h3>
         <button type="button" id="modal-close-btn" class="text-gray-400 hover:text-black font-medium text-lg px-2">✕</button>
@@ -131,50 +130,50 @@
   </div>
 
   <!-- TOP NAVBAR -->
-  <nav class="top-navbar px-4 sm:px-6 py-4 flex justify-between items-center w-full">
+  <nav class="top-navbar px-6 py-4 flex justify-between items-center w-full">
     <div id="nav-logo" class="flex items-center gap-2 cursor-pointer">
       <span class="apple-heading text-lg tracking-tight font-semibold">Double Check</span>
     </div>
-    <div class="flex items-center gap-2 sm:gap-3">
-      <div id="nav-logged-out" class="flex items-center gap-2 sm:gap-3">
-        <button type="button" id="nav-pricing-btn" class="text-sm font-medium text-gray-500 hover:text-black px-2 sm:px-3 py-2">Pricing</button>
-        <button type="button" id="nav-terms-btn" class="text-sm font-medium text-gray-500 hover:text-black px-2 sm:px-3 py-2">Terms</button>
-        <button type="button" id="nav-signin-btn" class="apple-btn-secondary px-3 sm:px-4 py-2 text-sm font-medium">Sign In</button>
+    <div class="flex items-center gap-3">
+      <div id="nav-logged-out" class="flex items-center gap-3">
+        <button type="button" id="nav-pricing-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Pricing</button>
+        <button type="button" id="nav-terms-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Terms</button>
+        <button type="button" id="nav-signin-btn" class="apple-btn-secondary px-4 py-2 text-sm font-medium">Sign In</button>
       </div>
-      <div id="nav-logged-in" class="hidden items-center gap-2 sm:gap-3">
-        <button type="button" id="nav-home-btn" class="text-sm font-medium text-gray-500 hover:text-black px-2 sm:px-3 py-2">Home</button>
-        <button type="button" id="nav-account-btn" class="text-sm font-medium text-gray-500 hover:text-black px-2 sm:px-3 py-2">Account</button>
-        <button type="button" id="nav-signout-btn" class="apple-btn-secondary px-3 sm:px-4 py-2 text-sm font-medium">Sign Out</button>
+      <div id="nav-logged-in" class="hidden items-center gap-3">
+        <button type="button" id="nav-home-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Home</button>
+        <button type="button" id="nav-account-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Account</button>
+        <button type="button" id="nav-signout-btn" class="apple-btn-secondary px-4 py-2 text-sm font-medium">Sign Out</button>
       </div>
     </div>
   </nav>
 
   <!-- WELCOME VIEW -->
-  <div id="view-welcome" class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-12 sm:py-16 flex flex-col items-center text-center justify-center gap-8 animate-fade-in">
+  <div id="view-welcome" class="flex-1 max-w-4xl w-full mx-auto px-6 py-16 flex flex-col items-center text-center justify-center gap-8 animate-fade-in">
     <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/5 text-xs font-semibold uppercase tracking-wider text-gray-600">
       Next-Gen Legal Intelligence
     </div>
-    <h1 class="text-3xl sm:text-4xl md:text-6xl apple-heading tracking-tight max-w-2xl leading-[1.15]">
+    <h1 class="text-4xl md:text-6xl apple-heading tracking-tight max-w-2xl leading-[1.15]">
       Understand Any Legal Contract in Seconds.
     </h1>
     <p class="apple-body text-base md:text-xl max-w-xl font-normal leading-relaxed">
       Transform complex legal agreements into crystal-clear plain-English summaries and instant risk breakdowns. Never sign blindly again.
     </p>
-    <div class="flex flex-col sm:flex-row items-center gap-4 mt-2 w-full sm:w-auto">
-      <button type="button" id="hero-get-started-btn" class="apple-btn-primary px-8 py-4 text-base font-medium shadow-md w-full sm:w-auto">Get Started Free</button>
-      <button type="button" id="hero-signin-btn" class="apple-btn-secondary px-8 py-4 text-base font-medium w-full sm:w-auto">Sign In</button>
+    <div class="flex items-center gap-4 mt-2">
+      <button type="button" id="hero-get-started-btn" class="apple-btn-primary px-8 py-4 text-base font-medium shadow-md">Get Started Free</button>
+      <button type="button" id="hero-signin-btn" class="apple-btn-secondary px-8 py-4 text-base font-medium">Sign In</button>
     </div>
   </div>
 
   <!-- PRICING SECTION -->
-  <div id="pricing-section" class="w-full max-w-5xl space-y-8 px-4 sm:px-6 py-12 mx-auto">
+  <div id="pricing-section" class="w-full max-w-5xl space-y-8 px-6 py-12 mx-auto">
     <div class="text-center space-y-2">
       <h2 class="text-2xl apple-heading text-1d1d1f tracking-tight">Transparent Plans & Features</h2>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <!-- Starter Card -->
-      <div class="apple-card p-6 sm:p-8 flex flex-col justify-between">
+      <div class="apple-card p-8 flex flex-col justify-between">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Free / Starter</div>
           <h3 class="text-3xl apple-heading text-1d1d1f">Free <span class="text-base text-gray-400 font-normal">/ mo</span></h3>
@@ -189,7 +188,7 @@
       </div>
 
       <!-- Pro Card -->
-      <div class="apple-card p-6 sm:p-8 flex flex-col justify-between border-black/20 shadow-lg relative">
+      <div class="apple-card p-8 flex flex-col justify-between border-black/20 shadow-lg relative">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-black text-white rounded-full text-xs font-semibold uppercase tracking-wider">Pro Tier</div>
           <h3 class="text-3xl apple-heading text-1d1d1f">£29 <span class="text-base text-gray-400 font-normal">/ month</span>[cite: 6]</h3>
@@ -204,7 +203,7 @@
       </div>
 
       <!-- Business Card -->
-      <div class="apple-card p-6 sm:p-8 flex flex-col justify-between">
+      <div class="apple-card p-8 flex flex-col justify-between">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Business / Team</div>
           <h3 class="text-3xl apple-heading text-1d1d1f">£199 <span class="text-base text-gray-400 font-normal">/ month</span>[cite: 6]</h3>
@@ -221,39 +220,39 @@
   </div>
 
   <!-- DISCLAIMER -->
-  <div class="w-full max-w-5xl mx-auto px-4 sm:px-6 pt-2 pb-12 border-t border-black/5">
+  <div class="w-full max-w-5xl mx-auto px-6 pt-2 pb-12 border-t border-black/5">
     <p class="text-xs text-gray-400 leading-relaxed text-center">
       Disclaimer: Double Check provides AI-generated contract summaries for informational purposes only and does not substitute professional legal advice.
     </p>
   </div>
 
   <!-- MAIN WORKSPACE -->
-  <div id="view-workspace" class="hidden flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-10 flex-col gap-8 animate-fade-in">
+  <div id="view-workspace" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col gap-8 animate-fade-in">
     <div class="flex flex-col gap-2">
       <h2 class="text-3xl apple-heading tracking-tight">Summarise Any Legal Document.</h2>
       <p class="apple-body text-sm">Paste your contract text below for an instant, professional AI breakdown.</p>
     </div>
 
-    <div class="apple-card p-4 sm:p-6 flex flex-col gap-4">
+    <div class="apple-card p-6 flex flex-col gap-4">
       <textarea id="legal-text-input" rows="10" placeholder="Paste agreement or contract terms here..." class="w-full p-4 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/30 text-sm leading-relaxed resize-y"></textarea>
       <button id="summarise-btn" class="apple-btn-primary w-full py-4 text-center text-sm font-medium shadow-md">Summarise Contract</button>
     </div>
   </div>
 
   <!-- LOADING VIEW -->
-  <div id="view-loading" class="hidden flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-20 flex-col items-center justify-center gap-6 animate-fade-in">
+  <div id="view-loading" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-20 flex-col items-center justify-center gap-6 animate-fade-in">
     <div class="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
     <p class="apple-heading text-sm text-gray-600 font-medium tracking-wide">Analyzing contract clauses with AI...</p>
   </div>
 
   <!-- RESULTS VIEW -->
-  <div id="view-results" class="hidden flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-10 flex-col gap-6 animate-fade-in text-left">
+  <div id="view-results" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col gap-6 animate-fade-in text-left">
     <div class="flex justify-between items-center border-b border-black/5 pb-4">
       <h2 id="doc-title-heading" class="text-xl apple-heading tracking-tight">Executive Summary</h2>
       <button id="back-to-workspace-btn" class="apple-btn-secondary px-4 py-2 text-xs font-medium">← Analyze Another</button>
     </div>
 
-    <div class="apple-card p-6 sm:p-8 flex flex-col gap-6">
+    <div class="apple-card p-8 flex flex-col gap-6">
       <div class="flex flex-col gap-2">
         <h4 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider apple-body">Executive Summary</h4>
         <p id="summary-text" class="text-sm text-gray-700 font-normal leading-relaxed text-left"></p>
@@ -262,12 +261,12 @@
   </div>
 
   <!-- ACCOUNT VIEW -->
-  <div id="view-account" class="hidden flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-10 flex-col text-left relative leading-10 space-y-6 space-x-0 animate-fade-in">
+  <div id="view-account" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col text-left relative leading-10 space-y-6 space-x-0 animate-fade-in">
     <h2 class="text-3xl apple-heading tracking-tight">My Account</h2>
-    <div class="apple-card p-6 sm:p-8 flex flex-col gap-6 max-w-md">
+    <div class="apple-card p-8 flex flex-col gap-6 max-w-md">
       <div class="flex flex-col gap-1.5">
         <label class="text-[11px] font-semibold text-gray-400 tracking-wider">Registered Email</label>
-        <p id="account-user-email" class="text-base font-medium text-gray-800 border-b border-black/10 pb-2 text-left truncate"></p>
+        <p id="account-user-email" class="text-base font-medium text-gray-800 border-b border-black/10 pb-2 text-left"></p>
       </div>
 
       <div class="flex flex-col gap-1.5">
@@ -280,7 +279,7 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="w-full py-8 border-t border-black/5 text-center text-xs text-gray-400 px-4 sm:px-6 font-medium">
+  <footer class="w-full py border-t border-black/5 text-center text-xs text-gray-400 border-border-black/10 px-6 px-4 selection:bg-20 font-medium">
     © 2026 Double Check LLC. All rights reserved.[cite: 6]
   </footer>
 
