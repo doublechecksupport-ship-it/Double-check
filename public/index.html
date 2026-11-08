@@ -459,13 +459,13 @@
         });
 
         if (error) {
-          showModalMsg('Password reset failed. Please check the email address and try again.', true);
+          showModalMsg('Supabase Error: ' + error.message, true);
           return;
         }
 
         showModalMsg('Password reset email sent! Please check your inbox.', false);
       } catch (err) {
-        showModalMsg('Password reset failed. Please check the email address and try again.', true);
+        showModalMsg('Error: ' + err.message, true);
       }
     }
 
