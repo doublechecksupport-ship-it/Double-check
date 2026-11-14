@@ -81,7 +81,7 @@
     }
   </style>
 </head>
-<body class="w-screen flex flex-col min-h-screen font-sans antialiased selecting-none selection:bg-black selection:text-white relative">
+<body class="w-screen flex flex-col min-h-screen font-sans antialiased select-none selection:bg-black selection:text-white relative">
 
   <!-- AUTHENTICATION MODAL -->
   <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden animate-fade-in">
@@ -194,7 +194,7 @@
   <!-- PRICING SECTION -->
   <div id="pricing-section" class="w-full max-w-5xl space-y-8 px-6 py-12 mx-auto">
     <div class="text-center space-y-2">
-      <h2 class="text-2xl apple-heading text-1d1d1f tracking-tight">Transparent Plans & Features</h2>
+      <h2 class="text-2xl apple-heading tracking-tight">Transparent Plans & Features</h2>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -202,7 +202,7 @@
       <div class="apple-card p-8 flex flex-col justify-between">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Free / Starter</div>
-          <h3 class="text-3xl apple-heading text-1d1d1f">Free <span class="text-base text-gray-400 font-normal">/ mo</span></h3>
+          <h3 class="text-3xl apple-heading">Free <span class="text-base text-gray-400 font-normal">/ mo</span></h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">For casual users needing quick legal sanity checks.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
             <li class="flex items-center gap-2">✓ <strong>1 document summary per month</strong> (up to 5 pages)</li>
@@ -217,7 +217,7 @@
       <div class="apple-card p-8 flex flex-col justify-between border-black/20 shadow-lg relative">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-black text-white rounded-full text-xs font-semibold uppercase tracking-wider">Pro Tier</div>
-          <h3 class="text-3xl apple-heading text-1d1d1f">£29 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
+          <h3 class="text-3xl apple-heading">£29 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Designed for freelancers, tenants, and sole traders.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
             <li class="flex items-center gap-2">✓ <strong>Unlimited contract summaries</strong> per month</li>
@@ -232,7 +232,7 @@
       <div class="apple-card p-8 flex flex-col justify-between">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Business / Team</div>
-          <h3 class="text-3xl apple-heading text-1d1d1f">£199 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
+          <h3 class="text-3xl apple-heading">£199 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
           <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Tailored for agencies, sales teams, and high-volume operations.</p>
           <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
             <li class="flex items-center gap-2">✓ 5 team seats included</li>
@@ -287,7 +287,7 @@
   </div>
 
   <!-- ACCOUNT VIEW -->
-  <div id="view-account" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col text-left relative leading-10 space-y-6 space-x-0 animate-fade-in">
+  <div id="view-account" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col text-left relative space-y-6 animate-fade-in">
     <h2 class="text-3xl apple-heading tracking-tight">My Account</h2>
     <div class="apple-card p-8 flex flex-col gap-6 max-w-md">
       <div class="flex flex-col gap-1.5">
@@ -305,7 +305,7 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="w-full py border-t border-black/5 text-center text-xs text-gray-400 border-border-black/10 px-6 px-4 selection:bg-20 font-medium">
+  <footer class="w-full py-6 border-t border-black/5 text-center text-xs text-gray-400 px-6 font-medium">
     © 2026 Double Check LLC. All rights reserved.
   </footer>
 
@@ -316,9 +316,10 @@
     try {
       if (typeof window.supabase !== "undefined" && window.supabase.createClient) {
         supabaseClient = window.supabase.createClient(
-          "https://doublechecksupport-ship-it.supabase.co",
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZWYiOiJkb3VibGVjaGVja3N1cHBvcnQtc2hpcC1pdCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzYwOTY3NDgyLCJleHAiOjIwNzY1NDM0ODJ9.6eWvY9PZ24r3Nn_O_z5Yt0W7a3B8c9V1x2Z4m5N6p7Q"
+          "https://jacksheasvhearkifytgjs.supabase.co",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZWYiOiJqYWNrc2hlYXN2aGVhcmtpZnl0Z2pzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5Njc0ODIsImV4cCI6MjA3NjU0MzQ4Mn0.6eWvY9PZ24r3Nn_O_z5Yt0W7a3B8c9V1x2Z4m5N6p7Q"
         );
+        window.supabaseClient = supabaseClient;
       }
     } catch (e) {
       console.log("Supabase init notice:", e);
@@ -345,6 +346,11 @@
             switchView('reset-password');
           }
         });
+      }
+
+      // Fallback check in URL hash for recovery tokens
+      if (window.location.hash.includes('type=recovery')) {
+        switchView('reset-password');
       }
 
       updateAccountUI(null);
@@ -448,14 +454,15 @@
         return;
       }
 
-      if (!supabaseClient) {
+      const client = window.supabaseClient || supabaseClient;
+      if (!client) {
         showModalMsg('Connection error. Please check your internet and try again.', true);
         return;
       }
 
       try {
-        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.href,
+        const { error } = await client.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin,
         });
 
         if (error) {
@@ -472,9 +479,10 @@
     async function handleUpdatePassword(event) {
       event.preventDefault();
       const newPassword = document.getElementById('new-password').value;
+      const client = window.supabaseClient || supabaseClient;
 
       try {
-        const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+        const { error } = await client.auth.updateUser({ password: newPassword });
         if (error) {
           alert('Failed to update password: ' + error.message);
           return;
@@ -499,7 +507,8 @@
         return;
       }
 
-      if (!supabaseClient) {
+      const client = window.supabaseClient || supabaseClient;
+      if (!client) {
         showModalMsg('Connection error. Please check your internet and try again.', true);
         return;
       }
@@ -507,10 +516,10 @@
       setBtnLoading('signup-submit-btn', true, 'Create Account');
 
       try {
-        const { data, error } = await supabaseClient.auth.signUp({ email, password });
+        const { data, error } = await client.auth.signUp({ email, password });
 
         if (error) {
-          showModalMsg("Account already exists! Please go to Sign In.", true);
+          showModalMsg(error.message, true);
           setBtnLoading('signup-submit-btn', false, 'Create Account');
           return;
         }
@@ -529,7 +538,7 @@
         }, 2000);
 
       } catch (err) {
-        showModalMsg("Account already exists! Please go to Sign In.", true);
+        showModalMsg("Account creation failed. Please try again.", true);
         setBtnLoading('signup-submit-btn', false, 'Create Account');
       }
     }
@@ -540,8 +549,9 @@
 
       const email = document.getElementById('login-email').value.trim().toLowerCase();
       const password = document.getElementById('login-password').value;
+      const client = window.supabaseClient || supabaseClient;
 
-      if (!supabaseClient) {
+      if (!client) {
         showModalMsg('Connection error. Please check your internet and try again.', true);
         return;
       }
@@ -549,7 +559,7 @@
       setBtnLoading('login-submit-btn', true, 'Sign In');
 
       try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        const { data, error } = await client.auth.signInWithPassword({ email, password });
 
         if (error) {
           showModalMsg("Incorrect email or password. Please try again.", true);
@@ -570,8 +580,9 @@
     }
 
     async function handleSignOut() {
-      if (supabaseClient) {
-        await supabaseClient.auth.signOut();
+      const client = window.supabaseClient || supabaseClient;
+      if (client) {
+        await client.auth.signOut();
       }
       currentUser = null;
       updateAccountUI(null);
@@ -585,13 +596,17 @@
 
       if (user) {
         if (loggedOutActions) loggedOutActions.classList.add('hidden');
-        if (loggedInActions) loggedInActions.classList.remove('hidden');
-        if (loggedInActions) loggedInActions.classList.add('flex');
+        if (loggedInActions) {
+          loggedInActions.classList.remove('hidden');
+          loggedInActions.classList.add('flex');
+        }
         if (accountEmail) accountEmail.textContent = user.email || '';
       } else {
         if (loggedOutActions) loggedOutActions.classList.remove('hidden');
-        if (loggedInActions) loggedInActions.classList.add('hidden');
-        if (loggedInActions) loggedInActions.classList.remove('flex');
+        if (loggedInActions) {
+          loggedInActions.classList.add('hidden');
+          loggedInActions.classList.remove('flex');
+        }
         if (accountEmail) accountEmail.textContent = '';
       }
     }
@@ -626,7 +641,8 @@
       switchView('loading');
 
       try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
+        const client = window.supabaseClient || supabaseClient;
+        const { data: { session } } = await client.auth.getSession();
         const token = session?.access_token || '';
 
         const res = await fetch('/api/summarise', {
