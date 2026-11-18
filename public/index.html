@@ -473,30 +473,28 @@
       event.preventDefault();
       clearModalMsg();
       const email = document.getElementById('forgot-email').value.trim().toLowerCase();
-      const client = window.supabaseClient || supabaseClient;
 
-      if (!client) {
-        showModalMsg('Connection error. Please try again.', true);
+      if (!email) {
+        showModalMsg('Please enter your email address.', true);
         return;
       }
 
       setBtnLoading('forgot-submit-btn', true, 'Send Reset Instructions');
 
       try {
-        const { error } = await client.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.origin,
+        const res = await fetch('/api/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
         });
 
-        if (error) {
-          showModalMsg(error.message, true);
-          setBtnLoading('forgot-submit-btn', false, 'Send Reset Instructions');
-          return;
-        }
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to send reset email.');
 
         showModalMsg('If an account exists with this email, reset instructions have been sent.', false);
         setBtnLoading('forgot-submit-btn', false, 'Send Reset Instructions');
       } catch (err) {
-        showModalMsg('Error sending reset email. Please try again.', true);
+        showModalMsg(err.message || 'Error sending reset email.', true);
         setBtnLoading('forgot-submit-btn', false, 'Send Reset Instructions');
       }
     }
