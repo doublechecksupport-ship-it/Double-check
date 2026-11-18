@@ -29,8 +29,8 @@ export default async function handler(req, res) {
 
     // Initialize Supabase server client to verify the auth token
     const supabase = createClient(
-      process.env.SUPABASE_URL || 'https://nvmdbfvsjfqdgx.supabase.co',
-      process.env.SUPABASE_ANON_KEY || 'PASTE_YOUR_FULL_PUBLISHABLE_KEY_HERE'
+      process.env.SUPABASE_URL || 'https://jacksheaslenrvmdbfvsjfqdgx.supabase.co',
+      process.env.SUPABASE_ANON_KEY || 'sb_publishable_t3ivgTlGaqQK2T6WhXKB3Q_WvMZW0zr'
     );
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
