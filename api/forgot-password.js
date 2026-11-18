@@ -20,14 +20,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email address is required.' });
     }
 
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return res.status(500).json({ error: 'Server configuration error.' });
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient(
+      'https://jxdnesvlwvmdbfwjzfga.supabase.co',
+      'sb_publishable_t3ivgTlGaqQK2T6WhXKB3Q_WvMZW0zr'
+    );
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: 'https://double-check-kohl.vercel.app',
@@ -41,6 +37,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, message: 'Password reset instructions sent.' });
   } catch (err) {
     console.error('Forgot Password API Error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: err.message || 'Internal server error' });
   }
 }
