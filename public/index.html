@@ -87,11 +87,11 @@
   <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden animate-fade-in">
     <div class="apple-card w-full max-w-md p-8 relative flex flex-col gap-6 m-4">
       <div class="flex justify-between items-center border-b border-black/5 pb-4">
-        <h3 class="text-xl apple-heading">Double Check Account</h3>
+        <h3 id="modal-title" class="text-xl apple-heading">Double Check Account</h3>
         <button type="button" id="modal-close-btn" class="text-gray-400 hover:text-black font-medium text-lg px-2">✕</button>
       </div>
 
-      <div class="flex bg-gray-100/80 p-1 rounded-xl">
+      <div id="auth-tabs-container" class="flex bg-gray-100/80 p-1 rounded-xl">
         <button type="button" id="tab-login" class="flex-1 py-2 rounded-lg font-medium text-sm transition-all text-black shadow-sm bg-white">Sign In</button>
         <button type="button" id="tab-signup" class="flex-1 py-2 rounded-lg font-medium text-sm transition-all text-gray-500 hover:text-black">Register</button>
       </div>
@@ -107,10 +107,10 @@
         </div>
         <div class="flex flex-col gap-1.5">
           <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Password</label>
-          <input type="password" id="login-password" placeholder="••••••••" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+          <input type="password" id="login-password" required placeholder="••••••••" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
         </div>
         <div class="flex justify-end">
-          <button type="button" id="forgot-password-btn" class="text-xs text-gray-500 hover:text-black">Forgot password?</button>
+          <button type="button" id="forgot-password-link" class="text-xs text-gray-500 hover:text-black font-medium">Forgot password?</button>
         </div>
         <button type="submit" id="login-submit-btn" class="apple-btn-primary w-full py-3.5 mt-1 text-sm font-medium flex justify-center items-center gap-2">
           <span>Sign In</span>
@@ -137,10 +137,23 @@
         </button>
         <button type="button" id="signup-cancel-btn" class="text-xs text-gray-400 hover:text-black text-center mt-1">Cancel</button>
       </form>
+
+      <!-- FORGOT PASSWORD FORM -->
+      <form id="form-forgot" class="flex flex-col gap-4" style="display: none;">
+        <p class="text-xs text-gray-500 leading-relaxed">Enter your account email below. If an account exists, we will send a password reset link to your inbox.</p>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Email Address</label>
+          <input type="email" id="forgot-email" required placeholder="name@example.com" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+        </div>
+        <button type="submit" id="forgot-submit-btn" class="apple-btn-primary w-full py-3.5 mt-2 text-sm font-medium flex justify-center items-center gap-2">
+          <span>Send Reset Instructions</span>
+        </button>
+        <button type="button" id="forgot-back-btn" class="text-xs text-gray-500 hover:text-black text-center mt-1 font-medium">← Back to Sign In</button>
+      </form>
     </div>
   </div>
 
-  <!-- RESET PASSWORD VIEW -->
+  <!-- RESET PASSWORD VIEW (WHEN ARRIVING VIA TOKEN) -->
   <div id="view-reset-password" class="hidden flex-1 max-w-md w-full mx-auto px-6 py-16 flex-col gap-6 animate-fade-in">
     <div class="apple-card p-8 flex flex-col gap-4">
       <h3 class="text-xl apple-heading">Set New Password</h3>
@@ -198,7 +211,6 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Starter Card -->
       <div class="apple-card p-8 flex flex-col justify-between">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Free / Starter</div>
@@ -213,7 +225,6 @@
         <button type="button" class="pricing-signup-btn apple-btn-secondary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Start Free Trial</button>
       </div>
 
-      <!-- Pro Card -->
       <div class="apple-card p-8 flex flex-col justify-between border-black/20 shadow-lg relative">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-black text-white rounded-full text-xs font-semibold uppercase tracking-wider">Pro Tier</div>
@@ -228,7 +239,6 @@
         <button type="button" class="pricing-signup-btn apple-btn-primary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Upgrade to Pro</button>
       </div>
 
-      <!-- Business Card -->
       <div class="apple-card p-8 flex flex-col justify-between">
         <div class="space-y-4">
           <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Business / Team</div>
@@ -340,7 +350,6 @@
           console.error("Session check error:", err);
         }
 
-        // Listen for Password Reset token links in URL
         supabaseClient.auth.onAuthStateChange((event, session) => {
           if (event === 'PASSWORD_RECOVERY') {
             switchView('reset-password');
@@ -348,7 +357,6 @@
         });
       }
 
-      // Fallback check in URL hash for recovery tokens
       if (window.location.hash.includes('type=recovery')) {
         switchView('reset-password');
       }
@@ -375,10 +383,12 @@
 
       document.getElementById('tab-login')?.addEventListener('click', () => switchAuthTab('login'));
       document.getElementById('tab-signup')?.addEventListener('click', () => switchAuthTab('signup'));
+      document.getElementById('forgot-password-link')?.addEventListener('click', () => switchAuthTab('forgot'));
+      document.getElementById('forgot-back-btn')?.addEventListener('click', () => switchAuthTab('login'));
 
       document.getElementById('form-login')?.addEventListener('submit', handleLoginSubmit);
       document.getElementById('form-signup')?.addEventListener('submit', handleSignUpSubmit);
-      document.getElementById('forgot-password-btn')?.addEventListener('click', handleForgotPassword);
+      document.getElementById('form-forgot')?.addEventListener('submit', handleForgotSubmit);
       document.getElementById('form-update-password')?.addEventListener('submit', handleUpdatePassword);
       document.getElementById('summarise-btn')?.addEventListener('click', handleSummarise);
     });
@@ -419,17 +429,32 @@
       const tabSignup = document.getElementById('tab-signup');
       const formLogin = document.getElementById('form-login');
       const formSignup = document.getElementById('form-signup');
+      const formForgot = document.getElementById('form-forgot');
+      const tabsContainer = document.getElementById('auth-tabs-container');
+      const modalTitle = document.getElementById('modal-title');
 
       if (tab === 'login') {
+        if (modalTitle) modalTitle.textContent = "Double Check Account";
+        if (tabsContainer) tabsContainer.style.display = 'flex';
         tabLogin.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-black shadow-sm bg-white";
         tabSignup.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-gray-500 hover:text-black";
         formLogin.style.display = 'flex';
         formSignup.style.display = 'none';
-      } else {
+        formForgot.style.display = 'none';
+      } else if (tab === 'signup') {
+        if (modalTitle) modalTitle.textContent = "Double Check Account";
+        if (tabsContainer) tabsContainer.style.display = 'flex';
         tabSignup.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-black shadow-sm bg-white";
         tabLogin.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-gray-500 hover:text-black";
         formSignup.style.display = 'flex';
         formLogin.style.display = 'none';
+        formForgot.style.display = 'none';
+      } else if (tab === 'forgot') {
+        if (modalTitle) modalTitle.textContent = "Reset Password";
+        if (tabsContainer) tabsContainer.style.display = 'none';
+        formForgot.style.display = 'flex';
+        formLogin.style.display = 'none';
+        formSignup.style.display = 'none';
       }
     }
 
@@ -444,21 +469,18 @@
       document.getElementById('auth-modal').classList.add('hidden');
     }
 
-    async function handleForgotPassword() {
+    async function handleForgotSubmit(event) {
+      event.preventDefault();
       clearModalMsg();
-      const emailInput = document.getElementById('login-email');
-      const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
-
-      if (!email) {
-        showModalMsg('Please type your email address above first, then click "Forgot password?".', true);
-        return;
-      }
-
+      const email = document.getElementById('forgot-email').value.trim().toLowerCase();
       const client = window.supabaseClient || supabaseClient;
+
       if (!client) {
-        showModalMsg('Connection error. Please check your internet and try again.', true);
+        showModalMsg('Connection error. Please try again.', true);
         return;
       }
+
+      setBtnLoading('forgot-submit-btn', true, 'Send Reset Instructions');
 
       try {
         const { error } = await client.auth.resetPasswordForEmail(email, {
@@ -466,13 +488,16 @@
         });
 
         if (error) {
-          showModalMsg('Supabase Error: ' + error.message, true);
+          showModalMsg(error.message, true);
+          setBtnLoading('forgot-submit-btn', false, 'Send Reset Instructions');
           return;
         }
 
-        showModalMsg('Password reset email sent! Please check your inbox.', false);
+        showModalMsg('If an account exists with this email, reset instructions have been sent.', false);
+        setBtnLoading('forgot-submit-btn', false, 'Send Reset Instructions');
       } catch (err) {
-        showModalMsg('Error: ' + err.message, true);
+        showModalMsg('Error sending reset email. Please try again.', true);
+        setBtnLoading('forgot-submit-btn', false, 'Send Reset Instructions');
       }
     }
 
@@ -530,12 +555,12 @@
           return;
         }
 
-        showModalMsg("Account created successfully! Check your email for verification.", false);
+        showModalMsg("Account created successfully!", false);
         setBtnLoading('signup-submit-btn', false, 'Create Account');
         setTimeout(() => {
           closeAuthModal();
           switchAuthTab('login');
-        }, 2000);
+        }, 1500);
 
       } catch (err) {
         showModalMsg("Account creation failed. Please try again.", true);
@@ -552,7 +577,7 @@
       const client = window.supabaseClient || supabaseClient;
 
       if (!client) {
-        showModalMsg('Connection error. Please check your internet and try again.', true);
+        showModalMsg('Connection error. Please try again.', true);
         return;
       }
 
