@@ -20,14 +20,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email address is required.' });
     }
 
-    const supabase = createClient(
-      process.env.SUPABASE_URL || 'https://jxdnesvlwvmdbfwjzfga.supabase.co',
-      process.env.SUPABASE_ANON_KEY || 'sb_publishable_t3ivgTlGaqQK2T6WhXKB3Q_WvMZW0zr'
-    );
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
-    // Trigger Supabase's built-in reset email (Supabase will handle token creation)
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return res.status(500).json({ error: 'Server configuration error.' });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${req.headers.origin || 'https://double-check-kohl.vercel.app'}`,
+      redirectTo: 'https://double-check-kohl.vercel.app',
     });
 
     if (error) {
