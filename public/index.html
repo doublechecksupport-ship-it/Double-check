@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Double Check - AI Legal Document Summariser</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Double Check — AI Legal Document Summariser</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       overflow-x: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      background-color: #fbfbfd;
+      background-color: #f5f5f7;
       color: #1d1d1f;
       margin: 0;
       padding: 0;
@@ -18,304 +19,357 @@
 
     .apple-heading {
       font-weight: 600;
-      letter-spacing: -0.015em;
+      letter-spacing: -0.02em;
     }
 
     .apple-body {
-      color: #86868b;
+      color: #6e6e73;
     }
 
     .apple-card {
       background: #ffffff;
-      border-radius: 1.25rem;
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      border-radius: 18px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.25s ease;
+    }
+
+    .apple-card-soft {
+      background: #fafafa;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
     }
 
     .apple-btn-primary {
       background: #1d1d1f;
       color: #ffffff;
-      border-radius: 980px;
       font-weight: 500;
-      border: none;
+      border-radius: 9999px;
+      transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), background-color 0.2s ease;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
     }
+
     .apple-btn-primary:hover {
       background: #000000;
-      transform: scale(1.02);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: scale(1.015);
     }
 
     .apple-btn-secondary {
       background: rgba(0, 0, 0, 0.05);
       color: #1d1d1f;
-      border-radius: 980px;
       font-weight: 500;
-      border: none;
+      border-radius: 9999px;
+      transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), background-color 0.2s ease;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    .apple-btn-secondary:hover {
-      background: rgba(0, 0, 0, 0.08);
-      transform: scale(1.01);
     }
 
-    .top-navbar {
-      backdrop-filter: blur(20px);
-      background-color: rgba(251, 251, 253, 0.8);
+    .apple-btn-secondary:hover {
+      background: rgba(0, 0, 0, 0.09);
+      transform: scale(1.015);
+    }
+
+    .top-anchor {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background-color: rgba(245, 245, 247, 0.82);
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-      position: sticky;
-      top: 0;
-      z-index: 99;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .animate-fade-in {
-      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
   </style>
 </head>
-<body class="w-screen flex flex-col min-h-screen font-sans antialiased select-none selection:bg-black selection:text-white relative">
+<body class="min-h-screen flex flex-col selection:bg-black selection:text-white">
 
   <!-- AUTHENTICATION MODAL -->
-  <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden animate-fade-in">
-    <div class="apple-card w-full max-w-md p-8 relative flex flex-col gap-6 m-4">
-      <div class="flex justify-between items-center border-b border-black/5 pb-4">
-        <h3 id="modal-title" class="text-xl apple-heading">Double Check Account</h3>
-        <button type="button" id="modal-close-btn" class="text-gray-400 hover:text-black font-medium text-lg px-2">✕</button>
+  <div id="auth-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+    <div class="apple-card w-full max-w-md p-6 sm:p-8 relative animate-fade-in">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <p class="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">Double Check Account</p>
+          <h2 id="modal-title" class="text-2xl apple-heading text-gray-900">Sign In</h2>
+        </div>
+        <button id="modal-close-btn" type="button" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-semibold cursor-pointer">
+          ✕
+        </button>
       </div>
 
-      <div id="auth-tabs-container" class="flex bg-gray-100/80 p-1 rounded-xl">
-        <button type="button" id="tab-login" class="flex-1 py-2 rounded-lg font-medium text-sm transition-all text-black shadow-sm bg-white">Sign In</button>
-        <button type="button" id="tab-signup" class="flex-1 py-2 rounded-lg font-medium text-sm transition-all text-gray-500 hover:text-black">Register</button>
+      <!-- AUTH MODE TABS -->
+      <div id="auth-tabs-container" class="flex bg-gray-100 p-1 rounded-xl mb-5">
+        <button id="tab-login" type="button" class="flex-1 py-2 rounded-lg text-sm font-medium transition-all bg-white text-black shadow-sm cursor-pointer">
+          Sign In
+        </button>
+        <button id="tab-signup" type="button" class="flex-1 py-2 rounded-lg text-sm font-medium transition-all text-gray-600 hover:text-black cursor-pointer">
+          Create Account
+        </button>
       </div>
 
       <!-- INLINE STATUS MESSAGE BANNER -->
-      <div id="modal-msg-banner" class="hidden p-3 rounded-xl text-xs font-medium text-center transition-all"></div>
+      <div id="modal-msg-banner" class="hidden mb-4 px-3.5 py-2.5 rounded-xl text-xs font-medium border"></div>
 
       <!-- SIGN IN FORM -->
       <form id="form-login" class="flex flex-col gap-4">
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Email Address</label>
-          <input type="email" id="login-email" required placeholder="name@example.com" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Email Address</label>
+          <input id="login-email" type="email" required placeholder="name@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:border-black" />
         </div>
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Password</label>
-          <input type="password" id="login-password" required placeholder="••••••••" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Password</label>
+          <input id="login-password" type="password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:border-black" />
         </div>
-        <div class="flex justify-end">
-          <button type="button" id="forgot-password-link" class="text-xs text-gray-500 hover:text-black font-medium">Forgot password?</button>
+        <div class="flex items-center justify-between text-xs">
+          <button id="forgot-password-link" type="button" class="text-gray-600 hover:text-black underline cursor-pointer">
+            Forgot password?
+          </button>
         </div>
-        <button type="submit" id="login-submit-btn" class="apple-btn-primary w-full py-3.5 mt-1 text-sm font-medium flex justify-center items-center gap-2">
-          <span>Sign In</span>
+        <button id="login-submit-btn" type="submit" class="apple-btn-primary w-full py-3 text-sm font-medium mt-1">
+          Sign In
         </button>
-        <button type="button" id="login-cancel-btn" class="text-xs text-gray-400 hover:text-black text-center mt-1">Cancel</button>
       </form>
 
       <!-- SIGN UP FORM -->
       <form id="form-signup" class="flex flex-col gap-4" style="display: none;">
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Email Address</label>
-          <input type="email" id="signup-email" required placeholder="name@example.com" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Email Address</label>
+          <input id="signup-email" type="email" required placeholder="name@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:border-black" />
         </div>
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Password (6+ Chars)</label>
-          <input type="password" id="signup-password" required placeholder="••••••••" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Password</label>
+          <input id="signup-password" type="password" required minlength="6" placeholder="At least 6 characters" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:border-black" />
         </div>
-        <div class="flex items-center gap-2 mt-1">
-          <input type="checkbox" id="terms-checkbox" required class="rounded border-gray-300">
-          <label for="terms-checkbox" class="text-xs text-gray-500">I agree to Terms & Privacy Policy</label>
-        </div>
-        <button type="submit" id="signup-submit-btn" class="apple-btn-primary w-full py-3.5 mt-2 text-sm font-medium flex justify-center items-center gap-2">
-          <span>Create Account</span>
+        <label class="flex items-start gap-2.5 text-xs text-gray-600 cursor-pointer">
+          <input id="signup-terms-checkbox" type="checkbox" class="mt-0.5 rounded border-gray-300" />
+          <span>I agree to the Terms of Service &amp; Privacy Policy.</span>
+        </label>
+        <button id="signup-submit-btn" type="submit" class="apple-btn-primary w-full py-3 text-sm font-medium mt-1">
+          Create Account
         </button>
-        <button type="button" id="signup-cancel-btn" class="text-xs text-gray-400 hover:text-black text-center mt-1">Cancel</button>
       </form>
 
-      <!-- FORGOT PASSWORD FORM -->
-      <form id="form-forgot" class="flex flex-col gap-4" style="display: none;">
-        <p class="text-xs text-gray-500 leading-relaxed">Enter your account email below. If an account exists, we will send a password reset link to your inbox.</p>
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[11px] font-semibold text-gray-400 apple-body uppercase tracking-wider">Email Address</label>
-          <input type="email" id="forgot-email" required placeholder="name@example.com" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
-        </div>
-        <button type="submit" id="forgot-submit-btn" class="apple-btn-primary w-full py-3.5 mt-2 text-sm font-medium flex justify-center items-center gap-2">
-          <span>Send Reset Instructions</span>
+      <!-- FORGOT PASSWORD + 6-DIGIT CODE RESET (IN THE SAME WINDOW) -->
+      <div id="form-forgot" class="flex flex-col gap-4" style="display: none;">
+        <!-- Step 1: Request 6-digit code -->
+        <form id="forgot-request-form" class="flex flex-col gap-4">
+          <p class="text-xs text-gray-500 leading-relaxed">
+            Enter your account email to receive a 6-digit reset code. You will enter the code and your new password right here in this window.
+          </p>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Email Address</label>
+            <input id="forgot-email" type="email" required placeholder="name@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:border-black" />
+          </div>
+          <button id="forgot-submit-btn" type="submit" class="apple-btn-primary w-full py-3 text-sm font-medium">
+            Send 6-Digit Code
+          </button>
+        </form>
+
+        <!-- Step 2: Enter 6-digit code + New Password in the same modal -->
+        <form id="otp-reset-form" class="hidden flex flex-col gap-4 pt-2 border-t border-gray-100">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">6-Digit Reset Code</label>
+            <input id="reset-otp-code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required placeholder="123456" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-center text-lg font-semibold tracking-[0.35em] focus:outline-none focus:border-black" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">New Password</label>
+            <input id="reset-new-password" type="password" required minlength="6" placeholder="Enter a new password" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:border-black" />
+          </div>
+          <button id="verify-otp-submit-btn" type="submit" class="apple-btn-primary w-full py-3 text-sm font-medium">
+            Verify Code &amp; Update Password
+          </button>
+        </form>
+
+        <button id="back-to-login-btn" type="button" class="text-xs text-gray-500 hover:text-black text-center cursor-pointer">
+          ← Back to Sign In
         </button>
-        <button type="button" id="forgot-back-btn" class="text-xs text-gray-500 hover:text-black text-center mt-1 font-medium">← Back to Sign In</button>
-      </form>
+      </div>
     </div>
   </div>
 
-  <!-- RESET PASSWORD VIEW (WHEN ARRIVING VIA TOKEN) -->
-  <div id="view-reset-password" class="hidden flex-1 max-w-md w-full mx-auto px-6 py-16 flex-col gap-6 animate-fade-in">
-    <div class="apple-card p-8 flex flex-col gap-4">
-      <h3 class="text-xl apple-heading">Set New Password</h3>
-      <p class="text-xs text-gray-500">Enter your new password below to update your account.</p>
-      <form id="form-update-password" class="flex flex-col gap-4">
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">New Password</label>
-          <input type="password" id="new-password" required placeholder="••••••••" class="p-3 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/50 text-sm">
+  <!-- TOP NAVIGATION -->
+  <header class="top-anchor sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div id="nav-logo" class="flex items-center gap-2.5 cursor-pointer">
+        <span class="text-lg apple-heading tracking-tight text-gray-900">Double Check</span>
+      </div>
+
+      <div id="nav-logged-out" class="flex items-center gap-2.5">
+        <button id="nav-login-btn" type="button" class="px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:text-black cursor-pointer">
+          Sign In
+        </button>
+        <button id="nav-signup-btn" type="button" class="apple-btn-primary px-4 py-2 text-xs sm:text-sm font-medium">
+          Get Started
+        </button>
+      </div>
+
+      <div id="nav-logged-in" class="hidden items-center gap-2.5">
+        <button id="nav-workspace-btn" type="button" class="px-3.5 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:text-black cursor-pointer">
+          Workspace
+        </button>
+        <button id="nav-account-btn" type="button" class="px-3.5 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:text-black cursor-pointer">
+          Account
+        </button>
+        <button id="nav-logout-btn" type="button" class="apple-btn-secondary px-4 py-2 text-xs sm:text-sm font-medium">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1">
+    <!-- WELCOME VIEW -->
+    <section id="view-welcome" class="max-w-5xl mx-auto px-4 sm:px-6 pt-14 pb-16">
+      <div class="text-center max-w-2xl mx-auto mb-14 animate-fade-in">
+        <p class="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-3">AI Legal Contract Clarity</p>
+        <h1 class="text-4xl sm:text-5xl apple-heading text-gray-900 leading-tight mb-4">
+          Understand Any Legal Contract in Seconds.
+        </h1>
+        <p class="text-base sm:text-lg apple-body leading-relaxed mb-7">
+          Paste terms, agreements, or contracts to get plain-English breakdowns, obligations, and potential risks before you sign.
+        </p>
+        <div class="flex items-center justify-center gap-3">
+          <button id="hero-get-started-btn" type="button" class="apple-btn-primary px-6 py-3 text-sm font-medium">
+            Get Started Free
+          </button>
+          <button id="hero-signin-btn" type="button" class="apple-btn-secondary px-6 py-3 text-sm font-medium">
+            Sign In
+          </button>
         </div>
-        <button type="submit" id="update-password-btn" class="apple-btn-primary w-full py-3.5 text-sm font-medium">Update Password</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- TOP NAVBAR -->
-  <nav class="top-navbar px-6 py-4 flex justify-between items-center w-full">
-    <div id="nav-logo" class="flex items-center gap-2 cursor-pointer">
-      <span class="apple-heading text-lg tracking-tight font-semibold">Double Check</span>
-    </div>
-    <div class="flex items-center gap-3">
-      <div id="nav-logged-out" class="flex items-center gap-3">
-        <button type="button" id="nav-pricing-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Pricing</button>
-        <button type="button" id="nav-terms-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Terms</button>
-        <button type="button" id="nav-signin-btn" class="apple-btn-secondary px-4 py-2 text-sm font-medium">Sign In</button>
       </div>
-      <div id="nav-logged-in" class="hidden items-center gap-3">
-        <button type="button" id="nav-home-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Home</button>
-        <button type="button" id="nav-account-btn" class="text-sm font-medium text-gray-500 hover:text-black px-3 py-2">Account</button>
-        <button type="button" id="nav-signout-btn" class="apple-btn-secondary px-4 py-2 text-sm font-medium">Sign Out</button>
-      </div>
-    </div>
-  </nav>
 
-  <!-- WELCOME VIEW -->
-  <div id="view-welcome" class="flex-1 max-w-4xl w-full mx-auto px-6 py-16 flex flex-col items-center text-center justify-center gap-8 animate-fade-in">
-    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/5 text-xs font-semibold uppercase tracking-wider text-gray-600">
-      Next-Gen Legal Intelligence
-    </div>
-    <h1 class="text-4xl md:text-6xl apple-heading tracking-tight max-w-2xl leading-[1.15]">
-      Understand Any Legal Contract in Seconds.
-    </h1>
-    <p class="apple-body text-base md:text-xl max-w-xl font-normal leading-relaxed">
-      Transform complex legal agreements into crystal-clear plain-English summaries and instant risk breakdowns. Never sign blindly again.
-    </p>
-    <div class="flex items-center gap-4 mt-2">
-      <button type="button" id="hero-get-started-btn" class="apple-btn-primary px-8 py-4 text-base font-medium shadow-md">Get Started Free</button>
-      <button type="button" id="hero-signin-btn" class="apple-btn-secondary px-8 py-4 text-base font-medium">Sign In</button>
-    </div>
-  </div>
-
-  <!-- PRICING SECTION -->
-  <div id="pricing-section" class="w-full max-w-5xl space-y-8 px-6 py-12 mx-auto">
-    <div class="text-center space-y-2">
-      <h2 class="text-2xl apple-heading tracking-tight">Transparent Plans & Features</h2>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="apple-card p-8 flex flex-col justify-between">
-        <div class="space-y-4">
-          <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Free / Starter</div>
-          <h3 class="text-3xl apple-heading">Free <span class="text-base text-gray-400 font-normal">/ mo</span></h3>
-          <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">For casual users needing quick legal sanity checks.</p>
-          <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ <strong>1 document summary per month</strong> (up to 5 pages)</li>
-            <li class="flex items-center gap-2">✓ Full Paragraph Summary Overview</li>
-            <li class="flex items-center gap-2">✓ Complete Red-Flag Breakdown Access</li>
-          </ul>
+      <!-- PRICING SECTION -->
+      <div id="pricing-section" class="mb-12">
+        <div class="text-center mb-8">
+          <h2 class="text-2xl sm:text-3xl apple-heading text-gray-900">Transparent Plans &amp; Features</h2>
         </div>
-        <button type="button" class="pricing-signup-btn apple-btn-secondary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Start Free Trial</button>
-      </div>
 
-      <div class="apple-card p-8 flex flex-col justify-between border-black/20 shadow-lg relative">
-        <div class="space-y-4">
-          <div class="inline-block px-3 py-1 bg-black text-white rounded-full text-xs font-semibold uppercase tracking-wider">Pro Tier</div>
-          <h3 class="text-3xl apple-heading">£29 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
-          <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Designed for freelancers, tenants, and sole traders.</p>
-          <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ <strong>Unlimited contract summaries</strong> per month</li>
-            <li class="flex items-center gap-2">✓ Full Risk Rating & High-Risk Alerts</li>
-            <li class="flex items-center gap-2">✓ Full Risk Header & Deep Analysis</li>
-          </ul>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="apple-card p-6 flex flex-col justify-between">
+            <div>
+              <p class="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Starter</p>
+              <div class="text-3xl apple-heading text-gray-900 mb-4">Free</div>
+              <ul class="space-y-2.5 text-sm text-gray-600 mb-6">
+                <li>• Plain-English Contract Summaries</li>
+                <li>• Key Obligations &amp; Highlights</li>
+                <li>• Instant Web Workspace</li>
+              </ul>
+            </div>
+            <button type="button" class="pricing-signup-btn apple-btn-secondary w-full py-2.5 text-sm font-medium">
+              Start Free
+            </button>
+          </div>
+
+          <div class="apple-card p-6 flex flex-col justify-between border-black/20">
+            <div>
+              <p class="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Pro</p>
+              <div class="text-3xl apple-heading text-gray-900 mb-4">£29 <span class="text-sm font-normal text-gray-500">/ month</span></div>
+              <ul class="space-y-2.5 text-sm text-gray-600 mb-6">
+                <li>• Unlimited Contract Reviews</li>
+                <li>• Detailed Risk &amp; Clause Analysis</li>
+                <li>• Priority Processing</li>
+              </ul>
+            </div>
+            <button type="button" class="pricing-signup-btn apple-btn-primary w-full py-2.5 text-sm font-medium">
+              Choose Pro
+            </button>
+          </div>
+
+          <div class="apple-card p-6 flex flex-col justify-between">
+            <div>
+              <p class="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Team</p>
+              <div class="text-3xl apple-heading text-gray-900 mb-4">£199 <span class="text-sm font-normal text-gray-500">/ month</span></div>
+              <ul class="space-y-2.5 text-sm text-gray-600 mb-6">
+                <li>• Multi-Seat Team Access</li>
+                <li>• Standardised Contract Playbooks</li>
+                <li>• Dedicated Support</li>
+              </ul>
+            </div>
+            <button type="button" class="pricing-signup-btn apple-btn-secondary w-full py-2.5 text-sm font-medium">
+              Contact &amp; Start
+            </button>
+          </div>
         </div>
-        <button type="button" class="pricing-signup-btn apple-btn-primary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Upgrade to Pro</button>
       </div>
 
-      <div class="apple-card p-8 flex flex-col justify-between">
-        <div class="space-y-4">
-          <div class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold uppercase tracking-wider">Business / Team</div>
-          <h3 class="text-3xl apple-heading">£199 <span class="text-base text-gray-400 font-normal">/ month</span></h3>
-          <p class="text-xs text-gray-500 font-normal border-b border-black/5 pb-4">Tailored for agencies, sales teams, and high-volume operations.</p>
-          <ul class="space-y-2.5 text-xs text-gray-600 font-normal">
-            <li class="flex items-center gap-2">✓ 5 team seats included</li>
-            <li class="flex items-center gap-2">✓ Custom playbooks & integrations</li>
-            <li class="flex items-center gap-2">✓ Full Risk Header & Breakdown Unlocked</li>
-          </ul>
+      <!-- DISCLAIMER -->
+      <div class="apple-card-soft p-4 text-center text-xs text-gray-500">
+        Disclaimer: Double Check provides AI-generated contract summaries for informational purposes only and does not constitute professional legal advice.
+      </div>
+    </section>
+
+    <!-- WORKSPACE VIEW -->
+    <section id="view-workspace" class="hidden max-w-4xl mx-auto px-4 sm:px-6 pt-12 pb-16">
+      <div class="mb-6">
+        <h2 class="text-2xl sm:text-3xl apple-heading text-gray-900">Summarise Any Legal Document</h2>
+        <p class="text-sm apple-body mt-1">Paste your contract text below for an executive breakdown.</p>
+      </div>
+
+      <div class="apple-card p-6">
+        <label for="legal-text-input" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+          Contract or Agreement Text
+        </label>
+        <textarea id="legal-text-input" rows="10" placeholder="Paste agreement or contract terms here..." class="w-full p-4 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-black mb-4"></textarea>
+        <div class="flex justify-end">
+          <button id="summarise-btn" type="button" class="apple-btn-primary px-6 py-3 text-sm font-medium">
+            Summarise Contract
+          </button>
         </div>
-        <button type="button" class="pricing-signup-btn apple-btn-secondary w-full py-3 mt-6 text-xs font-semibold uppercase tracking-wider">Get Started</button>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- DISCLAIMER -->
-  <div class="w-full max-w-5xl mx-auto px-6 pt-2 pb-12 border-t border-black/5">
-    <p class="text-xs text-gray-400 leading-relaxed text-center">
-      Disclaimer: Double Check provides AI-generated contract summaries for informational purposes only and does not substitute professional legal advice.
-    </p>
-  </div>
-
-  <!-- MAIN WORKSPACE -->
-  <div id="view-workspace" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col gap-8 animate-fade-in">
-    <div class="flex flex-col gap-2">
-      <h2 class="text-3xl apple-heading tracking-tight">Summarise Any Legal Document.</h2>
-      <p class="apple-body text-sm">Paste your contract text below for an instant, professional AI breakdown.</p>
-    </div>
-
-    <div class="apple-card p-6 flex flex-col gap-4">
-      <textarea id="legal-text-input" rows="10" placeholder="Paste agreement or contract terms here..." class="w-full p-4 rounded-xl border border-black/10 focus:outline-none focus:border-black bg-gray-50/30 text-sm leading-relaxed resize-y"></textarea>
-      <button id="summarise-btn" class="apple-btn-primary w-full py-4 text-center text-sm font-medium shadow-md">Summarise Contract</button>
-    </div>
-  </div>
-
-  <!-- LOADING VIEW -->
-  <div id="view-loading" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-20 flex-col items-center justify-center gap-6 animate-fade-in">
-    <div class="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-    <p class="apple-heading text-sm text-gray-600 font-medium tracking-wide">Analyzing contract clauses with AI...</p>
-  </div>
-
-  <!-- RESULTS VIEW -->
-  <div id="view-results" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col gap-6 animate-fade-in text-left">
-    <div class="flex justify-between items-center border-b border-black/5 pb-4">
-      <h2 id="doc-title-heading" class="text-xl apple-heading tracking-tight">Executive Summary</h2>
-      <button id="back-to-workspace-btn" class="apple-btn-secondary px-4 py-2 text-xs font-medium">← Analyze Another</button>
-    </div>
-
-    <div class="apple-card p-8 flex flex-col gap-6">
-      <div class="flex flex-col gap-2">
-        <h4 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider apple-body">Executive Summary</h4>
-        <p id="summary-text" class="text-sm text-gray-700 font-normal leading-relaxed text-left"></p>
+    <!-- LOADING VIEW -->
+    <section id="view-loading" class="hidden max-w-2xl mx-auto px-4 sm:px-6 pt-20 pb-20 text-center">
+      <div class="apple-card p-10">
+        <p class="text-base font-medium text-gray-900">Analysing contract clauses with AI...</p>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- ACCOUNT VIEW -->
-  <div id="view-account" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex-col text-left relative space-y-6 animate-fade-in">
-    <h2 class="text-3xl apple-heading tracking-tight">My Account</h2>
-    <div class="apple-card p-8 flex flex-col gap-6 max-w-md">
-      <div class="flex flex-col gap-1.5">
-        <label class="text-[11px] font-semibold text-gray-400 tracking-wider">Registered Email</label>
-        <p id="account-user-email" class="text-base font-medium text-gray-800 border-b border-black/10 pb-2 text-left"></p>
+    <!-- RESULTS VIEW -->
+    <section id="view-results" class="hidden max-w-4xl mx-auto px-4 sm:px-6 pt-12 pb-16">
+      <div class="flex items-center justify-between mb-6">
+        <h2 id="doc-title-heading" class="text-2xl apple-heading text-gray-900">Contract Breakdown</h2>
+        <button id="back-to-workspace-btn" type="button" class="apple-btn-secondary px-4 py-2 text-xs sm:text-sm font-medium">
+          Analyse Another
+        </button>
       </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-[11px] font-semibold text-gray-400 tracking-wider">Current Plan</label>
-        <p id="account-plan-badge" class="text-sm font-semibold text-black">Starter Free Trial</p>
+      <div class="apple-card p-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Executive Summary</h3>
+        <div id="summary-text" class="text-sm text-gray-700 leading-relaxed whitespace-pre-line"></div>
+      </div>
+    </section>
+
+    <!-- ACCOUNT VIEW -->
+    <section id="view-account" class="hidden max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-16">
+      <div class="mb-6">
+        <h2 class="text-2xl sm:text-3xl apple-heading text-gray-900">Account</h2>
       </div>
 
-      <button type="button" id="back-home-btn" class="apple-btn-secondary px-4 py-3 text-center text-xs font-semibold w-full cursor-pointer">← Back Home</button>
-    </div>
-  </div>
+      <div class="apple-card p-6 space-y-4">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Registered Email</p>
+          <p id="account-user-email" class="text-sm font-medium text-gray-900 mt-1">—</p>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Current Plan</p>
+          <p class="text-sm font-medium text-gray-900 mt-1">Starter Free Trial</p>
+        </div>
+        <div class="pt-2">
+          <button id="back-home-btn" type="button" class="apple-btn-secondary px-4 py-2 text-xs sm:text-sm font-medium">
+            Back to Workspace
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <!-- FOOTER -->
-  <footer class="w-full py-6 border-t border-black/5 text-center text-xs text-gray-400 px-6 font-medium">
+  <footer class="border-t border-black/5 py-6 text-center text-xs text-gray-500">
     © 2026 Double Check LLC. All rights reserved.
   </footer>
 
@@ -324,72 +378,72 @@
     let supabaseClient = null;
 
     try {
-      if (typeof window.supabase !== "undefined" && window.supabase.createClient) {
+      if (window.supabase && typeof window.supabase.createClient === 'function') {
         supabaseClient = window.supabase.createClient(
-          "https://jxdnesvlwvmdbfwjzfga.supabase.co",
-          "sb_publishable_t3ivgTlGaqQK2T6WhXKB3Q_WvMZW0zr"
+          'https://jxdnesvlwvmdbfwjzfga.supabase.co',
+          'sb_publishable_tIcVp18oqf3T4FAfWB08_w_m2vR4uuz'
         );
         window.supabaseClient = supabaseClient;
       }
-    } catch (e) {
-      console.log("Supabase init notice:", e);
+    } catch (err) {
+      console.log('Supabase init notice:', err);
     }
 
     let currentUser = null;
+    let pendingResetEmail = '';
 
-    document.addEventListener("DOMContentLoaded", async () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       if (supabaseClient) {
         try {
-          const { data: { session } } = await supabaseClient.auth.getSession();
-          if (session?.user) {
-            currentUser = session.user;
+          const { data } = await supabaseClient.auth.getSession();
+          if (data && data.session && data.session.user) {
+            currentUser = data.session.user;
             updateAccountUI(currentUser);
             switchView('workspace');
           }
         } catch (err) {
-          console.error("Session check error:", err);
+          console.error('Session check error:', err);
         }
 
         supabaseClient.auth.onAuthStateChange((event, session) => {
-          if (event === 'PASSWORD_RECOVERY') {
-            switchView('reset-password');
+          if (event === 'SIGNED_IN' && session && session.user) {
+            currentUser = session.user;
+            updateAccountUI(currentUser);
+          } else if (event === 'SIGNED_OUT') {
+            currentUser = null;
+            updateAccountUI(null);
           }
         });
       }
 
-      if (window.location.hash.includes('type=recovery')) {
-        switchView('reset-password');
-      }
-
-      updateAccountUI(null);
+      updateAccountUI(currentUser);
 
       document.getElementById('nav-logo')?.addEventListener('click', () => switchView('welcome'));
-      document.getElementById('nav-signin-btn')?.addEventListener('click', () => openAuthModal('login'));
-      document.getElementById('hero-signin-btn')?.addEventListener('click', () => openAuthModal('login'));
-      document.getElementById('hero-get-started-btn')?.addEventListener('click', () => openAuthModal('signup'));
-      document.getElementById('nav-home-btn')?.addEventListener('click', () => switchView('workspace'));
+      document.getElementById('nav-login-btn')?.addEventListener('click', () => openAuthModal('login'));
+      document.getElementById('nav-signup-btn')?.addEventListener('click', () => openAuthModal('signup'));
+      document.getElementById('nav-workspace-btn')?.addEventListener('click', () => switchView('workspace'));
       document.getElementById('nav-account-btn')?.addEventListener('click', () => switchView('account'));
-      document.getElementById('nav-signout-btn')?.addEventListener('click', handleSignOut);
+      document.getElementById('nav-logout-btn')?.addEventListener('click', handleSignOut);
       document.getElementById('back-home-btn')?.addEventListener('click', () => switchView('workspace'));
       document.getElementById('back-to-workspace-btn')?.addEventListener('click', () => switchView('workspace'));
 
-      document.querySelectorAll('.pricing-signup-btn').forEach(btn => {
+      document.querySelectorAll('.pricing-signup-btn').forEach((btn) => {
         btn.addEventListener('click', () => openAuthModal('signup'));
       });
 
-      document.getElementById('modal-close-btn')?.addEventListener('click', closeAuthModal);
-      document.getElementById('login-cancel-btn')?.addEventListener('click', closeAuthModal);
-      document.getElementById('signup-cancel-btn')?.addEventListener('click', closeAuthModal);
+      document.getElementById('hero-get-started-btn')?.addEventListener('click', () => openAuthModal('signup'));
+      document.getElementById('hero-signin-btn')?.addEventListener('click', () => openAuthModal('login'));
 
+      document.getElementById('modal-close-btn')?.addEventListener('click', closeAuthModal);
       document.getElementById('tab-login')?.addEventListener('click', () => switchAuthTab('login'));
       document.getElementById('tab-signup')?.addEventListener('click', () => switchAuthTab('signup'));
       document.getElementById('forgot-password-link')?.addEventListener('click', () => switchAuthTab('forgot'));
-      document.getElementById('forgot-back-btn')?.addEventListener('click', () => switchAuthTab('login'));
+      document.getElementById('back-to-login-btn')?.addEventListener('click', () => switchAuthTab('login'));
 
-      document.getElementById('form-login')?.addEventListener('submit', handleLoginSubmit);
+      document.getElementById('forgot-request-form')?.addEventListener('submit', handleForgotSubmit);
+      document.getElementById('otp-reset-form')?.addEventListener('submit', handleVerifyOtpAndUpdatePassword);
       document.getElementById('form-signup')?.addEventListener('submit', handleSignUpSubmit);
-      document.getElementById('form-forgot')?.addEventListener('submit', handleForgotSubmit);
-      document.getElementById('form-update-password')?.addEventListener('submit', handleUpdatePassword);
+      document.getElementById('form-login')?.addEventListener('submit', handleLoginSubmit);
       document.getElementById('summarise-btn')?.addEventListener('click', handleSummarise);
     });
 
@@ -397,18 +451,17 @@
       const banner = document.getElementById('modal-msg-banner');
       if (!banner) return;
       banner.textContent = msg;
-      banner.className = `p-3 rounded-xl text-xs font-medium text-center transition-all ${
-        isError ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-      }`;
+      banner.className = isError
+        ? 'mb-4 px-3.5 py-2.5 rounded-xl text-xs font-medium border bg-red-50 text-red-700 border-red-200'
+        : 'mb-4 px-3.5 py-2.5 rounded-xl text-xs font-medium border bg-emerald-50 text-emerald-700 border-emerald-200';
       banner.classList.remove('hidden');
     }
 
     function clearModalMsg() {
       const banner = document.getElementById('modal-msg-banner');
-      if (banner) {
-        banner.textContent = '';
-        banner.classList.add('hidden');
-      }
+      if (!banner) return;
+      banner.textContent = '';
+      banner.classList.add('hidden');
     }
 
     function setBtnLoading(btnId, isLoading, originalText) {
@@ -416,15 +469,24 @@
       if (!btn) return;
       if (isLoading) {
         btn.disabled = true;
-        btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Processing...</span>`;
+        btn.innerHTML = `<span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2 align-middle"></span>Processing...`;
       } else {
         btn.disabled = false;
-        btn.innerHTML = `<span>${originalText}</span>`;
+        btn.innerHTML = originalText;
       }
     }
 
+    function resetOtpStepUI() {
+      pendingResetEmail = '';
+      const otpForm = document.getElementById('otp-reset-form');
+      const codeInput = document.getElementById('reset-otp-code');
+      const passInput = document.getElementById('reset-new-password');
+      if (otpForm) otpForm.classList.add('hidden');
+      if (codeInput) codeInput.value = '';
+      if (passInput) passInput.value = '';
+    }
+
     function switchAuthTab(tab) {
-      clearModalMsg();
       const tabLogin = document.getElementById('tab-login');
       const tabSignup = document.getElementById('tab-signup');
       const formLogin = document.getElementById('form-login');
@@ -433,53 +495,57 @@
       const tabsContainer = document.getElementById('auth-tabs-container');
       const modalTitle = document.getElementById('modal-title');
 
+      clearModalMsg();
+
       if (tab === 'login') {
-        if (modalTitle) modalTitle.textContent = "Double Check Account";
+        if (modalTitle) modalTitle.textContent = 'Sign In';
         if (tabsContainer) tabsContainer.style.display = 'flex';
-        tabLogin.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-black shadow-sm bg-white";
-        tabSignup.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-gray-500 hover:text-black";
+        tabLogin.className = 'flex-1 py-2 rounded-lg text-sm font-medium transition-all bg-white text-black shadow-sm cursor-pointer';
+        tabSignup.className = 'flex-1 py-2 rounded-lg text-sm font-medium transition-all text-gray-600 hover:text-black cursor-pointer';
         formLogin.style.display = 'flex';
         formSignup.style.display = 'none';
         formForgot.style.display = 'none';
       } else if (tab === 'signup') {
-        if (modalTitle) modalTitle.textContent = "Double Check Account";
+        if (modalTitle) modalTitle.textContent = 'Create Account';
         if (tabsContainer) tabsContainer.style.display = 'flex';
-        tabSignup.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-black shadow-sm bg-white";
-        tabLogin.className = "flex-1 py-2 rounded-lg font-medium text-sm transition-all text-gray-500 hover:text-black";
+        tabSignup.className = 'flex-1 py-2 rounded-lg text-sm font-medium transition-all bg-white text-black shadow-sm cursor-pointer';
+        tabLogin.className = 'flex-1 py-2 rounded-lg text-sm font-medium transition-all text-gray-600 hover:text-black cursor-pointer';
         formSignup.style.display = 'flex';
         formLogin.style.display = 'none';
         formForgot.style.display = 'none';
       } else if (tab === 'forgot') {
-        if (modalTitle) modalTitle.textContent = "Reset Password";
+        if (modalTitle) modalTitle.textContent = 'Reset Password';
         if (tabsContainer) tabsContainer.style.display = 'none';
-        formForgot.style.display = 'flex';
         formLogin.style.display = 'none';
         formSignup.style.display = 'none';
+        formForgot.style.display = 'flex';
       }
     }
 
     function openAuthModal(tab = 'login') {
       clearModalMsg();
+      resetOtpStepUI();
       switchAuthTab(tab);
-      document.getElementById('auth-modal').classList.remove('hidden');
+      document.getElementById('auth-modal')?.classList.remove('hidden');
     }
 
     function closeAuthModal() {
       clearModalMsg();
-      document.getElementById('auth-modal').classList.add('hidden');
+      resetOtpStepUI();
+      document.getElementById('auth-modal')?.classList.add('hidden');
     }
 
     async function handleForgotSubmit(event) {
       event.preventDefault();
       clearModalMsg();
-      const email = document.getElementById('forgot-email').value.trim().toLowerCase();
 
+      const email = document.getElementById('forgot-email').value.trim().toLowerCase();
       if (!email) {
         showModalMsg('Please enter your email address.', true);
         return;
       }
 
-      setBtnLoading('forgot-submit-btn', true, 'Send Reset Instructions');
+      setBtnLoading('forgot-submit-btn', true, 'Send 6-Digit Code');
 
       try {
         const res = await fetch('/api/forgot-password', {
@@ -489,31 +555,80 @@
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to send reset email.');
+        if (!res.ok) throw new Error(data.error || 'Failed to send reset code.');
 
-        showModalMsg('If an account exists with this email, reset instructions have been sent.', false);
-        setBtnLoading('forgot-submit-btn', false, 'Send Reset Instructions');
+        pendingResetEmail = email;
+        document.getElementById('otp-reset-form')?.classList.remove('hidden');
+        document.getElementById('reset-otp-code')?.focus();
+        showModalMsg(data.message || '6-digit code sent. Enter it and your new password below.', false);
       } catch (err) {
-        showModalMsg(err.message || 'Error sending reset email.', true);
-        setBtnLoading('forgot-submit-btn', false, 'Send Reset Instructions');
+        showModalMsg(err.message || 'Error sending reset code.', true);
+      } finally {
+        setBtnLoading('forgot-submit-btn', false, 'Send 6-Digit Code');
       }
     }
 
-    async function handleUpdatePassword(event) {
+    async function handleVerifyOtpAndUpdatePassword(event) {
       event.preventDefault();
-      const newPassword = document.getElementById('new-password').value;
+      clearModalMsg();
+
+      const token = document.getElementById('reset-otp-code').value.trim();
+      const newPassword = document.getElementById('reset-new-password').value;
       const client = window.supabaseClient || supabaseClient;
 
+      if (!pendingResetEmail) {
+        showModalMsg('Please enter your email and request a 6-digit code first.', true);
+        return;
+      }
+
+      if (!/^\d{6}$/.test(token)) {
+        showModalMsg('Please enter the 6-digit code from your email.', true);
+        return;
+      }
+
+      if (!newPassword || newPassword.length < 6) {
+        showModalMsg('New password must be at least 6 characters.', true);
+        return;
+      }
+
+      if (!client) {
+        showModalMsg('Authentication service unavailable. Please refresh.', true);
+        return;
+      }
+
+      setBtnLoading('verify-otp-submit-btn', true, 'Verify Code &amp; Update Password');
+
       try {
-        const { error } = await client.auth.updateUser({ password: newPassword });
-        if (error) {
-          alert('Failed to update password: ' + error.message);
-          return;
+        const { error: verifyError } = await client.auth.verifyOtp({
+          email: pendingResetEmail,
+          token,
+          type: 'recovery'
+        });
+
+        if (verifyError) {
+          throw new Error(verifyError.message || 'Invalid or expired 6-digit code.');
         }
-        alert('Password updated successfully! Redirecting to workspace...');
-        switchView('workspace');
+
+        const { data: updateData, error: updateError } = await client.auth.updateUser({
+          password: newPassword
+        });
+
+        if (updateError) {
+          throw new Error(updateError.message || 'Failed to update password.');
+        }
+
+        currentUser = updateData?.user || currentUser;
+        updateAccountUI(currentUser);
+        showModalMsg('Password updated! Signing you in...', false);
+
+        setTimeout(() => {
+          closeAuthModal();
+          switchView('workspace');
+        }, 900);
       } catch (err) {
-        alert('Failed to update password. Please try again.');
+        showModalMsg(err.message || 'Could not reset password. Please try again.', true);
+      } finally {
+        setBtnLoading('verify-otp-submit-btn', false, 'Verify Code &amp; Update Password');
       }
     }
 
@@ -523,7 +638,7 @@
 
       const email = document.getElementById('signup-email').value.trim().toLowerCase();
       const password = document.getElementById('signup-password').value;
-      const terms = document.getElementById('terms-checkbox').checked;
+      const terms = document.getElementById('signup-terms-checkbox').checked;
 
       if (!terms) {
         showModalMsg('Please accept the Terms of Service.', true);
@@ -548,20 +663,19 @@
         }
 
         if (data.user && data.user.identities && data.user.identities.length === 0) {
-          showModalMsg("Account already exists! Please go to Sign In.", true);
+          showModalMsg('Account already exists! Please go to Sign In.', true);
           setBtnLoading('signup-submit-btn', false, 'Create Account');
           return;
         }
 
-        showModalMsg("Account created successfully!", false);
+        showModalMsg('Account created successfully!', false);
         setBtnLoading('signup-submit-btn', false, 'Create Account');
         setTimeout(() => {
           closeAuthModal();
           switchAuthTab('login');
         }, 1500);
-
       } catch (err) {
-        showModalMsg("Account creation failed. Please try again.", true);
+        showModalMsg('Account creation failed. Please try again.', true);
         setBtnLoading('signup-submit-btn', false, 'Create Account');
       }
     }
@@ -572,8 +686,8 @@
 
       const email = document.getElementById('login-email').value.trim().toLowerCase();
       const password = document.getElementById('login-password').value;
-      const client = window.supabaseClient || supabaseClient;
 
+      const client = window.supabaseClient || supabaseClient;
       if (!client) {
         showModalMsg('Connection error. Please try again.', true);
         return;
@@ -585,7 +699,7 @@
         const { data, error } = await client.auth.signInWithPassword({ email, password });
 
         if (error) {
-          showModalMsg("Incorrect email or password. Please try again.", true);
+          showModalMsg('Incorrect email or password. Please try again.', true);
           setBtnLoading('login-submit-btn', false, 'Sign In');
           return;
         }
@@ -595,9 +709,8 @@
         setBtnLoading('login-submit-btn', false, 'Sign In');
         closeAuthModal();
         switchView('workspace');
-
       } catch (err) {
-        showModalMsg("Incorrect email or password. Please try again.", true);
+        showModalMsg('Incorrect email or password. Please try again.', true);
         setBtnLoading('login-submit-btn', false, 'Sign In');
       }
     }
@@ -618,45 +731,41 @@
       const accountEmail = document.getElementById('account-user-email');
 
       if (user) {
-        if (loggedOutActions) loggedOutActions.classList.add('hidden');
-        if (loggedInActions) {
-          loggedInActions.classList.remove('hidden');
-          loggedInActions.classList.add('flex');
-        }
+        loggedOutActions?.classList.add('hidden');
+        loggedOutActions?.classList.remove('flex');
+        loggedInActions?.classList.remove('hidden');
+        loggedInActions?.classList.add('flex');
         if (accountEmail) accountEmail.textContent = user.email || '';
       } else {
-        if (loggedOutActions) loggedOutActions.classList.remove('hidden');
-        if (loggedInActions) {
-          loggedInActions.classList.add('hidden');
-          loggedInActions.classList.remove('flex');
-        }
+        loggedInActions?.classList.add('hidden');
+        loggedInActions?.classList.remove('flex');
+        loggedOutActions?.classList.remove('hidden');
+        loggedOutActions?.classList.add('flex');
         if (accountEmail) accountEmail.textContent = '';
       }
     }
 
     function switchView(viewName) {
-      const views = ['welcome', 'workspace', 'loading', 'results', 'account', 'reset-password'];
-      views.forEach(v => {
-        const target = document.getElementById(`view-${v}`);
-        if (target) {
-          if (v === viewName) {
-            target.classList.remove('hidden');
-            target.classList.add('animate-fade-in');
-            target.classList.add('flex');
-          } else {
-            target.classList.add('hidden');
-            target.classList.remove('flex');
-          }
-        }
+      const views = ['welcome', 'workspace', 'loading', 'results', 'account'];
+      views.forEach((v) => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.add('hidden');
       });
-      window.scrollTo(0, 0);
+
+      const target = document.getElementById(`view-${viewName}`);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('animate-fade-in');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function handleSummarise() {
       const input = document.getElementById('legal-text-input');
       const text = input ? input.value.trim() : '';
 
-      if (text.length < 20) {
+      if (!text || text.length < 20) {
         alert('Please provide a complete contract text.');
         return;
       }
@@ -665,8 +774,8 @@
 
       try {
         const client = window.supabaseClient || supabaseClient;
-        const { data: { session } } = await client.auth.getSession();
-        const token = session?.access_token || '';
+        const { data: sessionData } = await client.auth.getSession();
+        const token = sessionData?.session?.access_token || '';
 
         const res = await fetch('/api/summarise', {
           method: 'POST',
@@ -683,12 +792,12 @@
         const docTitle = document.getElementById('doc-title-heading');
         const summaryText = document.getElementById('summary-text');
 
-        if (docTitle) docTitle.textContent = data.parsed?.title || "CONTRACT BREAKDOWN";
-        if (summaryText) summaryText.textContent = data.parsed?.executiveSummary || data.summary || "No summary returned.";
+        if (docTitle) docTitle.textContent = data.source?.title || 'CONTRACT BREAKDOWN';
+        if (summaryText) summaryText.textContent = data.text || data.result?.executiveSummary || 'No summary returned.';
 
         switchView('results');
       } catch (err) {
-        alert("Unable to process document at the moment. Please try again.");
+        alert('Unable to process document at the moment. Please try again.');
         switchView('workspace');
       }
     }
